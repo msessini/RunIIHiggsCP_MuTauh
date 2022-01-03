@@ -1,0 +1,6 @@
+# empty file needed to check in folder to git
+# make git ignore everything in this folder:
+*
+
+# these files will not be ignored:
+!.gitignore

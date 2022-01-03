@@ -1,0 +1,38 @@
+#! /bin/bash
+verbosity=$(grep SetLevel Code/Analysis.cxx | grep -c -e Debug -e Verbose)
+  if [[ ${verbosity} -ne 0 ]]; then 
+    echo 'ERROR: Please make sure to set the verbosity level to Info in Analysis.cxx, otherwise your log-files will break QSUB! Abort...' 
+    exit ${verbosity}
+  fi
+
+
+cd {DIR}
+
+  if [ "${1}"  == "--help" ]; then
+      echo "Options for running this configuration file:"
+      echo "--help                    Prints this message"
+      echo "--Range X Y               Submit jobs in a range of X - Y   "
+      echo "--Lise  X Y Z ...         Submit the list of jobs X, Y, Z ...  " 
+  else
+
+ if [ "$1" == "--Range" ]; then
+     echo "Subbmiting range:  $2  $3"
+     for ((i=$2;i<=$3;i++)); do
+	 cd {DIR}Set_$i
+	 source  Qsub_Set_$i
+     done
+ fi
+
+ if [ "$1" == "--List" ]; then
+     numargs=$#
+     for ((i=1 ; i <= numargs -1 ; i++)) do
+     echo "Subbmiting list of jobs:  $2  "
+	 cd {DIR}Set_$2
+	 source  Qsub_Set_$2
+	 shift
+     done
+ fi
+
+ cd  {DIR}
+
+ fi

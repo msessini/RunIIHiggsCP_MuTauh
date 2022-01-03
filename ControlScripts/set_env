@@ -1,0 +1,16 @@
+#! /bin/bash
+  if [ "${1}"  == "--help" ]; then
+      echo "Options for running this configuration file:"
+      echo "--help                    Prints this message"
+      echo "--Local                   To setup environment if you want to run your jobs locally   "
+      echo "--Remote                  To setup environment if you want to run your jobs on remote   "
+  else
+
+ if [ "$1" == "--Local" ]; then
+     export TMPDIR={DIR}
+ fi
+
+ if [ "$1" == "--Remote" ]; then
+     export TMPDIR=
+ fi
+ fi

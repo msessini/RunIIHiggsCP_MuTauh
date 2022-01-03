@@ -1,0 +1,16 @@
+Thin: False
+Skim: True
+HistoFile: InputData/HistoSkim.txt
+Analysis: SingleMuSkim
+UncertType: default
+SkimInfo: InputData/SkimSummarySingleMuonFullData.log
+Lumi: 35862.45
+PlotStyle: style2
+
+
+# Everything below is only needed if you intend to use SVFit
+# DO NOT modify the fields in curly brackets {xyz}, they are set by the framework
+InputFileSVFit: 
+OutputFileSVFit: 
+GRIDSite: grid-srm.physik.rwth-aachen.de
+InputNtuples: {FileDir}

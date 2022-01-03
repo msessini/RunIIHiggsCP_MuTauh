@@ -1,0 +1,54 @@
+include ../make.inc
+#################################################
+### Defining Compiling variables              ###
+#################################################
+
+
+
+CXX           = g++ -Wno-deprecated -Wall -std=c++11
+LD            = g++ -Wno-deprecated -Wall -std=c++11
+INSTALL	      = /usr/bin/install
+SHELL = /bin/sh
+
+####################################
+###                              ###
+####################################
+
+override CXXFLAGS += -I$(ROOTSYS)/include -I./ -c
+LDFLAGS       =  
+ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore  -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMinuit2 -lMinuit -lGenVector -lRooFit -lRooFitCore -lGui -LObj -lThread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
+
+LIBS          = $(ROOTLIBS) $(SHAREDLIBFLAGS)
+
+SRCS    = $(wildcard TauAnalysis/ClassicSVfit/src/*.cc)
+HDRS    = $(SF_SRCS:.cc=.h)
+
+OBJS          = $(SRCS:.cc=.o) 
+
+SHAREDLIB     = lib/libClassicSVfit.so
+
+$(SHAREDLIB): $(OBJS)
+	@echo "======================================================="
+	@echo "Linking SharedLib: $(SHAREDLIB) ..."
+	@echo $(LD) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $(SHAREDLIB)
+	@$(LD) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $(SHAREDLIB)
+	@echo "Linking SharedLib: $(SHAREDLIB) Complete"
+	@echo "======================================================="
+
+
+vpath %.cc TauAnalysis/ClassicSVfit/src/ 
+
+##########################################################
+###                                                    ###
+##########################################################
+
+$(OBJS): %.o: %.cc
+	$(CXX) $(CXXFLAGS) $(DEFS) -fpic $< -o $@
+
+.PHONY: clean install 
+
+install: $(SHAREDLIB)
+
+clean:
+	@rm TauDataFormat/TauNtuple/src/*.o
+	@rm lib/*.so
