@@ -26,7 +26,7 @@ else
     ## setup variables for make files
     #export ROOTSYS=/libcern/root/5.34.30/sl6.6-x86_64
     #export ROOTSYS=/libcern/root/5.34.18/sl6.3-x86_64
-    export ROOTSYS=/libcern/root/6.14.06/centos7.6-x86_64
+    export ROOTSYS=/libcern/root/6.24.06/centos7.6-x86_64
     #source /libcern/gcc/4.9.3/sl6.5-x86_64/setup.sh
     #source /libcern/gcc/4.9.3/centos7.6-x86_64/setup.sh
     #cernlib-use --version 6.14.06 root
