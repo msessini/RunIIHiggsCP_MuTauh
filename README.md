@@ -1,4 +1,4 @@
 # IPHCAnalysisTools
-Tools to perform data analysis based on LLR nuples
+Tools to perform data analysis based on LLR ntuples
 
-git clone https://github.com/cherepan/IPHCAnalysisTools.git
+git clone https://github.com/msessini/IPHCAnalysisTools.git
