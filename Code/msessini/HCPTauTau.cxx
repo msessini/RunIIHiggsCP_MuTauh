@@ -1030,7 +1030,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
     }
   }
   //RECONSTRUCTED LEVEL
-  if(Ntp->Daughters_charge(Tau1)>0 && Ntp->Daughters_charge(Tau2)<0 && Tau1P4 > 40 && Tau2P4 > 40)
+  if(Ntp->Daughters_charge(Tau1)>0 && Ntp->Daughters_charge(Tau2)<0 && Tau1P4.Pt() > 40 && Tau2P4.Pt() > 40)
     {
       Tauplusvis=Tau1P4;
       Tauminusvis=Tau2P4;
@@ -1038,7 +1038,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
       Tauminus=Tau2;
       charge = true;
     }
-  else if(Ntp->Daughters_charge(Tau2)>0 && Ntp->Daughters_charge(Tau1)<0 && Tau1P4 > 40 && Tau2P4 > 40)
+  else if(Ntp->Daughters_charge(Tau2)>0 && Ntp->Daughters_charge(Tau1)<0 && Tau1P4.Pt() > 40 && Tau2P4.Pt() > 40)
     {
       Tauplusvis=Tau2P4;
       Tauminusvis=Tau1P4;
