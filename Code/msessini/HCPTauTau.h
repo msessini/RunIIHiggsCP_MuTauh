@@ -263,7 +263,10 @@ class HCPTauTau : public Selection {
 
   std::vector<TH1D> polarimetricAcopAnglePVRefitWithTracksBSMVADMZTTUnrolled;
   std::vector<TH1D> decayplaneAcopAngle;
+  std::vector<TH1D> impactparameterAcopAngle;
+
   std::vector<TH1D> decayplaneAcopAngleTruth;
+  std::vector<TH1D> impactparameterAcopAngleTruth;
 
   std::vector<TH1D> DPIPAcopAngleTruth;
   std::vector<TH1D> PVIPAcopAngleTruth;
