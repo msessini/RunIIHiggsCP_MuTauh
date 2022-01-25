@@ -513,8 +513,12 @@ if( $ARGV[0] eq "--Local" ){
     system(sprintf("echo \"cd  $OutputDir/workdir$set/Code/\" >> $OutputDir/workdir$set/compile "));
     system(sprintf("echo \"source config \\\$\@ \"   >> $OutputDir/workdir$set/compile "));
     system(sprintf("echo \"gmake all\" >> $OutputDir/workdir$set/compile "));
-    system(sprintf("echo \"cd $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/compile")) ;
- 
+    system(sprintf("echo \"cd $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/compile"));
+
+    #MyDict remove
+    system(sprintf("cd $OutputDir/workdir$set/Code/DataFormats/"));
+    system(sprintf("mv MyDict_rdict.pcm lib/."));
+
     # Generate Combine script 
     system(sprintf("echo \"#! /bin/bash\" >> $OutputDir/workdir$set/Combine")) ;
     system(sprintf("echo \"export workdir=\\\"$OutputDir/workdir$set/\\\"\" >> $OutputDir/workdir$set/Combine"));
