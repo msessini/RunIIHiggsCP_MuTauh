@@ -404,7 +404,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   // else value.at(ZTTMC)=true;
   // pass.at(ZTTMC)=value.at(ZTTMC);
   //if(!pass.at(ZTTMC))cout<<"Passe pas !!!!!!!!!!!!!!!!"<<endl;
-
   bool trig=false;
   std::vector<int> TauIndex ;
   std::vector<int> TriggerIndexVector ;
@@ -417,13 +416,11 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
   Tau1=Ntp->tau1IndexVect(0);
   Tau2=Ntp->tau2IndexVect(0);
-
   int j=0;
   int GenMatch1=6, GenMatch2=6;
   
   if(!Ntp->isData()|| isEmbed){GenMatch1=Ntp->gen_match_1(0);GenMatch2=Ntp->gen_match_2(0);}
   else{GenMatch1=6;GenMatch2=6;}
-
   // Here you can defined different type of weights you want to apply to events.
   double wobs=1;
   double w=1;
@@ -504,10 +501,8 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
     }
     w*=Ntp->EmbeddingSelectionSF(imc1,imc2);
   }
-
   float PUPPImetCorr_px=Ntp->PUPPImet()*cos(Ntp->PUPPImetphi());
   float PUPPImetCorr_py=Ntp->PUPPImet()*sin(Ntp->PUPPImetphi());
-
   double jdeta_=-9999, jpt_1_=-9999, m_sv_=-9999, m_vis_=-9999, met_=-9999, mjj_=-9999, n_jets_=-9999, pt_1_=-9999,  pt_tt_=-9999, pt_vis_=-9999;
   int njets20=-99;
 
@@ -539,12 +534,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   if(Ntp->njetsSize()>0)njetsJES=Ntp->njetspt20(indice);
   if(Ntp->njetsSizeUp()>0)njetsJERUp=Ntp->njetsUp(indice);
   if(Ntp->njetsSizeDown()>0)njetsJERDown=Ntp->njetsDown(indice);
-
-  int njetpercand[Ntp->njetspt20Size()];
-  for(int i=0;i<Ntp->njetspt20Size();i++)
-    {
-      njetpercand[i]=Ntp->njetspt20(i);
-    }
 
 
   /*if(PairsIndexTemp.size()>0){
@@ -722,8 +711,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
       PUPPImetCorr_py=PUPPImetCorr_py + SumPyNom-SumPyShift;
     }
   }*/
-
-  if((!Ntp->isData() && id!=DataMCType::QCD) || isEmbed){
+ if((!Ntp->isData() && id!=DataMCType::QCD) || isEmbed){
 
     if (isEmbed && Ntp->MC_weight()>10000.)w*=Ntp->MC_weight()*0.000000001; //problem with 2016
     else w*=Ntp->MC_weight();
@@ -757,15 +745,15 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
 
   if(!Ntp->isData() && !isEmbed && (Ntp->year()==2016||Ntp->year()==2017))w*=Ntp->prefiringweight();
-  double prefup;
+  /*double prefup;
   double prefdown;
   if((Ntp->prefiringweightup()/Ntp->prefiringweight())>1.2)prefup=Ntp->prefiringweightup();
   else prefup=Ntp->prefiringweight()*1.2;
   if((Ntp->prefiringweightdown()/Ntp->prefiringweight())<0.8)prefdown=Ntp->prefiringweightdown();
-  else prefdown=Ntp->prefiringweight()*0.8;
+  else prefdown=Ntp->prefiringweight()*0.8;*/
 
-  std::vector<unsigned int> exclude_cuts;
-  exclude_cuts.push_back(TausIsolation);
+  //std::vector<unsigned int> exclude_cuts;
+  //exclude_cuts.push_back(TausIsolation);
   classic_svFit::LorentzVector tau1P4;
   classic_svFit::LorentzVector tau2P4;
   classic_svFit::LorentzVector tau1P4mtt;
@@ -777,7 +765,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   Tau1P4 = Ntp->Daughters_P4(Tau1);
   Tau2P4 = Ntp->Daughters_P4(Tau2);
   //}
-
   unsigned long long evt_ = Ntp->EventNumber();
   std::pair<float, int> max_pair;
   std::vector<float> scores = {};
@@ -807,7 +794,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   bool isRefitBS=true;
   bool isRefitNoBSZNominal=true;
   bool isRefitBSZNominal=true;
-
   double Spin_WT=Ntp->TauSpinerGet(TauSpinerInterface::Spin);
   double FlipSpin_WT=Ntp->TauSpinerGet(TauSpinerInterface::FlipSpin);
 
@@ -877,8 +863,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   unsigned int Tauminustruth=0;
   unsigned int Tauplus=0;
   unsigned int Tauminus=0;
-
-  string CHANNEL = "RHORHO";
+  string CHANNEL = "PIONPION";
   //
   bool a1minus = false, a1plus = false, a1a1 = false;
   bool rhominus = false, rhoplus = false, rhorho =false;
@@ -905,7 +890,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
     Tauplustruth = 0;
     chargetruth = true;
   }
-
   TauMinusTruth = Ntp->MCTau_p4(Tauminustruth);
   TauPlusTruth = Ntp->MCTau_p4(Tauplustruth);
 
@@ -1136,12 +1120,13 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 	}
       //MIXED TAUS
       if(TauMinusSVFit!=zeroLV && TauPlusSVFit!=zeroLV && TauMinusMTT!=zeroLV && TauPlusMTT!=zeroLV && TauMinusSVFit!=TauPlusSVFit && TauMinusMTT!=TauPlusMTT){
-        TauPlusMixed.SetVect(TauPlusSVFit.P()*TauPlusMTT.Vect().Unit());
-        TauPlusMixed.SetE(TauPlusSVFit.E());
-        TauMinusMixed.SetVect(TauMinusSVFit.P()*TauMinusMTT.Vect().Unit());
-        TauMinusMixed.SetE(TauMinusSVFit.E());
+        if(TauMinusSVFit.DeltaR(TauMinusMTT) < 0.15 && TauPlusSVFit.DeltaR(TauPlusMTT) < 0.15){
+          TauPlusMixed.SetVect(TauPlusSVFit.P()*TauPlusMTT.Vect().Unit());
+          TauPlusMixed.SetE(TauPlusSVFit.E());
+          TauMinusMixed.SetVect(TauMinusSVFit.P()*TauMinusMTT.Vect().Unit());
+          TauMinusMixed.SetE(TauMinusSVFit.E());
+        }
       }
-
     }
 
     /*if(JetsVectJERUp.size()>1){
@@ -1292,11 +1277,17 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
       if(pionpion){
 	HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
 	HadRefitPionsCharge_minus.push_back(-1);
-	PionMinus_ref = Ntp->Daughters_pcaRefitPV(Tauminus);
 
 	HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
 	HadRefitPionsCharge_plus.push_back(1);
-	PionPlus_ref = Ntp->Daughters_pcaRefitPV(Tauplus);
+        if(Ntp->Daughters_charge(Tau1)>0 && Ntp->Daughters_charge(Tau2)<0){
+	  PionPlus_ref = Ntp->Daughter1_Vertex(0) - tauBSPrimaryVertex;
+	  PionMinus_ref = Ntp->Daughter2_Vertex(0) - tauBSPrimaryVertex;
+	}
+	if(Ntp->Daughters_charge(Tau1)<0 && Ntp->Daughters_charge(Tau2)>0){
+          PionPlus_ref = Ntp->Daughter2_Vertex(0) - tauBSPrimaryVertex;
+          PionMinus_ref = Ntp->Daughter1_Vertex(0) - tauBSPrimaryVertex;
+        }
       }
       if(a1a1 || rhorho || pionpion){
 	Tau1MTT = TauMinusMTT; Tau2MTT = TauPlusMTT;
@@ -1327,7 +1318,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
 	  HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
 	  HadRefitPionsCharge_minus.push_back(-1);
-	  PionMinus_ref = Ntp->Daughters_pcaRefitPV(Tauminus);
 	}
 	if(rhopion){
 	  HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
@@ -1337,7 +1327,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
 	  HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
 	  HadRefitPionsCharge_minus.push_back(-1);
-	  PionMinus_ref = Ntp->Daughters_pcaRefitPV(Tauminus);
 	}
 	Tau1MTT = TauPlusMTT; Tau2MTT = TauMinusMTT;
 	Tau1SVFit = TauPlusSVFit; Tau2SVFit = TauMinusSVFit;
@@ -1385,7 +1374,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
       }
     }
 
-
   double pvx(0);
   pvx =  Ntp->npv();
   // if(id == DataMCType::Data) pvx =  Ntp->npv();
@@ -1410,7 +1398,9 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 		}
 		if(pionpiontruth && ScalcPVTruth.isOk("pion", "pion", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus)==true){
 		  Acop_PVTruth = ScalcPVTruth.AcopAngle("pion", "pion", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
+		  cout<<"boucle1"<<endl;
 		  Acop_IPTruth = ScalcIPTruth.AcopAngle_IP(HadPionsTruth_minus.at(0), PionMinus_refTruth, HadPionsTruth_plus.at(0), PionPlus_refTruth);
+		  cout<<"boucle2"<<endl;
 		}
 		if(a1rhotruth){
 		  if(plusminustruth && ScalcPVTruth.isOk("rho", "a1", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus)==true){
@@ -1449,8 +1439,8 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 		decayplaneAcopAngleTruth.at(t).Fill(Acop_DPTruth,Wspin);
 		polarimetricAcopAngleTruth.at(t).Fill(Acop_PVTruth,Wspin);
                 impactparameterAcopAngleTruth.at(t).Fill(Acop_IPTruth,Wspin);
-		DPIPAcopAngleTruth.at(t).Fill(Acop_DPIPTruth);
-		PVIPAcopAngleTruth.at(t).Fill(Acop_PVIPTruth);
+		DPIPAcopAngleTruth.at(t).Fill(Acop_DPIPTruth,Wspin);
+		PVIPAcopAngleTruth.at(t).Fill(Acop_PVIPTruth,Wspin);
 	      } //mixed taus
 	    } //pions
 	} //channel
@@ -1479,7 +1469,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 		}
 		if(pionpion && ScalcPV.isOk("pion", "pion", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus)==true){
 		  Acop_PV = ScalcPV.AcopAngle("pion", "pion", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-		  Acop_IP = ScalcIP.AcopAngle_IP(HadRefitPions_minus.at(0), PionMinus_ref, HadRefitPions_plus.at(0), PionPlus_ref);
+		  //Acop_IP = ScalcIP.AcopAngle_IP(HadRefitPions_minus.at(0), PionMinus_ref, HadRefitPions_plus.at(0), PionPlus_ref);
 		}
 		if(a1rho){
 		  if(plusminus && ScalcPV.isOk("rho", "a1", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus)==true){
@@ -1519,8 +1509,8 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 		polarimetricAcopAngle.at(t).Fill(Acop_PV,Wspin);
 		polarimetricGEFAcopAngle.at(t).Fill(Acop_PVGEF,Wspin);
  		impactparameterAcopAngle.at(t).Fill(Acop_IP,Wspin);
-		//DPIPAcopAngle.at(t).Fill(Wspin);
-		PVIPAcopAngle.at(t).Fill(Acop_PVIP);
+		DPIPAcopAngle.at(t).Fill(Acop_DPIP,Wspin);
+		PVIPAcopAngle.at(t).Fill(Acop_PVIP,Wspin);
 	      } //mixed taus
 	    } //pions
 	} //channel
