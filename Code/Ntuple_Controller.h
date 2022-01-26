@@ -942,6 +942,8 @@ float  Daughters_jetBTagCSV(unsigned int i){return Ntp->daughters_jetBTagCSV->at
  TVector3 Daughters_pcaRefitPV(unsigned int i){return TVector3(Ntp->daughters_pcaRefitPV_x->at(i),Ntp->daughters_pcaRefitPV_y->at(i),Ntp->daughters_pcaRefitPV_z->at(i));}
  TVector3 Daughters_pcaGenPV(unsigned int i){return TVector3(Ntp->daughters_pcaGenPV_x->at(i),Ntp->daughters_pcaGenPV_y->at(i),Ntp->daughters_pcaGenPV_z->at(i));}
 
+ TVector3 Daughters_vertex(unsigned int i){return TVector3(Ntp->daughters_vx->at(i),Ntp->daughters_vy->at(i),Ntp->daughters_vz->at(i));}
+
  float  Daughters_IetaIeta(unsigned int i){return Ntp->daughters_IetaIeta->at(i);}
  float  Daughters_full5x5_IetaIeta(unsigned int i){return Ntp->daughters_full5x5_IetaIeta->at(i);}
  float  Daughters_hOverE(unsigned int i){return Ntp->daughters_hOverE->at(i);}

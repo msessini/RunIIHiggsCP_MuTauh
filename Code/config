@@ -182,7 +182,6 @@ else
     
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/TAUOLA/lib
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/TAUOLA/TauSpinner/include/TauSpinner/
-    #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/pythia8/176/lib/
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/pythia8303/
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/lhapdf/lib/
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/TauSpiner/hepmc/install/lib/

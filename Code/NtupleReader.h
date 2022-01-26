@@ -347,6 +347,9 @@ class NtupleReader {
   vector<float>   *daughters_pcaGenPV_x;
   vector<float>   *daughters_pcaGenPV_y;
   vector<float>   *daughters_pcaGenPV_z;
+  vector<float>   *daughters_vx;
+  vector<float>   *daughters_vy;
+  vector<float>   *daughters_vz;
   vector<vector<double> > *PFTau_a1_lvp;
   //  vector<vector<double> > *PFTau_a1_cov;
   vector<int>     *PFTau_a1_charge;
@@ -993,6 +996,10 @@ class NtupleReader {
   TBranch        *b_daughters_pcaGenPV_x;   //!
   TBranch        *b_daughters_pcaGenPV_y;   //!
   TBranch        *b_daughters_pcaGenPV_z;   //!
+  TBranch        *b_daughters_vx;
+  TBranch        *b_daughters_vy;
+  TBranch        *b_daughters_vz;
+
   TBranch        *b_PFTau_a1_lvp;   //!
   //  TBranch        *b_PFTau_a1_cov;   //!
   TBranch        *b_PFTau_a1_charge;   //!
@@ -1685,6 +1692,9 @@ void NtupleReader::Init(TTree *tree)
   daughters_pcaGenPV_x = 0;
   daughters_pcaGenPV_y = 0;
   daughters_pcaGenPV_z = 0;
+  daughters_vx = 0;
+  daughters_vy = 0;
+  daughters_vz = 0;
   PFTau_a1_lvp = 0;
   //  PFTau_a1_cov = 0;
   PFTau_a1_charge = 0;
@@ -2300,6 +2310,10 @@ void NtupleReader::Init(TTree *tree)
   fChain->SetBranchAddress("daughters_pcaGenPV_x", &daughters_pcaGenPV_x, &b_daughters_pcaGenPV_x);
   fChain->SetBranchAddress("daughters_pcaGenPV_y", &daughters_pcaGenPV_y, &b_daughters_pcaGenPV_y);
   fChain->SetBranchAddress("daughters_pcaGenPV_z", &daughters_pcaGenPV_z, &b_daughters_pcaGenPV_z);
+  fChain->SetBranchAddress("daughters_vx", &daughters_vx, &b_daughters_vx);
+  fChain->SetBranchAddress("daughters_vy", &daughters_vy, &b_daughters_vy);
+  fChain->SetBranchAddress("daughters_vz", &daughters_vz, &b_daughters_vz);
+
   //fChain->SetBranchAddress("JetsNumber", &JetsNumber, &b_JetsNumber);
   fChain->SetBranchAddress("PFTau_a1_lvp", &PFTau_a1_lvp, &b_PFTau_a1_lvp);
   //  fChain->SetBranchAddress("PFTau_a1_cov", &PFTau_a1_cov, &b_PFTau_a1_cov);
