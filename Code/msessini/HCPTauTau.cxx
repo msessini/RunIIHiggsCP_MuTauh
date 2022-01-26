@@ -1277,17 +1277,11 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
       if(pionpion){
 	HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
 	HadRefitPionsCharge_minus.push_back(-1);
+        PionMinus_ref = Ntp->Daughters_vertex(Tauminus) - tauBSPrimaryVertex;
 
 	HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
 	HadRefitPionsCharge_plus.push_back(1);
-        if(Ntp->Daughters_charge(Tau1)>0 && Ntp->Daughters_charge(Tau2)<0){
-	  PionPlus_ref = Ntp->Daughter1_Vertex(0) - tauBSPrimaryVertex;
-	  PionMinus_ref = Ntp->Daughter2_Vertex(0) - tauBSPrimaryVertex;
-	}
-	if(Ntp->Daughters_charge(Tau1)<0 && Ntp->Daughters_charge(Tau2)>0){
-          PionPlus_ref = Ntp->Daughter2_Vertex(0) - tauBSPrimaryVertex;
-          PionMinus_ref = Ntp->Daughter1_Vertex(0) - tauBSPrimaryVertex;
-        }
+	PionPlus_ref = Ntp->Daughters_vertex(Tauplus) - tauBSPrimaryVertex;
       }
       if(a1a1 || rhorho || pionpion){
 	Tau1MTT = TauMinusMTT; Tau2MTT = TauPlusMTT;
