@@ -1,0 +1,7 @@
+echo "bonjour je suis le lanceur"
+if test -f 'autokill'; then
+  echo "je lance autokill"
+  ./autokill
+else
+  echo "je n'ai rien a faire :("
+fi

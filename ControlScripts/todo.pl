@@ -510,7 +510,7 @@ if( $ARGV[0] eq "--Local" ){
     system(sprintf("touch $OutputDir/workdir$set/firstsetup"));
     system(sprintf("chmod 744 $OutputDir/workdir$set/firstsetup"));
     system(sprintf("echo \"#! /bin/bash\" >> $OutputDir/workdir$set/firstsetup "));
-    system(sprintf("echo \"sed -i 's\ TauSpiner/ \ \g' $OutputDir/workdir$set/Code/Makefile\" >> $OutputDir/workdir$set/firstsetup "));
+    system(sprintf("echo \"sed -i 's\+= TauSpiner/\+=\g' $OutputDir/workdir$set/Code/Makefile\" >> $OutputDir/workdir$set/firstsetup "));
     system(sprintf("echo \"cd $OutputDir/workdir$set/Code/DataFormats\" >> $OutputDir/workdir$set/firstsetup "));
     system(sprintf("echo \"mv MyDict_rdict.pcm lib/. \" >> $OutputDir/workdir$set/firstsetup "));
     system(sprintf("echo \"cd $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/firstsetup"));
