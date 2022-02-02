@@ -30,7 +30,7 @@ class Selection : public Selection_Base {
   std::vector<std::vector<TH1D> >&   Get_Accumdist(){return Accumdist;}
   std::vector<std::vector<TH1D>* >&  Get_Extradist1d(){return Extradist1d;}
   std::vector<std::vector<TH2D>* >&  Get_Extradist2d(){return Extradist2d;}
-  std::vector<std::vector<TH3F>* >&  Get_Extradist3d(){return Extradist3d;}
+  std::vector<std::vector<TH3D>* >&  Get_Extradist3d(){return Extradist3d;}
 
   virtual double Compute(double thisdata,double thissignal, double thissignalTotal, double thisbkg,double data,double signal,
 			 double signalTotal, double bkg);
@@ -72,7 +72,7 @@ class Selection : public Selection_Base {
   std::vector<std::vector<TH1D> >  Accumdist;    //[distindx][type]
   std::vector<std::vector<TH1D>* >  Extradist1d;
   std::vector<std::vector<TH2D>* >  Extradist2d;
-  std::vector<std::vector<TH3F>* > Extradist3d;
+  std::vector<std::vector<TH3D>* > Extradist3d;
   std::vector<float> value; 
   std::vector<bool>  pass; 
   std::vector<float> cut; 

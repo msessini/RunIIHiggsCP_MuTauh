@@ -188,14 +188,14 @@ std::vector<TH2D> HistoConfig::GetTH2D(TString name,TString title,int nbinsx, do
   return histos;
 }
 
-std::vector<TH3F> HistoConfig::GetTH3F(TString name,TString title, int nbinsx, double minx, double maxx,
+std::vector<TH3D> HistoConfig::GetTH3D(TString name,TString title, int nbinsx, double minx, double maxx,
 			  int nbinsy,double miny, double maxy,int nbinsz,double minz,double maxz,
 			  TString xaxis, TString yaxis,TString zaxis){
 
-  std::vector<TH3F> histos;
+  std::vector<TH3D> histos;
   Logger(Logger::Verbose) << "Adding TH2D " << name << " " << title << std::endl;
   for(unsigned int i=0;i<HistoName.size();i++){
-    histos.push_back(TH3F(name+HistoName.at(i),HistoLegend.at(i),nbinsx,minx,maxx,nbinsy,miny,maxy,nbinsz,minz,maxz));
+    histos.push_back(TH3D(name+HistoName.at(i),HistoLegend.at(i),nbinsx,minx,maxx,nbinsy,miny,maxy,nbinsz,minz,maxz));
     histos.at(i).Sumw2();
     histos.at(i).SetXTitle(xaxis);
     histos.at(i).SetYTitle(yaxis);

@@ -658,7 +658,7 @@ void Plots::Plot2D(std::vector<TH2D> histo, std::vector<int> colour, std::vector
 	}
 }
 
-void Plots::Plot3D(std::vector<TH3F> histo, std::vector<int> colour, std::vector<TString> legend) {
+void Plots::Plot3D(std::vector<TH3D> histo, std::vector<int> colour, std::vector<TString> legend) {
 	Logger(Logger::Verbose) << "Create 3D plots" << std::endl;
 	gStyle->SetPadTopMargin(0.10);
 	gStyle->SetPadBottomMargin(0.22);

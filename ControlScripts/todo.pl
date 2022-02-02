@@ -707,7 +707,7 @@ if( $ARGV[0] eq "--Local" ){
 			# Add Set information to Combining scripts and Input.txt
 			system(sprintf("echo \"File: $OutputDir/workdir$set/Set_$B/ \" >>  $OutputDir/workdir$set/Input.txt ")) ;
 			system(sprintf("echo \"cd $OutputDir/workdir$set/Set_$B \" >> $OutputDir/workdir$set/Submit")) ;
-			system(sprintf("echo \'source  Qsub_Set_$B \"\${1}\" \' >> $OutputDir/workdir$set/Submit")) ;
+			system(sprintf("echo \'source  Qsub_Set_$B \"\${1}\" \"\${2}\"\' >> $OutputDir/workdir$set/Submit")) ;
 
 
 			# Create and configure Set_$B dir
@@ -728,7 +728,7 @@ if( $ARGV[0] eq "--Local" ){
 			system(sprintf("echo \"mkdir $RemoteDir/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"cp -r *    $RemoteDir/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"cd  $RemoteDir/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
-			system(sprintf("echo \'$OutputDir/workdir$set/Code/Analysis.exe \"\${1}\" 2>&1 | tee >(sed -r \\\"s/\\\\x1B\\\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g\\\" > Set_$B.output) \' >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
+			system(sprintf("echo \'$OutputDir/workdir$set/Code/Analysis.exe \"\${1}\" \"\${2}\" 2>&1 | tee >(sed -r \\\'s/\\\\x1B\\\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g\\\' > Set_$B.output) \' >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"cp -r *  $OutputDir/workdir$set/Set_$B/ \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"source $OutputDir/workdir$set/Set_$B/Set_$B-clean.sh \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"rm -r   $RemoteDir/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));	
@@ -763,7 +763,7 @@ if( $ARGV[0] eq "--Local" ){
 			system(sprintf("echo \" que=\\\"$QsubQue\\\"\" >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B")); 
 			system(sprintf("echo \" output=\\\"Set_$B.qsub.o  \\\"\" >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B")); 
 			system(sprintf("echo \" error=\\\"Set_$B.qsub.e  \\\"\" >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B")); 
-			system(sprintf("echo \" qsub -q  $s1_char  -o $s2_char -e $s3_char Set_$B.sh\" >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B"));		
+			system(sprintf("echo \' qsub -q  $s1_char  -o $s2_char -e $s3_char -F \"\$1 \${2}\" Set_$B.sh\' >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B"));		
 		    }
 		    ($a,$b,$c)=split('/',$file);
 		    $myfile=$file;
