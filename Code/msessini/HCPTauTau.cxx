@@ -647,7 +647,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   unsigned int Tauplus=0;
   unsigned int Tauminus=0;
   string CHANNEL = string(Channel);
-  cout<<CHANNEL<<" "<<CPstate<<endl;
   //
   bool a1minus = false, a1plus = false, a1a1 = false;
   bool rhominus = false, rhoplus = false, rhorho =false;
