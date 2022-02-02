@@ -2657,7 +2657,7 @@ bool Ntuple_Controller::DiMuonVeto() {
 // 	return vec;
 // }
 
-double Ntuple_Controller::TauSpinerGet(int SpinType){
+double Ntuple_Controller::TauSpinerGet(int SpinType,char* CPstate){
 #ifdef USE_TauSpinner
   if(!isData()){
     TauDecay taudecay;
@@ -2718,7 +2718,7 @@ double Ntuple_Controller::TauSpinerGet(int SpinType){
 	  }
 	  if(tau1good && tau2good){
 		Logger(Logger::Verbose)  << "Two Taus found: " << tau_daughters.size() << " " << tau_daughters2.size() << std::endl;
-	    return TauSpinerInt.Get(SpinType,X,tau,tau_daughters,tau2,tau_daughters2);
+	    return TauSpinerInt.Get(CPstate,SpinType,X,tau,tau_daughters,tau2,tau_daughters2);
 	  }
 	}
       }
@@ -3552,25 +3552,25 @@ std::vector<TLorentzVector> Ntuple_Controller::GetTruthPionsFromA1(unsigned int 
 // 	return matchTrigger(obj, dr_cut, triggerVec, objectType);
 // }
 
-// bool Ntuple_Controller::isPVCovAvailable(){ // sometimes returns zero size matrix (rare)
-//   if(Ntp->pv_cov->size()!=6)  return false; 
-//   return true;
+bool Ntuple_Controller::isPVCovAvailable(){ // sometimes returns zero size matrix (rare)
+   if(Ntp->pv_cov->size()!=6)  return false; 
+   return true;
+}
 
-// }
-// TMatrixTSym<float> Ntuple_Controller::PFTau_TIP_primaryVertex_cov(){
-//   TMatrixTSym<float> V_cov(LorentzVectorParticle::NVertex);
-//   int l=0;
-//   for(int j=0;j<LorentzVectorParticle::NVertex;j++){
-//     for(int k=j;k<LorentzVectorParticle::NVertex;k++){
-//       //if(j==k) V_cov(i,j)=pow(0.0001,2.0);
-//       V_cov(j,k)=Ntp->pv_cov->at(l);
-//       V_cov(k,j)=Ntp->pv_cov->at(l);
-//       l++;
-//     }
-//   }
-//   //  std::cout<<"  pv is good"<< std::endl; V_cov.Print();
-//   return  V_cov;
-// }
+ TMatrixTSym<float> Ntuple_Controller::PFTau_TIP_primaryVertex_cov(){
+   TMatrixTSym<float> V_cov(LorentzVectorParticle::NVertex);
+   int l=0;
+   for(int j=0;j<LorentzVectorParticle::NVertex;j++){
+     for(int k=j;k<LorentzVectorParticle::NVertex;k++){
+       //if(j==k) V_cov(i,j)=pow(0.0001,2.0);
+       V_cov(j,k)=Ntp->pv_cov->at(l);
+       V_cov(k,j)=Ntp->pv_cov->at(l);
+       l++;
+     }
+   }
+   //  std::cout<<"  pv is good"<< std::endl; V_cov.Print();
+   return  V_cov;
+ }
 
 TMatrixTSym<double> Ntuple_Controller::PFTau_TIP_secondaryVertex_cov(unsigned int i){
   TMatrixTSym<double> V_cov(LorentzVectorParticle::NVertex);
@@ -3586,22 +3586,22 @@ TMatrixTSym<double> Ntuple_Controller::PFTau_TIP_secondaryVertex_cov(unsigned in
   return  V_cov;
 }
 
- // LorentzVectorParticle Ntuple_Controller::PFTau_a1_lvp(unsigned int i){
- //   TMatrixT<double>    a1_par(LorentzVectorParticle::NLorentzandVertexPar,1);
- //   TMatrixTSym<double> a1_cov(LorentzVectorParticle::NLorentzandVertexPar);
- //   int l=0;
- //   if(Ntp->PFTau_a1_lvp->at(i).size()==LorentzVectorParticle::NLorentzandVertexPar){
- //     for(int k=0; k<LorentzVectorParticle::NLorentzandVertexPar; k++){
- //       a1_par(k,0)=Ntp->PFTau_a1_lvp->at(i).at(k);
- //       for(int j=k; j<LorentzVectorParticle::NLorentzandVertexPar; j++){
- // 	a1_cov(k,j)=Ntp->PFTau_a1_cov->at(i).at(l);
- // 	a1_cov(j,k)=Ntp->PFTau_a1_cov->at(i).at(l);
- // 	l++;
- //       } 
- //     }
- //   }
- //   return LorentzVectorParticle(a1_par,a1_cov,Ntp->PFTau_a1_pdgid->at(i),Ntp->PFTau_a1_charge->at(i),Ntp->PFTau_a1_B->at(i));
- // }
+ LorentzVectorParticle Ntuple_Controller::PFTau_a1_lvp(unsigned int i){
+    TMatrixT<double>    a1_par(LorentzVectorParticle::NLorentzandVertexPar,1);
+    TMatrixTSym<double> a1_cov(LorentzVectorParticle::NLorentzandVertexPar);
+    int l=0;
+    if(Ntp->PFTau_a1_lvp->at(i).size()==LorentzVectorParticle::NLorentzandVertexPar){
+      for(int k=0; k<LorentzVectorParticle::NLorentzandVertexPar; k++){
+        a1_par(k,0)=Ntp->PFTau_a1_lvp->at(i).at(k);
+        for(int j=k; j<LorentzVectorParticle::NLorentzandVertexPar; j++){
+  	a1_cov(k,j)=Ntp->PFTau_a1_cov->at(i).at(l);
+  	a1_cov(j,k)=Ntp->PFTau_a1_cov->at(i).at(l);
+  	l++;
+        } 
+      }
+    }
+    return LorentzVectorParticle(a1_par,a1_cov,Ntp->PFTau_a1_pdgid->at(i),Ntp->PFTau_a1_charge->at(i),Ntp->PFTau_a1_B->at(i));
+  }
 
 
 double Ntuple_Controller::stitch_weight(bool isDY1050){

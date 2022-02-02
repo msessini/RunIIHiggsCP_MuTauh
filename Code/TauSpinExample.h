@@ -8,11 +8,12 @@
 class TauSpinExample : public Selection {
 
  public:
-  TauSpinExample(TString Name_, TString id_);
+  TauSpinExample(TString Name_, TString id_,char* Channel_, char* CPstate_);
   virtual ~TauSpinExample();
 
   virtual void  Configure();
   virtual void  Finish();
+  char* CPstate;
   enum cuts {isZtautauto3pimu=0,NCuts};
 
  protected:

@@ -30,7 +30,8 @@
 #include "Parameters.h"
 #include "Plots.h"
 
-int main() {
+int main(int argc, char* argv[]) {
+  cout<<argc<<"  "<<argv[1]<<endl;
   Logger::Instance()->SetLevel(Logger::Info);
   Logger(Logger::Info) << "\n\n\n================" << std::endl;
   Logger(Logger::Info) << "Program is Starting" << endl;
@@ -122,11 +123,13 @@ int main() {
   // Configure Analysis
   Selection_Factory SF;
   vector<Selection_Base*> selections;
+  char* Channel = argv[1];
+  char* CPstate = argv[2];
   for (unsigned int i = 0; i < UncertType.size(); i++) {
     Logger(Logger::Info) << "Configuring systematic " << UncertType.at(i) << endl;
     for (unsigned int j = 0; j < Analysis.size(); j++) {
       Logger(Logger::Info) << "Configuring Selection " << Analysis.at(j) << endl;
-      selections.push_back(SF.Factory(Analysis.at(j), UncertType.at(i), mode, runtype, Lumi));
+      selections.push_back(SF.Factory(Analysis.at(j), UncertType.at(i), Channel, CPstate, mode, runtype, Lumi));
     }
   }
   Logger(Logger::Info) << "Selection modules Setup NSelection= " << selections.size() << endl;
@@ -257,6 +260,8 @@ int main() {
   ///////////////////////////////////////////
   // Reconstruct Analysis from Stored Histograms
   else if (mode == Selection_Base::RECONSTRUCT) {
+    char* Channel = argv[1];
+    char* CPstate = argv[2];
     Logger(Logger::Info) << "Reconstructing histograms: Loading files" << endl;
     for (unsigned int j = 0; j < selections.size(); j++) {
       selections[j]->LoadResults(Files);
@@ -269,7 +274,7 @@ int main() {
 	  for (unsigned int i = 0; i < UncertList.size(); i++) {
 	    TString n = selections.at(j)->Get_Name();
 	    Logger(Logger::Info) << "Adding Systematic Uncertainty " << UncertType.at(i) << endl;
-	    Selection_Base *s = SF.Factory(selections.at(j)->Get_Analysis(), UncertList.at(i), mode, runtype, Lumi);
+	    Selection_Base *s = SF.Factory(selections.at(j)->Get_Analysis(), UncertList.at(i), Channel, CPstate, mode, runtype, Lumi);
 	    s->LoadResults(Files);
 	    selections[j]->EvaluateSystematics(s, 1.0);
 	    delete s;

@@ -313,12 +313,12 @@ class NtupleReader {
   vector<double>  *Muon_M;
   vector<vector<double> > *Muon_par;
   //  vector<vector<double> > *Muon_cov;
-  /* std::vector<std::vector<double> > *PFTau_Track_par; */
-  /* std::vector<std::vector<double> > *PFTau_Track_cov; */
-  /* std::vector<int>  *PFTau_Track_charge; */
-  /* std::vector<int>  *PFTau_Track_pdgid; */
-  /* std::vector<double>  *PFTau_Track_B; */
-  /* std::vector<double>  *PFTau_Track_M; */
+  std::vector<std::vector<double> > *PFTau_Track_par; 
+  std::vector<std::vector<double> > *PFTau_Track_cov; 
+  std::vector<int>  *PFTau_Track_charge; 
+  std::vector<int>  *PFTau_Track_pdgid; 
+  std::vector<double>  *PFTau_Track_B; 
+  std::vector<double>  *PFTau_Track_M; 
   vector<vector<double> > *PFTauSVPos;
   vector<vector<double> > *PFTauSVCov;
   vector<vector<vector<double> > > *PFTauPionsP4;
@@ -351,7 +351,7 @@ class NtupleReader {
   vector<float>   *daughters_vy;
   vector<float>   *daughters_vz;
   vector<vector<double> > *PFTau_a1_lvp;
-  //  vector<vector<double> > *PFTau_a1_cov;
+  vector<vector<double> > *PFTau_a1_cov;
   vector<int>     *PFTau_a1_charge;
   vector<int>     *PFTau_a1_pdgid;
   vector<double>  *PFTau_a1_B;
@@ -476,7 +476,7 @@ class NtupleReader {
   Float_t         pv_x;
   Float_t         pv_y;
   Float_t         pv_z;
-  //  vector<double>  *pv_cov;
+  vector<double>  *pv_cov;
 
   vector<Float_t>         *RefitPVNoBS_x;
   vector<Float_t>         *RefitPVNoBS_y;
@@ -962,12 +962,12 @@ class NtupleReader {
   TBranch        *b_Muon_M;   //!
   TBranch        *b_Muon_par;   //!
   //  TBranch        *b_Muon_cov;   //!
-  /* TBranch        *b_PFTau_Track_par; */
-  /* TBranch        *b_PFTau_Track_cov; */
-  /* TBranch        *b_PFTau_Track_charge; */
-  /* TBranch        *b_PFTau_Track_pdgid; */
-  /* TBranch        *b_PFTau_Track_B; */
-  /* TBranch        *b_PFTau_Track_M; */
+  TBranch        *b_PFTau_Track_par; 
+  TBranch        *b_PFTau_Track_cov; 
+  TBranch        *b_PFTau_Track_charge;
+  TBranch        *b_PFTau_Track_pdgid; 
+  TBranch        *b_PFTau_Track_B; 
+  TBranch        *b_PFTau_Track_M; 
   TBranch        *b_PFTauSVPos;   //!
   TBranch        *b_PFTauSVCov;   //!
   TBranch        *b_PFTauPionsP4;   //!
@@ -1001,7 +1001,7 @@ class NtupleReader {
   TBranch        *b_daughters_vz;
 
   TBranch        *b_PFTau_a1_lvp;   //!
-  //  TBranch        *b_PFTau_a1_cov;   //!
+  TBranch        *b_PFTau_a1_cov;   //!
   TBranch        *b_PFTau_a1_charge;   //!
   TBranch        *b_PFTau_a1_pdgid;   //!
   TBranch        *b_PFTau_a1_B;   //!
@@ -1131,7 +1131,7 @@ class NtupleReader {
   TBranch        *b_pv_x;   //!
   TBranch        *b_pv_y;   //!
   TBranch        *b_pv_z;   //!
-  //  TBranch        *b_pv_cov;   //!
+  TBranch        *b_pv_cov;   //!
   TBranch        *b_RefitPVNoBS_x;
   TBranch        *b_RefitPVNoBS_y;
   TBranch        *b_RefitPVNoBS_z;
@@ -1656,12 +1656,12 @@ void NtupleReader::Init(TTree *tree)
   Muon_M = 0;
   Muon_par = 0;
   //  Muon_cov = 0;
-  /* PFTau_Track_par = 0; */
-  /* PFTau_Track_cov = 0; */
-  /* PFTau_Track_charge = 0; */
-  /* PFTau_Track_pdgid = 0; */
-  /* PFTau_Track_B = 0; */
-  /* PFTau_Track_M = 0; */
+  PFTau_Track_par = 0; 
+  PFTau_Track_cov = 0; 
+  PFTau_Track_charge = 0; 
+  PFTau_Track_pdgid = 0; 
+  PFTau_Track_B = 0; 
+  PFTau_Track_M = 0; 
   PFTauSVPos = 0;
   PFTauSVCov = 0;
   PFTauPionsP4 = 0;
@@ -1696,7 +1696,7 @@ void NtupleReader::Init(TTree *tree)
   daughters_vy = 0;
   daughters_vz = 0;
   PFTau_a1_lvp = 0;
-  //  PFTau_a1_cov = 0;
+  PFTau_a1_cov = 0;
   PFTau_a1_charge = 0;
   PFTau_a1_pdgid = 0;
   PFTau_a1_B = 0;
@@ -1817,7 +1817,7 @@ void NtupleReader::Init(TTree *tree)
   /* subjets_deepFlavor_probbb = 0; */
   /* subjets_deepFlavor_problepb = 0; */
   subjets_ak8MotherIdx = 0;
-  //  pv_cov = 0;
+  pv_cov = 0;
 
   RefitPVNoBS_x = 0;
   RefitPVNoBS_y = 0;
@@ -2276,12 +2276,12 @@ void NtupleReader::Init(TTree *tree)
   fChain->SetBranchAddress("Muon_M", &Muon_M, &b_Muon_M);
   fChain->SetBranchAddress("Muon_par", &Muon_par, &b_Muon_par);
   //  fChain->SetBranchAddress("Muon_cov", &Muon_cov, &b_Muon_cov);
-  /* fChain->SetBranchAddress("PFTau_Track_par", &PFTau_Track_par, &b_PFTau_Track_par); */
-  /* fChain->SetBranchAddress("PFTau_Track_cov", &PFTau_Track_cov, &b_PFTau_Track_cov); */
-  /* fChain->SetBranchAddress("PFTau_Track_charge", &PFTau_Track_charge, &b_PFTau_Track_charge); */
-  /* fChain->SetBranchAddress("PFTau_Track_pdgid", &PFTau_Track_pdgid, &b_PFTau_Track_pdgid); */
-  /* fChain->SetBranchAddress("PFTau_Track_B", &PFTau_Track_B, &b_PFTau_Track_B); */
-  /* fChain->SetBranchAddress("PFTau_Track_M", &PFTau_Track_M, &b_PFTau_Track_M); */
+  fChain->SetBranchAddress("PFTau_Track_par", &PFTau_Track_par, &b_PFTau_Track_par); 
+  fChain->SetBranchAddress("PFTau_Track_cov", &PFTau_Track_cov, &b_PFTau_Track_cov); 
+  fChain->SetBranchAddress("PFTau_Track_charge", &PFTau_Track_charge, &b_PFTau_Track_charge); 
+  fChain->SetBranchAddress("PFTau_Track_pdgid", &PFTau_Track_pdgid, &b_PFTau_Track_pdgid); 
+  fChain->SetBranchAddress("PFTau_Track_B", &PFTau_Track_B, &b_PFTau_Track_B); 
+  fChain->SetBranchAddress("PFTau_Track_M", &PFTau_Track_M, &b_PFTau_Track_M); 
   fChain->SetBranchAddress("PFTauSVPos", &PFTauSVPos, &b_PFTauSVPos);
   fChain->SetBranchAddress("PFTauSVCov", &PFTauSVCov, &b_PFTauSVCov);
   fChain->SetBranchAddress("PFTauPionsP4", &PFTauPionsP4, &b_PFTauPionsP4);
@@ -2316,7 +2316,7 @@ void NtupleReader::Init(TTree *tree)
 
   //fChain->SetBranchAddress("JetsNumber", &JetsNumber, &b_JetsNumber);
   fChain->SetBranchAddress("PFTau_a1_lvp", &PFTau_a1_lvp, &b_PFTau_a1_lvp);
-  //  fChain->SetBranchAddress("PFTau_a1_cov", &PFTau_a1_cov, &b_PFTau_a1_cov);
+  fChain->SetBranchAddress("PFTau_a1_cov", &PFTau_a1_cov, &b_PFTau_a1_cov);
   fChain->SetBranchAddress("PFTau_a1_charge", &PFTau_a1_charge, &b_PFTau_a1_charge);
   fChain->SetBranchAddress("PFTau_a1_pdgid", &PFTau_a1_pdgid, &b_PFTau_a1_pdgid);
   fChain->SetBranchAddress("PFTau_a1_B", &PFTau_a1_B, &b_PFTau_a1_B);
@@ -2500,7 +2500,7 @@ void NtupleReader::Init(TTree *tree)
   fChain->SetBranchAddress("pv_x", &pv_x, &b_pv_x);
   fChain->SetBranchAddress("pv_y", &pv_y, &b_pv_y);
   fChain->SetBranchAddress("pv_z", &pv_z, &b_pv_z);
-  //  fChain->SetBranchAddress("pv_cov", &pv_cov, &b_pv_cov);
+  fChain->SetBranchAddress("pv_cov", &pv_cov, &b_pv_cov);
    
   fChain->SetBranchAddress("RefitPVNoBS_x", &RefitPVNoBS_x, &b_RefitPVNoBS_x);
   fChain->SetBranchAddress("RefitPVNoBS_y", &RefitPVNoBS_y, &b_RefitPVNoBS_y);

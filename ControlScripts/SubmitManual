@@ -19,7 +19,7 @@ cd {DIR}
      echo "Subbmiting range:  $2  $3"
      for ((i=$2;i<=$3;i++)); do
 	 cd {DIR}Set_$i
-	 source  Qsub_Set_$i
+	 source  Qsub_Set_$i ${4}
      done
  fi
 
@@ -28,7 +28,7 @@ cd {DIR}
      for ((i=1 ; i <= numargs -1 ; i++)) do
      echo "Subbmiting list of jobs:  $2  "
 	 cd {DIR}Set_$2
-	 source  Qsub_Set_$2
+	 source  Qsub_Set_$2 ${3}
 	 shift
      done
  fi

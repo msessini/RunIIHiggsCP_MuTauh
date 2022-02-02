@@ -9,7 +9,7 @@
 class Example : public Selection {
 
  public:
-  Example(TString Name_, TString id_);
+  Example(TString Name_, TString id_,char* Channel_, char* CPstate_);
   virtual ~Example();
 
   virtual void  Configure();

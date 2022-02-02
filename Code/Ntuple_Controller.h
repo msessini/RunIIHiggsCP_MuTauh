@@ -258,7 +258,7 @@ class Ntuple_Controller{
   void InitEvent();
 
   //TauSpiner function
-  double TauSpinerGet(int SpinType);
+  double TauSpinerGet(int SpinType,char* CPstate);
   void TauSpinerSetSignal(int signalcharge){
 #ifdef USE_TauSpinner
 TauSpinerInt.SetTauSignalCharge(signalcharge);
@@ -1439,6 +1439,26 @@ float  Daughters_jetBTagCSV(unsigned int i){return Ntp->daughters_jetBTagCSV->at
    /* } */
 
   /* bool           isGoodMuon(unsigned int i); */
+
+ bool PFTau_TrackHasMomentum(unsigned int i){
+        if(Ntp->PFTau_Track_par->at(i).size()!=0){return true;}
+        else{return false;}
+ }
+
+   TrackParticle PFTau_Track(unsigned int i){
+     TMatrixT<double>    Oneprong_par(TrackParticle::NHelixPar,1);
+     TMatrixTSym<double> Oneprong_cov(TrackParticle::NHelixPar);
+     unsigned int l=0;
+     for(int k=0; k<TrackParticle::NHelixPar; k++){
+       Oneprong_par(k,0)=Ntp->PFTau_Track_par->at(i).at(k);
+       for(int j=k; j<TrackParticle::NHelixPar; j++){
+        Oneprong_cov(k,j)=Ntp->PFTau_Track_cov->at(i).at(l);
+        l++;
+       }
+     }
+     return TrackParticle(Oneprong_par,Oneprong_cov,Ntp->PFTau_Track_pdgid->at(i),Ntp->PFTau_Track_M->at(i),Ntp->PFTau_Track_charge->at(i),Ntp->PFTau_Track_B->at(i));
+   }
+
 
    bool           isElectron( int i);
    bool           isMuon( int i);

@@ -9,7 +9,7 @@ class Selection_Factory {
   Selection_Factory();
   virtual ~Selection_Factory();
 
-  Selection_Base* Factory(TString Analysis, TString UncertType,int mode, int runtype,double lumi);
+  Selection_Base* Factory(TString Analysis, TString UncertType, char* Channel, char* CPstate, int mode, int runtype,double lumi);
     
 };
 #endif

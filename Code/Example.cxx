@@ -6,7 +6,7 @@
 #include "SVFitObject.h"
 #include "SimpleFits/FitSoftware/interface/Logger.h"
 
-Example::Example(TString Name_, TString id_):
+Example::Example(TString Name_, TString id_,char* Channel_, char* CPstate_):
   Selection(Name_,id_)
 {
 }

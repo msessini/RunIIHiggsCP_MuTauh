@@ -20,7 +20,7 @@ TauSpinerInterface::~TauSpinerInterface(){
 
 }
 #ifdef USE_TauSpinner
-void TauSpinerInterface::Initialize(){
+void TauSpinerInterface::Initialize(char* CPstate){
   Tauolapp::Tauola::initialize();
   string name="NNPDF30_nlo_as_0118";
   LHAPDF::initPDFSetByName(name);
@@ -34,17 +34,19 @@ void TauSpinerInterface::Initialize(){
   int Ipol=0,nonSM2=0,nonSMN=0;
 
   initialize_spinner(Ipp,Ipol,nonSM2,nonSMN,CMSENE);
-  setHiggsParametersTR(-1.0, 1.0, 0.0, 0.0); // Scalar Higgs (Even)
-  //setHiggsParametersTR(1.0, -1.0, 0.0, 0.0); // Pseudo-Scalar Higgs (Odd)
-  //double theta=TMath::Pi()/4.;
-  //setHiggsParametersTR(-cos(2*theta),cos(2*theta) ,-sin(2*theta),-sin(2*theta));
+  if(string(CPstate) == "Even") setHiggsParametersTR(-1.0, 1.0, 0.0, 0.0); // Scalar Higgs (Even)
+  if(string(CPstate) == "Odd") setHiggsParametersTR(1.0, -1.0, 0.0, 0.0); // Pseudo-Scalar Higgs (Odd)
+  if(string(CPstate) == "MM"){
+    double theta=TMath::Pi()/4.;
+    setHiggsParametersTR(-cos(2*theta),cos(2*theta) ,-sin(2*theta),-sin(2*theta));
+  }
 }
 
 
 
-double TauSpinerInterface::Get(int type, SimpleParticle X, SimpleParticle tau, std::vector<SimpleParticle> tau_daughters,SimpleParticle tau2, std::vector<SimpleParticle> tau_daughters2){
+double TauSpinerInterface::Get(char* CPstate, int type, SimpleParticle X, SimpleParticle tau, std::vector<SimpleParticle> tau_daughters,SimpleParticle tau2, std::vector<SimpleParticle> tau_daughters2){
   if(!initialized){
-    Initialize();
+    Initialize(CPstate);
     initialized=true;
   }
 

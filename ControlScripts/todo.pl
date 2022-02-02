@@ -397,7 +397,7 @@ if( $ARGV[0] eq "--Local" ){
 			# Add Set information to Combining scripts and Input.txt
 			system(sprintf("echo \"File: $OutputDir/workdir$set/Set_$B/  \" >>  $OutputDir/workdir$set/Input.txt ")) ;
 			system(sprintf("echo \"cd $OutputDir/workdir$set/Set_$B \" >> $OutputDir/workdir$set/Submit")) ;
-			system(sprintf("echo \"source Qsub_Set_$B  \" >> $OutputDir/workdir$set/Submit")) ;
+			system(sprintf("echo \'source Qsub_Set_$B \"\${1}\"\' >> $OutputDir/workdir$set/Submit")) ;
 #			system(sprintf("echo \"condor_submit  Condor_Set_$B  \" >> $OutputDir/workdir$set/Submit")) ;
 
 			# Create and configure Set_$B dir
@@ -412,7 +412,7 @@ if( $ARGV[0] eq "--Local" ){
 			system(sprintf("echo \"cd $OutputDir/workdir$set/Code/; source config \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"cd $OutputDir/workdir$set/Set_$B/ \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh")) ;
 			system(sprintf("chmod +x $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
-			system(sprintf("echo \"$OutputDir/workdir$set/Code/Analysis.exe 2>&1 | tee >(sed -r \\\"s/\\\\x1B\\\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g\\\" > Set_$B.output) \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
+			system(sprintf("echo \'$OutputDir/workdir$set/Code/Analysis.exe \"\${1}\" 2>&1 | tee >(sed -r \\\"s/\\\\x1B\\\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g\\\" > Set_$B.output) \' >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"echo 'Completed Job' \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 
 			# Setup Input.txt
@@ -434,7 +434,7 @@ if( $ARGV[0] eq "--Local" ){
 			system(sprintf("echo \" que=\\\"$QsubQue\\\"\" >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B")); 
 			system(sprintf("echo \" output=\\\"Set_$B.qsub.o  \\\"\" >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B")); 
 			system(sprintf("echo \" error=\\\"Set_$B.qsub.e  \\\"\" >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B")); 
-			system(sprintf("echo \" qsub -q  $s1_char  -o $s2_char -e $s3_char Set_$B.sh\" >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B"));		
+			system(sprintf("echo \' qsub -q  $s1_char  -o $s2_char -e $s3_char Set_$B.sh \"\${1}\"\' >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B"));		
 		    }
 		    system(sprintf("echo \"File: $InputDir/$subdir/$file  \" >> $OutputDir/workdir$set/Set_$B/Input.txt")) ;
 		    $A++;
@@ -514,10 +514,6 @@ if( $ARGV[0] eq "--Local" ){
     system(sprintf("echo \"source config \\\$\@ \"   >> $OutputDir/workdir$set/compile "));
     system(sprintf("echo \"gmake all\" >> $OutputDir/workdir$set/compile "));
     system(sprintf("echo \"cd $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/compile"));
-
-    #MyDict remove
-    system(sprintf("cd $OutputDir/workdir$set/Code/DataFormats/"));
-    system(sprintf("mv MyDict_rdict.pcm lib/."));
 
     # Generate Combine script 
     system(sprintf("echo \"#! /bin/bash\" >> $OutputDir/workdir$set/Combine")) ;
@@ -711,7 +707,7 @@ if( $ARGV[0] eq "--Local" ){
 			# Add Set information to Combining scripts and Input.txt
 			system(sprintf("echo \"File: $OutputDir/workdir$set/Set_$B/ \" >>  $OutputDir/workdir$set/Input.txt ")) ;
 			system(sprintf("echo \"cd $OutputDir/workdir$set/Set_$B \" >> $OutputDir/workdir$set/Submit")) ;
-			system(sprintf("echo \"source  Qsub_Set_$B  \" >> $OutputDir/workdir$set/Submit")) ;
+			system(sprintf("echo \'source  Qsub_Set_$B \"\${1}\" \' >> $OutputDir/workdir$set/Submit")) ;
 
 
 			# Create and configure Set_$B dir
@@ -732,7 +728,7 @@ if( $ARGV[0] eq "--Local" ){
 			system(sprintf("echo \"mkdir $RemoteDir/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"cp -r *    $RemoteDir/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"cd  $RemoteDir/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
-			system(sprintf("echo \"$OutputDir/workdir$set/Code/Analysis.exe 2>&1 | tee >(sed -r \\\"s/\\\\x1B\\\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g\\\" > Set_$B.output) \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
+			system(sprintf("echo \'$OutputDir/workdir$set/Code/Analysis.exe \"\${1}\" 2>&1 | tee >(sed -r \\\"s/\\\\x1B\\\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g\\\" > Set_$B.output) \' >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"cp -r *  $OutputDir/workdir$set/Set_$B/ \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"source $OutputDir/workdir$set/Set_$B/Set_$B-clean.sh \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));
 			system(sprintf("echo \"rm -r   $RemoteDir/workdir$set-Set_$B  \" >> $OutputDir/workdir$set/Set_$B/Set_$B.sh"));	
