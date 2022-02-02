@@ -34,11 +34,13 @@
 #include "TauPolSoftware/TauDecaysInterface/interface/SCalculator.h"
 #include <algorithm>
 
-HCPTauTau::HCPTauTau(TString Name_, TString id_):
+HCPTauTau::HCPTauTau(TString Name_, TString id_, char* Channel_, char* CPstate_):
   Selection(Name_,id_)
   //DataMC_Corr(true,true,false),
   //tauTrgSF("tight")
 {
+  Channel = Channel_;
+  CPstate = CPstate_; 
   ChargeSumDummy = -999;
   selMuon_IsoDummy = 999.;
   WorkSpaceFF2016=TFile::Open(((std::string)std::getenv("workdir")+"Code/fake_factors_tt_dRcorr/fakefactors_ws_tt_lite_2016_dR_corr.root").c_str(), "READ");
@@ -212,42 +214,75 @@ void  HCPTauTau::Configure(){
   // mtt
   DeltaPhitau1MTT=HConfig.GetTH1D(Name+"_DeltaPhitau1MTT","DeltaPhitau1MTT",50,-0.2,0.2,"#Delta#phi","Events");
   DeltaEtatau1MTT=HConfig.GetTH1D(Name+"_DeltaEtatau1MTT","DeltaEtatau1MTT",50,-0.2,0.2,"#Delta#eta","Events");
-  DeltaPtau1MTT=HConfig.GetTH1D(Name+"_DeltaPtau1MTT","DeltaPtau1MTT",50,-1,1,"#Delta#P","Events");
-  DeltaEtau1MTT=HConfig.GetTH1D(Name+"_DeltaEtau1MTT","DeltaEtau1MTT",50,-1,1,"#Delta#E","Events");
+  DeltaPtau1MTT=HConfig.GetTH1D(Name+"_DeltaPtau1MTT","DeltaPtau1MTT",50,-1,1,"#Delta P","Events");
+  DeltaEtau1MTT=HConfig.GetTH1D(Name+"_DeltaEtau1MTT","DeltaEtau1MTT",50,-1,1,"#Delta E","Events");
   DeltaPhitau2MTT=HConfig.GetTH1D(Name+"_DeltaPhitau2MTT","DeltaPhitau2MTT",50,-0.2,0.2,"#Delta#phi","Events");
   DeltaEtatau2MTT=HConfig.GetTH1D(Name+"_DeltaEtatau2MTT","DeltaEtatau2MTT",50,-0.2,0.2,"#Delta#eta","Events");
-  DeltaPtau2MTT=HConfig.GetTH1D(Name+"_DeltaPtau2MTT","DeltaPtau2MTT",50,-1,1,"#Delta#P","Events");
-  DeltaEtau2MTT=HConfig.GetTH1D(Name+"_DeltaEtau2MTT","DeltaEtau2MTT",50,-1,1,"#Delta#E","Events");
+  DeltaPtau2MTT=HConfig.GetTH1D(Name+"_DeltaPtau2MTT","DeltaPtau2MTT",50,-1,1,"#Delta P","Events");
+  DeltaEtau2MTT=HConfig.GetTH1D(Name+"_DeltaEtau2MTT","DeltaEtau2MTT",50,-1,1,"#Delta E","Events");
   //svfit
   DeltaPhitau1SVFit=HConfig.GetTH1D(Name+"_DeltaPhitau1SVFit","DeltaPhitau1SVFit",50,-0.2,0.2,"#Delta#phi","Events");
   DeltaEtatau1SVFit=HConfig.GetTH1D(Name+"_DeltaEtatau1SVFit","DeltaEtatau1SVFit",50,-0.2,0.2,"#Delta#eta","Events");
-  DeltaPtau1SVFit=HConfig.GetTH1D(Name+"_DeltaPtau1SVFit","DeltaPtau1SVFit",50,-1,1,"#Delta#P","Events");
-  DeltaEtau1SVFit=HConfig.GetTH1D(Name+"_DeltaEtau1SVFit","DeltaEtau1SVFit",50,-1,1,"#Delta#E","Events");
+  DeltaPtau1SVFit=HConfig.GetTH1D(Name+"_DeltaPtau1SVFit","DeltaPtau1SVFit",50,-1,1,"#Delta P","Events");
+  DeltaEtau1SVFit=HConfig.GetTH1D(Name+"_DeltaEtau1SVFit","DeltaEtau1SVFit",50,-1,1,"#Delta E","Events");
   DeltaPhitau2SVFit=HConfig.GetTH1D(Name+"_DeltaPhitau2SVFit","DeltaPhitau2SVFit",50,-0.2,0.2,"#Delta#phi","Events");
-  DeltaEtatau2SVFit=HConfig.GetTH1D(Name+"_DeltaEtatau2SVFit","DeltaEtatau2SVFit",100,-2.1,2.1,"#Delta#eta","Events");
-  DeltaPtau2SVFit=HConfig.GetTH1D(Name+"_DeltaPtau2SVFit","DeltaPtau2SVFit",50,-1,1,"#Delta#P","Events");
-  DeltaEtau2SVFit=HConfig.GetTH1D(Name+"_DeltaEtau2SVFit","DeltaEtau2SVFit",50,-1,1,"#Delta#E","Events");
+  DeltaEtatau2SVFit=HConfig.GetTH1D(Name+"_DeltaEtatau2SVFit","DeltaEtatau2SVFit",100,-0.2,0.2,"#Delta#eta","Events");
+  DeltaPtau2SVFit=HConfig.GetTH1D(Name+"_DeltaPtau2SVFit","DeltaPtau2SVFit",50,-1,1,"#Delta P","Events");
+  DeltaEtau2SVFit=HConfig.GetTH1D(Name+"_DeltaEtau2SVFit","DeltaEtau2SVFit",50,-1,1,"#Delta E","Events");
   //mixed
   DeltaPhitau1Mixed=HConfig.GetTH1D(Name+"_DeltaPhitau1Mixed","DeltaPhitau1Mixed",50,-0.2,0.2,"#Delta#phi","Events");
   DeltaEtatau1Mixed=HConfig.GetTH1D(Name+"_DeltaEtatau1Mixed","DeltaEtatau1Mixed",50,-0.2,0.2,"#Delta#eta","Events");
-  DeltaPtau1Mixed=HConfig.GetTH1D(Name+"_DeltaPtau1Mixed","DeltaPtau1Mixed",50,-1,1,"#Delta#P","Events");
-  DeltaEtau1Mixed=HConfig.GetTH1D(Name+"_DeltaEtau1Mixed","DeltaEtau1Mixed",50,-1,1,"#Delta#E","Events");
+  DeltaPtau1Mixed=HConfig.GetTH1D(Name+"_DeltaPtau1Mixed","DeltaPtau1Mixed",50,-1,1,"#Delta P","Events");
+  DeltaEtau1Mixed=HConfig.GetTH1D(Name+"_DeltaEtau1Mixed","DeltaEtau1Mixed",50,-1,1,"#Delta E","Events");
   DeltaPhitau2Mixed=HConfig.GetTH1D(Name+"_DeltaPhitau2Mixed","DeltaPhitau2Mixed",50,-0.2,0.2,"#Delta#phi","Events");
   DeltaEtatau2Mixed=HConfig.GetTH1D(Name+"_DeltaEtatau2Mixed","DeltaEtatau2Mixed",50,-0.2,0.2,"#Delta#eta","Events");
-  DeltaPtau2Mixed=HConfig.GetTH1D(Name+"_DeltaPtau2Mixed","DeltaPtau2Mixed",50,-1,1,"#Delta#P","Events");
-  DeltaEtau2Mixed=HConfig.GetTH1D(Name+"_DeltaEtau2Mixed","DeltaEtau2Mixed",50,-1,1,"#Delta#E","Events");
+  DeltaPtau2Mixed=HConfig.GetTH1D(Name+"_DeltaPtau2Mixed","DeltaPtau2Mixed",50,-1,1,"#Delta P","Events");
+  DeltaEtau2Mixed=HConfig.GetTH1D(Name+"_DeltaEtau2Mixed","DeltaEtau2Mixed",50,-1,1,"#Delta E","Events");
   //GEF
   DeltaPhitau1GEF=HConfig.GetTH1D(Name+"_DeltaPhitau1GEF","DeltaPhitau1GEF",50,-0.2,0.2,"#Delta#phi","Events");
   DeltaEtatau1GEF=HConfig.GetTH1D(Name+"_DeltaEtatau1GEF","DeltaEtatau1GEF",50,-0.2,0.2,"#Delta#eta","Events");
-  DeltaPtau1GEF=HConfig.GetTH1D(Name+"_DeltaPtau1GEF","DeltaPtau1GEF",50,-1,1,"#Delta#P","Events");
-  DeltaEtau1GEF=HConfig.GetTH1D(Name+"_DeltaEtau1GEF","DeltaEtau1GEF",50,-1,1,"#Delta#E","Events");
+  DeltaPtau1GEF=HConfig.GetTH1D(Name+"_DeltaPtau1GEF","DeltaPtau1GEF",50,-1,1,"#Delta P","Events");
+  DeltaEtau1GEF=HConfig.GetTH1D(Name+"_DeltaEtau1GEF","DeltaEtau1GEF",50,-1,1,"#Delta E","Events");
   DeltaPhitau2GEF=HConfig.GetTH1D(Name+"_DeltaPhitau2GEF","DeltaPhitau2GEF",50,-0.2,0.2,"#Delta#phi","Events");
   DeltaEtatau2GEF=HConfig.GetTH1D(Name+"_DeltaEtatau2GEF","DeltaEtatau2GEF",50,-0.2,0.2,"#Delta#eta","Events");
-  DeltaPtau2GEF=HConfig.GetTH1D(Name+"_DeltaPtau2GEF","DeltaPtau2GEF",50,-1,1,"#Delta#P","Events");
-  DeltaEtau2GEF=HConfig.GetTH1D(Name+"_DeltaEtau2GEF","DeltaEtau2GEF",50,-1,1,"#Delta#E","Events");
+  DeltaPtau2GEF=HConfig.GetTH1D(Name+"_DeltaPtau2GEF","DeltaPtau2GEF",50,-1,1,"#Delta P","Events");
+  DeltaEtau2GEF=HConfig.GetTH1D(Name+"_DeltaEtau2GEF","DeltaEtau2GEF",50,-1,1,"#Delta E","Events");
+  //
+  DeltaPhitauPiGEF=HConfig.GetTH1D(Name+"_DeltaPhitauPiGEF","DeltaPhitauPiGEF",50,-0.2,0.2,"#Delta#phi","Events");
+  DeltaEtatauPiGEF=HConfig.GetTH1D(Name+"_DeltaEtatauPiGEF","DeltaEtatauPiGEF",50,-0.2,0.2,"#Delta#eta","Events");
+  DeltaPtauPiGEF=HConfig.GetTH1D(Name+"_DeltaPtauPiGEF","DeltaPtauPiGEF",50,-1,1,"#Delta P","Events");
+  DeltaEtauPiGEF=HConfig.GetTH1D(Name+"_DeltaEtauPiGEF","DeltaEtauPiGEF",50,-1,1,"#Delta E","Events");
+  DeltaPhitauHGEF=HConfig.GetTH1D(Name+"_DeltaPhitauHGEF","DeltaPhitauHGEF",50,-0.1,0.1,"#Delta#phi","Events");
+  DeltaEtatauHGEF=HConfig.GetTH1D(Name+"_DeltaEtatauHGEF","DeltaEtatauHGEF",50,-0.1,0.1,"#Delta#eta","Events");
+  DeltaPtauHGEF=HConfig.GetTH1D(Name+"_DeltaPtauHGEF","DeltaPtauHGEF",50,-1,1,"#Delta P","Events");
+  DeltaEtauHGEF=HConfig.GetTH1D(Name+"_DeltaEtauHGEF","DeltaEtauHGEF",50,-1,1,"#Delta E","Events");
 
   //REF
   Ref=HConfig.GetTH1D(Name+"_Ref","Ref",50,0,2,"ref","Events");
+  SVfitMTTdR1=HConfig.GetTH1D(Name+"_SVfitMTTdR1","SVfitMTTdR1",50,0,0.06,"#Delta (R) #tau 1","a.u");
+  SVfitMTTdR2=HConfig.GetTH1D(Name+"_SVfitMTTdR2","SVfitMTTdR2",50,0,0.06,"#Delta (R) #tau 2","a.u");
+
+  PcorrEtaSVfitMTT1=HConfig.GetTH2D(Name+"_PcorrEtaSVfitMTT1","PcorrEtaSVfitMTT1",50,-1,1,50,-0.2,0.2,"P SVfit","#Eta MTT");
+  PcorrPhiSVfitMTT1=HConfig.GetTH2D(Name+"_PcorrPhiSVfitMTT1","PcorrPhiSVfitMTT1",50,-1,1,50,-0.2,0.2,"P SVfit","#Phi MTT");
+
+  PcorrEtaSVfitMTT2=HConfig.GetTH2D(Name+"_PcorrEtaSVfitMTT2","PcorrEtaSVfitMTT2",50,-1,1,50,-0.2,0.2,"P SVfit","#Eta MTT");
+  PcorrPhiSVfitMTT2=HConfig.GetTH2D(Name+"_PcorrPhiSVfitMTT2","PcorrPhiSVfitMTT2",50,-1,1,50,-0.2,0.2,"P SVfit","#Phi MTT");
+
+  dRandPcorrEta1=HConfig.GetTH3D(Name+"_dRandPcorrEta1","dRandPcorrEta1",50,-1,1,50,-0.2,0.2,50,0,0.06,"P SVfit","#Eta MTT","#Delta R");
+  dRandPcorrPhi1=HConfig.GetTH3D(Name+"_dRandPcorrPhi1","dRandPcorrPhi1",50,-1,1,50,-0.2,0.2,50,0,0.06,"P SVfit","#Phi MTT","#Delta R");
+
+  dRandPcorrEta2=HConfig.GetTH3D(Name+"_dRandPcorrEta2","dRandPcorrEta2",50,-1,1,50,-0.2,0.2,50,0,0.06,"P SVfit","#Eta MTT","#Delta R");
+  dRandPcorrPhi2=HConfig.GetTH3D(Name+"_dRandPcorrPhi2","dRandPcorrPhi2",50,-1,1,50,-0.2,0.2,50,0,0.06,"P SVfit","#Phi MTT","#Delta R");
+
+  PullAcopPV=HConfig.GetTH1D(Name+"_PullAcopPV","PullAcopPV",50,-1,1,"pull AcopPV","u.a");
+  dR1vsAcopPV=HConfig.GetTH2D(Name+"_dR1vsAcopPV","dR1vsAcopPV",50,0,0.06,50,-1,1,"dR","acop");
+  dR2vsAcopPV=HConfig.GetTH2D(Name+"_dR2vsAcopPV","dR2vsAcopPV",50,0,0.06,50,-1,1,"dR","acop");
+  P1vsAcopPV=HConfig.GetTH2D(Name+"_P1vsAcopPV","P1vsAcopPV",50,-1,1,50,-1,1,"P svfit","acop");
+  P2vsAcopPV=HConfig.GetTH2D(Name+"_P2vsAcopPV","P2vsAcopPV",50,-1,1,50,-1,1,"P svfit","acop");
+  Phi1vsAcopPV=HConfig.GetTH2D(Name+"_Phi1vsAcopPV","Phi1vsAcopPV",50,-0.2,0.2,50,-1,1,"phi mtt","acop");
+  Eta1vsAcopPV=HConfig.GetTH2D(Name+"_Eta1vsAcopPV","Eta1vsAcopPV",50,-0.2,0.2,50,-1,1,"eta mtt","acop");
+  Phi2vsAcopPV=HConfig.GetTH2D(Name+"_Phi2vsAcopPV","Phi2vsAcopPV",50,-0.2,0.2,50,-1,1,"phi mtt","acop");
+  Eta2vsAcopPV=HConfig.GetTH2D(Name+"_Eta2vsAcopPV","Eta2vsAcopPV",50,-0.2,0.2,50,-1,1,"eta mtt","acop");
 
   Fraction1=HConfig.GetTH1D(Name+"_Fraction1","Fraction1",2,0,2," "," ");
   Fraction2=HConfig.GetTH1D(Name+"_Fraction2","Fraction2",2,0,2," "," ");
@@ -308,8 +343,41 @@ void  HCPTauTau::Store_ExtraDist(){
   Extradist1d.push_back(&DeltaEtatau2GEF);
   Extradist1d.push_back(&DeltaPtau2GEF);
   Extradist1d.push_back(&DeltaEtau2GEF);
+  //
+  Extradist1d.push_back(&DeltaPhitauPiGEF);
+  Extradist1d.push_back(&DeltaEtatauPiGEF);
+  Extradist1d.push_back(&DeltaPtauPiGEF);
+  Extradist1d.push_back(&DeltaEtauPiGEF);
+  Extradist1d.push_back(&DeltaPhitauHGEF);
+  Extradist1d.push_back(&DeltaEtatauHGEF);
+  Extradist1d.push_back(&DeltaPtauHGEF);
+  Extradist1d.push_back(&DeltaEtauHGEF);
   //ref
   Extradist1d.push_back(&Ref);
+  Extradist1d.push_back(&SVfitMTTdR1);
+  Extradist1d.push_back(&SVfitMTTdR2);
+
+  Extradist2d.push_back(&PcorrEtaSVfitMTT1);
+  Extradist2d.push_back(&PcorrPhiSVfitMTT1);
+
+  Extradist2d.push_back(&PcorrEtaSVfitMTT2);
+  Extradist2d.push_back(&PcorrPhiSVfitMTT2);
+
+  Extradist3d.push_back(&dRandPcorrEta1);
+  Extradist3d.push_back(&dRandPcorrPhi1);
+
+  Extradist3d.push_back(&dRandPcorrEta2);
+  Extradist3d.push_back(&dRandPcorrPhi2);
+ 
+  Extradist1d.push_back(&PullAcopPV);
+  Extradist2d.push_back(&dR1vsAcopPV);
+  Extradist2d.push_back(&dR2vsAcopPV);
+  Extradist2d.push_back(&P1vsAcopPV);
+  Extradist2d.push_back(&P2vsAcopPV);
+  Extradist2d.push_back(&Phi1vsAcopPV);
+  Extradist2d.push_back(&Eta1vsAcopPV);
+  Extradist2d.push_back(&Phi2vsAcopPV);
+  Extradist2d.push_back(&Eta2vsAcopPV);
 
   Extradist1d.push_back(&Fraction1);
   Extradist1d.push_back(&Fraction2);
@@ -320,90 +388,9 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   unsigned int t;                // sample type, you may manage in your further analysis, if needed
   int id(Ntp->GetMCID());  //read event ID of a sample
 
-  //Because some problems with the prod
-  // if (InputNtuplePath.Contains("EWKWMinus2Jets"))id=202;
-  // else if (InputNtuplePath.Contains("EWKWPlus2Jets"))id=201;
-  // else if (InputNtuplePath.Contains("EWKZ2Jets_Z_ll"))id=203;
-  // else if (InputNtuplePath.Contains("EWKZ2Jets_Z_nunu"))id=27;
-  //if (InputNtuplePath.Contains("WplusHToTauTau"))id=460;
-  //else if (InputNtuplePath.Contains("WminusHToTauTau"))id=461;
-  // else if (InputNtuplePath.Contains("TTTo2L2Nu"))id=701;
-  // else if (InputNtuplePath.Contains("TTToHadronic"))id=702;
-  // else if (InputNtuplePath.Contains("TTToSemiLeptonic"))id=703;
-  // else if (InputNtuplePath.Contains("Embed"))id=36;
   if(!HConfig.GetHisto(Ntp->isData(),id,t)){ Logger(Logger::Error) << "failed to find id" <<std::endl; return;}  //  gives a warning if list of samples in Histo.txt  and SkimSummary.log do not coincide
 
-  bool TESUp=false;
-  bool TESDown=false;
-  bool JERUp=false;
-  bool JERDown=false;
-  bool jetAbsoluteUp=false;
-  bool jetBBEC1Up=false;
-  bool jetEC2Up=false;
-  bool jetFlavorQCDUp=false;
-  bool jetHFUp=false;
-  bool jetRelativeBalUp=false;
-  bool jetAbsoluteYearUp=false;
-  bool jetBBEC1YearUp=false;
-  bool jetEC2YearUp=false;
-  bool jetHFYearUp=false;
-  bool jetRelativeSampleYearUp=false;
-  bool jetAbsoluteDown=false;
-  bool jetBBEC1Down=false;
-  bool jetEC2Down=false;
-  bool jetFlavorQCDDown=false;
-  bool jetHFDown=false;
-  bool jetRelativeBalDown=false;
-  bool jetAbsoluteYearDown=false;
-  bool jetBBEC1YearDown=false;
-  bool jetEC2YearDown=false;
-  bool jetHFYearDown=false;
-  bool jetRelativeSampleYearDown=false;
-  bool METScaleUp=false;
-  bool METResoUp=false;
-  bool METUnclusteredScaleUp=false;
-  bool METScaleDown=false;
-  bool METResoDown=false;
-  bool METUnclusteredScaleDown=false;
-  // bool ScaleggUp=false;
-  // bool ISRUp=false;
-  // bool FSRUp=false;
-  // bool ScaleggDown=false;
-  // bool ISRDown=false;
-  // bool FSRDown=false;
-
-
-  string TES="Nom";
-  if(TESUp) TES="Up";
-  else if(TESDown) TES="Down";
-
-  string JER="Nom";
-  if(JERUp) JER="Up";
-  else if(JERDown) JER="Down";
-
-  string METScale="Nom";
-  if(METScaleUp) METScale="Up";
-  else if(METScaleDown) METScale="Down";
-
-  string METReso="Nom";
-  if(METResoUp) METReso="Up";
-  else if(METResoDown) METReso="Down";
-
-  string METUnclusteredScale="Nom";
-  if(METUnclusteredScaleUp) METReso="Up";
-  else if(METUnclusteredScaleDown) METReso="Down";
-
-  bool JESUp=false,JESDown=false;
-  if(jetAbsoluteUp||jetBBEC1Up ||jetEC2Up ||jetFlavorQCDUp ||jetHFUp ||jetRelativeBalUp || jetAbsoluteYearUp||jetBBEC1YearUp ||jetEC2YearUp ||jetHFYearUp ||jetRelativeSampleYearUp)JESUp=true;
-  else if(jetAbsoluteDown||jetBBEC1Down ||jetEC2Down ||jetFlavorQCDDown ||jetHFDown ||jetRelativeBalDown || jetAbsoluteYearDown||jetBBEC1YearDown ||jetEC2YearDown ||jetHFYearDown ||jetRelativeSampleYearDown)JESDown=true;
-
   bool isEmbed=(id==36);
-  //cout<<isEmbed<<endl;
-  // value.at(ZTTMC)=1;
-  // if(id==33)value.at(ZTTMC)=false;
-  // else value.at(ZTTMC)=true;
-  // pass.at(ZTTMC)=value.at(ZTTMC);
-  //if(!pass.at(ZTTMC))cout<<"Passe pas !!!!!!!!!!!!!!!!"<<endl;
   bool trig=false;
   std::vector<int> TauIndex ;
   std::vector<int> TriggerIndexVector ;
@@ -421,6 +408,14 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   
   if(!Ntp->isData()|| isEmbed){GenMatch1=Ntp->gen_match_1(0);GenMatch2=Ntp->gen_match_2(0);}
   else{GenMatch1=6;GenMatch2=6;}
+  if(id==30 || id==33 ||id==203)GenMatchSelection=(!(GenMatch1==6 || GenMatch2==6) && !(GenMatch1==5 && GenMatch2==5)); //ZL
+  else if(id==36)GenMatchSelection=(GenMatch1==5 && GenMatch2==5);
+  else if(id==23 && id==20)GenMatchSelection=false; //WTaunu
+  else if(id==201|| id==202)GenMatchSelection=!((GenMatch1==5 && GenMatch2==6)||(GenMatch2==5 && GenMatch1==6));
+  else if(id==71||id==72||id==73||id==74||id==47||id==48||id==49||id==50||id==51||id==52||id==53||id==54||id==55||id==56||id==57||id==58)GenMatchSelection=(!(GenMatch1==6 || GenMatch2==6) &&  !(GenMatch1==5 && GenMatch2==5)); // VVT
+  else if(id==70 ||id==701 ||id==702 ||id==703 )GenMatchSelection=(!(GenMatch1==6 || GenMatch2==6) &&  !(GenMatch1==5 && GenMatch2==5));
+  else GenMatchSelection=true;
+
   // Here you can defined different type of weights you want to apply to events.
   double wobs=1;
   double w=1;
@@ -431,27 +426,24 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
   if(!Ntp->isData() && id!=DataMCType::QCD && !isEmbed) w*=Ntp->PUReweight();
 
+  string TES="Nom";
   if((!Ntp->isData() && id!=DataMCType::QCD) || isEmbed) {
-    //if(PairsIndexTemp.size()>0){
-      //double w1=1.,w2=1.;
 
-      wTrgSF1=Ntp->TriggerSF(Tau1,GenMatch1,TES,"Nom");
-      wTrgSF2=Ntp->TriggerSF(Tau2,GenMatch2,TES,"Nom");
+    wTrgSF1=Ntp->TriggerSF(Tau1,GenMatch1,TES,"Nom");
+    wTrgSF2=Ntp->TriggerSF(Tau2,GenMatch2,TES,"Nom");
 
-      w*=wTrgSF1;
-      w*=wTrgSF2;
+    w*=wTrgSF1;
+    w*=wTrgSF2;
 
-      wIDSF1=Ntp->IDSF(Tau1,GenMatch1,TES);
-      wIDSF2=Ntp->IDSF(Tau2,GenMatch2,TES);
-      if(!isEmbed){
-	wIDSFAntiE1=Ntp->IDSF(Tau1,GenMatch1,TES,"ele");
-	wIDSFAntiE2=Ntp->IDSF(Tau2,GenMatch2,TES,"ele");
-	wIDSFAntiMu1=Ntp->IDSF(Tau1,GenMatch1,TES,"mu");
-	wIDSFAntiMu2=Ntp->IDSF(Tau2,GenMatch2,TES,"mu");
-      }
-      w*=wIDSF1*wIDSF2*wIDSFAntiE1*wIDSFAntiE2*wIDSFAntiMu1*wIDSFAntiMu2;
-
-    //}
+    wIDSF1=Ntp->IDSF(Tau1,GenMatch1,TES);
+    wIDSF2=Ntp->IDSF(Tau2,GenMatch2,TES);
+    if(!isEmbed){
+      wIDSFAntiE1=Ntp->IDSF(Tau1,GenMatch1,TES,"ele");
+      wIDSFAntiE2=Ntp->IDSF(Tau2,GenMatch2,TES,"ele");
+      wIDSFAntiMu1=Ntp->IDSF(Tau1,GenMatch1,TES,"mu");
+      wIDSFAntiMu2=Ntp->IDSF(Tau2,GenMatch2,TES,"mu");
+    }
+    w*=wIDSF1*wIDSF2*wIDSFAntiE1*wIDSFAntiE2*wIDSFAntiMu1*wIDSFAntiMu2;
   }
 
   TLorentzVector genMomentum(0,0,0,0);
@@ -503,215 +495,10 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   }
   float PUPPImetCorr_px=Ntp->PUPPImet()*cos(Ntp->PUPPImetphi());
   float PUPPImetCorr_py=Ntp->PUPPImet()*sin(Ntp->PUPPImetphi());
-  double jdeta_=-9999, jpt_1_=-9999, m_sv_=-9999, m_vis_=-9999, met_=-9999, mjj_=-9999, n_jets_=-9999, pt_1_=-9999,  pt_tt_=-9999, pt_vis_=-9999;
-  int njets20=-99;
-
-  TLorentzVector NullTLV(0,0,0,0);
-  int maxjets=0;
-  int maxjetsUp=0;
-  int maxjetsDown=0;
-  vector<TLorentzVector> JetsVectNominal;
-
-  int indice=0;
-  int njetsJES=0;
-  // int njetsJESUp;
-  // int njetsJERDown;
-  int njetsJERUp=0;
-  int njetsJERDown=0;
-  int m=0;
-
-  /*if(PairsIndexTemp.size()>0){
-    if(JERUp) {n_jets_=Ntp->njetsUp(IndexSelectedTemp.at(Sorted.back()));njets20=Ntp->njetspt20Up(IndexSelectedTemp.at(Sorted.back()));}
-    else if(JERDown) {n_jets_=Ntp->njetsDown(IndexSelectedTemp.at(Sorted.back()));njets20=Ntp->njetspt20Down(IndexSelectedTemp.at(Sorted.back()));}
-    else {n_jets_=Ntp->njets(IndexSelectedTemp.at(Sorted.back()));njets20=Ntp->njetspt20(IndexSelectedTemp.at(Sorted.back()));}
-  }*/
-
-  vector<TLorentzVector> JetsVect;
-  vector<TLorentzVector> JetsVectJERUp;
-  vector<TLorentzVector> JetsVectJERDown;
-
-
-  if(Ntp->njetsSize()>0)njetsJES=Ntp->njetspt20(indice);
-  if(Ntp->njetsSizeUp()>0)njetsJERUp=Ntp->njetsUp(indice);
-  if(Ntp->njetsSizeDown()>0)njetsJERDown=Ntp->njetsDown(indice);
-
-
-  /*if(PairsIndexTemp.size()>0){
-    int j=0;
-    m=0;
-    for(int i=0;i<Ntp->njetspt20Size();i++)
-      {
-	m+=Ntp->njetspt20(i);
-	while(j<m){
-	  if(i==IndexSelectedTemp.at(Sorted.back()))JetsVect.push_back(Ntp->Jet_P4(j));
-	  j++;
-	}
-      }
-
-    indice=0;
-    j=0;
-    m=0;
-
-    for(int i=0;i<Ntp->njetsSizeUp();i++)
-      {
-	m+=Ntp->njetsUp(i);
-	while(j<m){
-	  if(i==IndexSelectedTemp.at(Sorted.back()))JetsVectJERUp.push_back(Ntp->JetUp_P4(j));
-	  j++;
-	}
-      }
-    j=0;
-    indice=0;
-    m=0;
-
-    for(int i=0;i<Ntp->njetsSizeDown();i++)
-      {
-	m+=Ntp->njetsDown(i);
-	while(j<m){
-	  if(i==IndexSelectedTemp.at(Sorted.back()))JetsVectJERDown.push_back(Ntp->JetDown_P4(j));
-	  j++;
-	}
-      }
-  }*/
-
-  indice=0;
-  m=0;
-
-  /*int decalage=0;
-  double SumPxNom=0., SumPyNom=0.,SumPxShift=0., SumPyShift=0.;
-  int njets20Nom=0,njetsNom=0;
-  vector<TLorentzVector> JetsVectJES;
-  if(PairsIndexTemp.size()>0){
-
-    if(njets20>0)
-      {
-
-	for(int i=0;i<Ntp->njetspt20Size();i++)
-	  {
-
-	    if(i<IndexSelectedTemp.at(Sorted.back()))decalage+=Ntp->njetspt20(i);
-	  }
-
-	njetsNom=Ntp->njetspt20(IndexSelectedTemp.at(Sorted.back()));
-	float JESshift[njets20];
-
-	for(int i=0;i<njets20;i++)
-	  {
-
-	    JESshift[i]=0;
-	    if(jetAbsoluteUp)JESshift[i]=Ntp->jets_jetUnc_Absolute_up(decalage+i);
-	    else if(jetBBEC1Up)JESshift[i]=Ntp->jets_jetUnc_BBEC1_up(decalage+i);
-	    else if(jetEC2Up)JESshift[i]=Ntp->jets_jetUnc_EC2_up(decalage+i);
-	    else if(jetFlavorQCDUp)JESshift[i]=Ntp->jets_jetUnc_FlavorQCD_up(decalage+i);
-	    else if(jetHFUp)JESshift[i]=Ntp->jets_jetUnc_HF_up(decalage+i);
-	    else if(jetRelativeBalUp)JESshift[i]=Ntp->jets_jetUnc_RelativeBal_up(decalage+i);
-	    else if(jetAbsoluteYearUp)JESshift[i]=Ntp->jets_jetUnc_Absolute_YEAR_up(decalage+i);
-	    else if(jetBBEC1YearUp)JESshift[i]=Ntp->jets_jetUnc_BBEC1_YEAR_up(decalage+i);
-	    else if(jetEC2YearUp)JESshift[i]=Ntp->jets_jetUnc_EC2_YEAR_up(decalage+i);
-	    else if(jetHFYearUp)JESshift[i]=Ntp->jets_jetUnc_HF_YEAR_up(decalage+i);
-	    else if(jetRelativeSampleYearUp)JESshift[i]=Ntp->jets_jetUnc_RelativeSample_YEAR_up(decalage+i);
-	    else if(jetAbsoluteDown)JESshift[i]=-Ntp->jets_jetUnc_Absolute_dw(decalage+i);
-	    else if(jetBBEC1Down)JESshift[i]=-Ntp->jets_jetUnc_BBEC1_dw(decalage+i);
-	    else if(jetEC2Down)JESshift[i]=-Ntp->jets_jetUnc_EC2_dw(decalage+i);
-	    else if(jetFlavorQCDDown)JESshift[i]=-Ntp->jets_jetUnc_FlavorQCD_dw(decalage+i);
-	    else if(jetHFDown)JESshift[i]=-Ntp->jets_jetUnc_HF_dw(decalage+i);
-	    else if(jetRelativeBalDown)JESshift[i]=-Ntp->jets_jetUnc_RelativeBal_dw(decalage+i);
-	    else if(jetAbsoluteYearDown)JESshift[i]=-Ntp->jets_jetUnc_Absolute_YEAR_dw(decalage+i);
-	    else if(jetBBEC1YearDown)JESshift[i]=-Ntp->jets_jetUnc_BBEC1_YEAR_dw(decalage+i);
-	    else if(jetEC2YearDown)JESshift[i]=-Ntp->jets_jetUnc_EC2_YEAR_dw(decalage+i);
-	    else if(jetHFYearDown)JESshift[i]=-Ntp->jets_jetUnc_HF_YEAR_dw(decalage+i);
-	    else if(jetRelativeSampleYearDown)JESshift[i]=-Ntp->jets_jetUnc_RelativeSample_YEAR_dw(decalage+i);
-
-	  }
-
-	JetsVectNominal=JetsVect;
-
-	for(int i=0;i<JetsVect.size();i++)
-	  {
-	    if((JetsVect[i]+JESshift[i]*JetsVect[i]).Pt()>30.)JetsVectJES.push_back(JetsVect[i]+JESshift[i]*JetsVect[i]);
-	  }
-
-	if(JetsVectJES.size()>1)std::sort(JetsVectJES.begin(),JetsVectJES.end(),Ntp->ComparePairsbyPt);
-	if(JetsVectJERUp.size()>1)std::sort(JetsVectJERUp.begin(),JetsVectJERUp.end(),Ntp->ComparePairsbyPt);
-	if(JetsVectJERDown.size()>1)std::sort(JetsVectJERDown.begin(),JetsVectJERDown.end(),Ntp->ComparePairsbyPt);
-
-	for(int i=0;i<JetsVectJES.size()//njets20;i++)
-	  {
-	    if(JESUp || JESDown){
-	      SumPxShift+=JetsVectJES[i].Px();
-	      SumPyShift+=JetsVectJES[i].Py();
-	    }
-	  }
-
-	for(int i=0;i<JetsVectNominal.size()//njets20Nom;i++)
-	  {
-	    SumPxNom+=JetsVectNominal[i].Px();
-	    SumPyNom+=JetsVectNominal[i].Py();
-	  }
-
-	for(int i=0;i<JetsVectJERUp.size()//njets20;i++)
-	  {
-	    if(JERUp){
-	      SumPxShift+=JetsVectJERUp[i].Px();
-	      SumPyShift+=JetsVectJERUp[i].Py();
-	    }
-	  }
-
-	for(int i=0;i<JetsVectJERDown.size()//njets20;i++){
-	  if(JERDown){
-	    SumPxShift+=JetsVectJERDown[i].Px();
-	    SumPyShift+=JetsVectJERDown[i].Py();
-	  }
-	}
-
-      }
-
-    if(TESUp || TESDown){
-      PUPPImetCorr_px=PUPPImetCorr_px + Ntp->Daughters_P4(Tau1).Px()+Ntp->Daughters_P4(Tau2).Px()-(Ntp->P4Corrected(Tau1,GenMatch1,TES).Px()+Ntp->P4Corrected(Tau2,GenMatch2,TES).Px());
-      PUPPImetCorr_py=PUPPImetCorr_py + Ntp->Daughters_P4(Tau1).Py()+Ntp->Daughters_P4(Tau2).Py()-(Ntp->P4Corrected(Tau1,GenMatch1,TES).Py()+Ntp->P4Corrected(Tau2,GenMatch2,TES).Py());
-    }
-
-  }
 
 
 
-  if(id==33 || id == 10110333 || id == 10110433|| id == 10130533|| id ==10210333|| id == 10210433|| id == 10230533|| id ==10310333 || id ==10330533 || id ==10410433 || id == 10410333|| id == 10430533|| id == 30530533 || id==30 || id==11 || id==12 || id==20 || id==23 || id==21 || id==22 ||id==23 ||id==45  ||id==460||id == 461)
-    {
-      if(PairsIndexTemp.size()>0)
-	{
-	  TLorentzVector Vis,Gen;
-	  for(unsigned i = 0; i < Ntp->NGenParts(); ++i) {
-	    unsigned pdgid = abs(Ntp->Genpart_pdg(i));
-	    unsigned status = abs(Ntp->Genpart_status(i));
-
-	    if ( (pdgid >= 11 && pdgid <= 16 && Ntp->CHECK_BIT(Ntp->Genpart_flags(i),8) && status==1) || Ntp->CHECK_BIT(Ntp->Genpart_flags(i),10)) Gen+=Ntp->Genpart_P4(i);
-
-	    if ( ( (pdgid == 11 || pdgid == 13 || pdgid == 15) && Ntp->CHECK_BIT(Ntp->Genpart_flags(i),8) && status==1) || (Ntp->CHECK_BIT(Ntp->Genpart_flags(i),10) && !(pdgid==12||pdgid==14||pdgid==16))) Vis+=Ntp->Genpart_P4(i) ;
-	  }
-	  Ntp->RecoilCorr(Gen, Vis, IndexSelectedTemp.at(Sorted.back()),PUPPImetCorr_px,PUPPImetCorr_py,JER,METScale,METReso);
-	}
-    }
-  else if(PairsIndexTemp.size()>0 && !Ntp->isData() && !isEmbed){
-    if(METUnclusteredScale=="Up"){
-      PUPPImetCorr_px=Ntp->puppimet_ex_UnclusteredEnUp();
-      PUPPImetCorr_py=Ntp->puppimet_ey_UnclusteredEnUp();
-    }
-    else if(METUnclusteredScale=="Down"){
-      PUPPImetCorr_px=Ntp->puppimet_ex_UnclusteredEnDown();
-      PUPPImetCorr_py=Ntp->puppimet_ey_UnclusteredEnDown();
-    }
-
-    if(JERUp || JERDown){
-      PUPPImetCorr_px=PUPPImetCorr_px + SumPxNom-SumPxShift;
-      PUPPImetCorr_py=PUPPImetCorr_py + SumPyNom-SumPyShift;
-    }
-
-    if(JESUp || JESDown){
-      PUPPImetCorr_px=PUPPImetCorr_px + SumPxNom-SumPxShift;
-      PUPPImetCorr_py=PUPPImetCorr_py + SumPyNom-SumPyShift;
-    }
-  }*/
- if((!Ntp->isData() && id!=DataMCType::QCD) || isEmbed){
+  if((!Ntp->isData() && id!=DataMCType::QCD) || isEmbed){
 
     if (isEmbed && Ntp->MC_weight()>10000.)w*=Ntp->MC_weight()*0.000000001; //problem with 2016
     else w*=Ntp->MC_weight();
@@ -745,12 +532,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
 
   if(!Ntp->isData() && !isEmbed && (Ntp->year()==2016||Ntp->year()==2017))w*=Ntp->prefiringweight();
-  /*double prefup;
-  double prefdown;
-  if((Ntp->prefiringweightup()/Ntp->prefiringweight())>1.2)prefup=Ntp->prefiringweightup();
-  else prefup=Ntp->prefiringweight()*1.2;
-  if((Ntp->prefiringweightdown()/Ntp->prefiringweight())<0.8)prefdown=Ntp->prefiringweightdown();
-  else prefdown=Ntp->prefiringweight()*0.8;*/
 
   //std::vector<unsigned int> exclude_cuts;
   //exclude_cuts.push_back(TausIsolation);
@@ -794,9 +575,8 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   bool isRefitBS=true;
   bool isRefitNoBSZNominal=true;
   bool isRefitBSZNominal=true;
-  double Spin_WT=Ntp->TauSpinerGet(TauSpinerInterface::Spin);
-  double FlipSpin_WT=Ntp->TauSpinerGet(TauSpinerInterface::FlipSpin);
-
+  double Spin_WT=Ntp->TauSpinerGet(TauSpinerInterface::Spin,CPstate);
+  double FlipSpin_WT=Ntp->TauSpinerGet(TauSpinerInterface::FlipSpin,CPstate);
   double Wspin;
   double Wflipspin;
   if(id == 11 || id == 12|| id == 45 || id ==461||id == 460)Wspin=w*Spin_WT;
@@ -813,6 +593,8 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   double DEtau1Mixed=-99, DEtau2Mixed=-99, DPtau1Mixed=-99, DPtau2Mixed=-99;
   double DEtatau1GEF=-99, DEtatau2GEF=-99, DPhitau1GEF=-99, DPhitau2GEF=-99;
   double DEtau1GEF=-99, DEtau2GEF=-99, DPtau1GEF=-99, DPtau2GEF=-99;
+  double DEtatauPiGEF=-99, DEtatauHGEF=-99, DPhitauPiGEF=-99, DPhitauHGEF=-99;
+  double DEtauPiGEF=-99, DEtauHGEF=-99, DPtauPiGEF=-99, DPtauHGEF=-99;
 
   vector<TLorentzVector> HadPionsTruth_minus;
   vector<TLorentzVector> HadPionsTruth_plus;
@@ -854,16 +636,18 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   TLorentzVector Tau2SVFit, Tau1SVFit;
   TLorentzVector Tau2MTT, Tau1MTT;
   TLorentzVector Tau2Mixed, Tau1Mixed;
+  TLorentzVector TauHGEF, TauPiGEF;
   TLorentzVector Tauplusvis;
   TLorentzVector Tauminusvis;
-  TLorentzVector Pi0RECO;
   TLorentzVector TauPlusTruth, TauMinusTruth;
   TLorentzVector Tau1Truth, Tau2Truth;
+  TLorentzVector TauPiTruth, TauHTruth;
   unsigned int Tauplustruth=0;
   unsigned int Tauminustruth=0;
   unsigned int Tauplus=0;
   unsigned int Tauminus=0;
-  string CHANNEL = "PIONPION";
+  string CHANNEL = string(Channel);
+  cout<<CHANNEL<<" "<<CPstate<<endl;
   //
   bool a1minus = false, a1plus = false, a1a1 = false;
   bool rhominus = false, rhoplus = false, rhorho =false;
@@ -878,6 +662,9 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   bool a1rhotruth = false, a1piontruth = false, rhopiontruth = false;
   bool minusplustruth = false, plusminustruth = false;
   bool chargetruth = false, channeltruth = false;
+  //
+  bool recoPionsAreOk = false, genPionsAreOk = false;
+  bool recoTausAreOk = false, GEFTausAreOk = false, mixedTausAreOk = false, genTausAreOk = false;
 
   //GENERATED LEVEL
   if(Ntp->MCTau_charge(0)<0 && Ntp->MCTau_charge(1)>0){
@@ -893,15 +680,15 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   TauMinusTruth = Ntp->MCTau_p4(Tauminustruth);
   TauPlusTruth = Ntp->MCTau_p4(Tauplustruth);
 
-  //5 products : tau, neutrino, 3pions
-  if(Ntp->MCTau_JAK(Tauminustruth) == 5 && Ntp->NMCTauDecayProducts(Tauminustruth) == 5) a1minustruth=true;
-  if(Ntp->MCTau_JAK(Tauplustruth) == 5 && Ntp->NMCTauDecayProducts(Tauplustruth) == 5) a1plustruth=true;
-  //6 products : tau, neutrino, pi, pi0, 2 gammas
-  if(Ntp->MCTau_JAK(Tauminustruth) == 4 && Ntp->NMCTauDecayProducts(Tauminustruth) == 6) rhominustruth=true;
-  if(Ntp->MCTau_JAK(Tauplustruth) == 4 && Ntp->NMCTauDecayProducts(Tauplustruth) == 6) rhoplustruth=true;
-  //3 products : tau, neutrino, pion
-  if(Ntp->MCTau_JAK(Tauminustruth) == 3 && Ntp->NMCTauDecayProducts(Tauminustruth) == 3) pionminustruth=true;
-  if(Ntp->MCTau_JAK(Tauplustruth) == 3 && Ntp->NMCTauDecayProducts(Tauplustruth) == 3) pionplustruth=true;
+  //3 prongs decay
+  if(Ntp->MCTau_JAK(Tauminustruth) == 5) a1minustruth=true;
+  if(Ntp->MCTau_JAK(Tauplustruth) == 5) a1plustruth=true;
+  //1prong + pi0 decay
+  if(Ntp->MCTau_JAK(Tauminustruth) == 4) rhominustruth=true;
+  if(Ntp->MCTau_JAK(Tauplustruth) == 4) rhoplustruth=true;
+  //1 prong decay
+  if(Ntp->MCTau_JAK(Tauminustruth) == 3) pionminustruth=true;
+  if(Ntp->MCTau_JAK(Tauplustruth) == 3) pionplustruth=true;
 
   if(a1minustruth && a1plustruth && CHANNEL == "A1A1") a1a1truth=true;
   if(rhominustruth && rhoplustruth && CHANNEL == "RHORHO") rhorhotruth=true;
@@ -944,6 +731,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
       HadPionsChargeTruth_plus.push_back(0);
     }
     if(pionpiontruth){
+    cout<<"yes"<<endl;
       HadPionsTruth_minus.push_back(Ntp->GetTruthTauProductLV(3,211,Tauminustruth));
       HadPionsChargeTruth_minus.push_back(-1);
       PionMinus_refTruth = Ntp->MCTauandProd_Vertex(Tauminustruth,2) - Ntp->MCTauandProd_Vertex(Tauminustruth,0);
@@ -986,6 +774,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
         PionPlus_refTruth = Ntp->MCTauandProd_Vertex(Tauminustruth,2) - Ntp->MCTauandProd_Vertex(Tauminustruth,0);
       }
       Tau1Truth = TauPlusTruth; Tau2Truth = TauMinusTruth;
+      TauHTruth = TauPlusTruth; TauPiTruth = TauMinusTruth;
     }
     if(minusplustruth){
       if(a1rhotruth){
@@ -1018,6 +807,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
         PionPlus_refTruth = Ntp->MCTauandProd_Vertex(Tauplustruth,2) - Ntp->MCTauandProd_Vertex(Tauplustruth,0);
       }
       Tau1Truth = TauMinusTruth; Tau2Truth = TauPlusTruth;
+      TauHTruth = TauMinusTruth; TauPiTruth = TauPlusTruth;
     }
   }
   //RECONSTRUCTED LEVEL
@@ -1038,14 +828,14 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
       charge = true;
     }
 
-  if(Ntp->MVADM2017(Tauminus) == 10 &&  Ntp->PFTau_hassecondaryVertex(Tauminus) && Ntp->NPions(Tauminus) == 3) a1minus=true;
-  if(Ntp->MVADM2017(Tauplus) == 10 && Ntp->PFTau_hassecondaryVertex(Tauplus) && Ntp->NPions(Tauplus) == 3) a1plus=true;
+  if(Ntp->MVADM2017(Tauminus) == 10 && Ntp->PFTau_hassecondaryVertex(Tauminus) && Ntp->PFtauHasThreePions(Tauminus)) a1minus=true;
+  if(Ntp->MVADM2017(Tauplus) == 10 && Ntp->PFTau_hassecondaryVertex(Tauplus) && Ntp->PFtauHasThreePions(Tauplus)) a1plus=true;
 
-  if(Ntp->MVADM2017(Tauminus) == 1 /*&& Ntp->NPions(Tauminus) == 1*/) rhominus=true;
-  if(Ntp->MVADM2017(Tauplus) == 1 /*&& Ntp->NPions(Tauplus) == 1*/) rhoplus=true;
+  if(Ntp->MVADM2017(Tauminus) == 1) rhominus=true;
+  if(Ntp->MVADM2017(Tauplus) == 1) rhoplus=true;
 
-  if(Ntp->MVADM2017(Tauminus) == 0 /*&& Ntp->NPions(Tauminus) == 1*/) pionminus=true;
-  if(Ntp->MVADM2017(Tauplus) == 0 /*&& Ntp->NPions(Tauplus) == 1*/) pionplus=true;
+  if(Ntp->MVADM2017(Tauminus) == 0) pionminus=true;
+  if(Ntp->MVADM2017(Tauplus) == 0) pionplus=true;
 
   if(a1minus && a1plus && CHANNEL == "A1A1") a1a1=true;
   if(rhominus && rhoplus && CHANNEL == "RHORHO") rhorho=true;
@@ -1068,10 +858,8 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   if((a1a1 || rhorho || pionpion || a1rho || a1pion || rhopion) && charge) channel = true;
   ClassicSVfit svfitAlgo1(0);
   double higgsmass;
-  if(channel) {
+  if(channel){
     FastMTT FastMTTAlgo;
-    //if(a1a1TruthSVFit || a1a1TruthSVFitMVA /*|| a1rhoTruthSVFit || a1rhoTruthSVFitMVA ||a1piTruthSVFit || a1piTruthSVFitMVA*/)
-    //{
     // // //---------  svfit ---------------------
     std::vector<classic_svFit::MeasuredTauLepton> measuredTauLeptons;
     classic_svFit::MeasuredTauLepton lep1(classic_svFit::MeasuredTauLepton::kTauToHadDecay, Tau1P4.Pt(), Tau1P4.Eta(),  Tau1P4.Phi(), Tau1P4.M(),Ntp->MVADM2017(Tau1));
@@ -1087,6 +875,18 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
     metcov[1][0] = Ntp->PUPPIMETCov01();
     metcov[0][1] = Ntp->PUPPIMETCov10();
     metcov[1][1] = Ntp->PUPPIMETCov11();
+
+    TMatrixTSym<double> covMET(2);
+    covMET[0][0] = Ntp->PUPPIMETCov00();
+    covMET[0][1] = Ntp->PUPPIMETCov01();
+    covMET[1][0] = Ntp->PUPPIMETCov10();
+    covMET[1][1] = Ntp->PUPPIMETCov11();
+
+    TMatrixT<double> MET(2,1);
+    MET[0][0] = PUPPIMET*cos(PUPPIMETPhi);
+    MET[1][0] = PUPPIMET*sin(PUPPIMETPhi);
+
+    PTObject METInput(MET,covMET);
 
     svfitAlgo1.setHistogramAdapter(new classic_svFit::TauTauHistogramAdapter());
     svfitAlgo1.addLogM_fixed(true,5.);
@@ -1120,57 +920,26 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 	}
       //MIXED TAUS
       if(TauMinusSVFit!=zeroLV && TauPlusSVFit!=zeroLV && TauMinusMTT!=zeroLV && TauPlusMTT!=zeroLV && TauMinusSVFit!=TauPlusSVFit && TauMinusMTT!=TauPlusMTT){
-        if(TauMinusSVFit.DeltaR(TauMinusMTT) < 0.15 && TauPlusSVFit.DeltaR(TauPlusMTT) < 0.15){
+        //if(TauMinusSVFit.DeltaR(TauMinusMTT) < 0.03 && TauPlusSVFit.DeltaR(TauPlusMTT) < 0.03){
           TauPlusMixed.SetVect(TauPlusSVFit.P()*TauPlusMTT.Vect().Unit());
           TauPlusMixed.SetE(TauPlusSVFit.E());
           TauMinusMixed.SetVect(TauMinusSVFit.P()*TauMinusMTT.Vect().Unit());
           TauMinusMixed.SetE(TauMinusSVFit.E());
-        }
+        //}	
+	/*else{
+	  TauPlusMixed = TauPlusMTT;
+	  TauMinusMixed = TauMinusMTT;
+	}*/
       }
     }
-
-    /*if(JetsVectJERUp.size()>1){
-      if (JERUp && (JetsVectJERUp[0].Pt()>30. && JetsVectJERUp[1].Pt()>30.)){
-        jdeta_=Ntp->jdetaUp(IndexSelectedTemp.at(Sorted.back()));
-        mjj_=Ntp->mjjUp(IndexSelectedTemp.at(Sorted.back()));
-      }
-    }
-    if(JetsVectJERDown.size()>1){
-      if (JERDown && (JetsVectJERDown[0].Pt()>30. && JetsVectJERDown[1].Pt()>30.)){
-        jdeta_=Ntp->jdetaDown(IndexSelectedTemp.at(Sorted.back()));
-        mjj_=Ntp->mjjDown(IndexSelectedTemp.at(Sorted.back()));
-      }
-    }
-    if(JetsVectJES.size()>1){
-      if((JESUp || JESDown) && (JetsVectJES[0].Pt()>30. && JetsVectJES[1].Pt()>30.)){
-        jdeta_=Ntp->jdeta(IndexSelectedTemp.at(Sorted.back()));
-        mjj_=(JetsVectJES[0]+JetsVectJES[1]).M();
-      }
-      else if(JetsVectJES[0].Pt()>30. && JetsVectJES[1].Pt()>30.){
-        jdeta_=Ntp->jdeta(IndexSelectedTemp.at(Sorted.back()));
-        mjj_=(JetsVectJES[0]+JetsVectJES[1]).M();
-      }
-    }
-
-    //cout<<Ntp->jptSize_1()<<"  "<<IndexSelectedTemp.at(Sorted.back())<<"  "<<njets20<<"  "<<Ntp->jets_jetUnc_AbsoluteSize_up()<<endl;
-    if(JetsVectJERUp.size()>0){
-      if (JERUp && JetsVectJERUp[0].Pt()>30.){
-        jpt_1_=JetsVectJERUp[0].Pt();
-      }
-    }
-    if(JetsVectJERDown.size()>0){
-      if (JERDown && JetsVectJERDown[0].Pt()>30.){
-        jpt_1_=JetsVectJERDown[0].Pt();
-      }
-    }
-    if(JetsVectJES.size()>0){
-      if ((JESUp || JESDown) && JetsVectJES[0].Pt()>30.){
-        jpt_1_=JetsVectJES[0].Pt();
-      }
-      else if(JetsVectJES[0].Pt()>30.){
-        jpt_1_=JetsVectJES[0].Pt();
-      }
-    }*/
+    
+    float m_sv_;
+    float met_;
+    float p_tt_;
+    float m_vis_;
+    float pt_1_;
+    float pt_tt_;
+    float pt_vis_;
     if(svfitAlgo1.isValidSolution()) m_sv_=higgsmass;
     else m_sv_=-1;
     m_vis_=(Tau1P4+Tau2P4).M();
@@ -1182,72 +951,187 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
     pt_vis_=(Tau1P4+Tau2P4).Pt();
     //cout<<jdeta_<<" "<<jpt_1_<<"  "<<m_vis_<<"  "<<met_<<"  "<<mjj_<<"  "<<n_jets_<<endl;
 
-    JetsVect.clear();
-    JetsVectJERUp.clear();
-    JetsVectJERDown.clear();
-    //JetsVectJES.clear();
-    JetsVectNominal.clear();
-    BDT->Execute(jdeta_, jpt_1_, m_vis_, met_, mjj_, n_jets_, pt_1_, pt_tt_, pt_vis_, m_sv_, evt_,scores,max_pair);
-  }
-  if(channel && std::isnan(Wspin)!=true)
-    {
-      std::vector<double> PVRefitNoBS_X_temp, PVRefitNoBS_Y_temp, PVRefitNoBS_Z_temp;
-      for(unsigned int i=0;i<Ntp->NPVRefitNoBS();i++)
-	{
-	  PVRefitNoBS_X_temp.push_back(Ntp->RefitPVNoBS_x(i));
-	  PVRefitNoBS_Y_temp.push_back(Ntp->RefitPVNoBS_y(i));
-	  PVRefitNoBS_Z_temp.push_back(Ntp->RefitPVNoBS_z(i));
-	}
+    //BDT->Execute(jdeta_, jpt_1_, m_vis_, met_, mjj_, n_jets_, pt_1_, pt_tt_, pt_vis_, m_sv_, evt_,scores,max_pair);
+  
+    std::vector<double> PVRefitNoBS_X_temp, PVRefitNoBS_Y_temp, PVRefitNoBS_Z_temp;
+    for(unsigned int i=0;i<Ntp->NPVRefitNoBS();i++)
+      {
+	PVRefitNoBS_X_temp.push_back(Ntp->RefitPVNoBS_x(i));
+	PVRefitNoBS_Y_temp.push_back(Ntp->RefitPVNoBS_y(i));
+	PVRefitNoBS_Z_temp.push_back(Ntp->RefitPVNoBS_z(i));
+      }
 
-      std::vector<double> PVRefitBS_X_temp, PVRefitBS_Y_temp, PVRefitBS_Z_temp;
-      for(unsigned int i=0;i<Ntp->NPVRefitBS();i++)
-	{
-	  PVRefitBS_X_temp.push_back(Ntp->RefitPVBS_x(i));
-	  PVRefitBS_Y_temp.push_back(Ntp->RefitPVBS_y(i));
-	  PVRefitBS_Z_temp.push_back(Ntp->RefitPVBS_z(i));
-	}
+    std::vector<double> PVRefitBS_X_temp, PVRefitBS_Y_temp, PVRefitBS_Z_temp;
+    for(unsigned int i=0;i<Ntp->NPVRefitBS();i++)
+      {
+	PVRefitBS_X_temp.push_back(Ntp->RefitPVBS_x(i));
+	PVRefitBS_Y_temp.push_back(Ntp->RefitPVBS_y(i));
+	PVRefitBS_Z_temp.push_back(Ntp->RefitPVBS_z(i));
+      }
 
 
-      vector<size_t> VertexHashNoBS1_temp, VertexHashNoBS2_temp;
-      for(unsigned int i=0;i<Ntp->NVertexHashNoBS();i++)
-	{
-	  VertexHashNoBS1_temp.push_back(Ntp->VertexHashNoBS1(i));
-	  VertexHashNoBS2_temp.push_back(Ntp->VertexHashNoBS2(i));
+    vector<size_t> VertexHashNoBS1_temp, VertexHashNoBS2_temp;
+    for(unsigned int i=0;i<Ntp->NVertexHashNoBS();i++)
+      {
+	VertexHashNoBS1_temp.push_back(Ntp->VertexHashNoBS1(i));
+	VertexHashNoBS2_temp.push_back(Ntp->VertexHashNoBS2(i));
 
-	}
+      }
 
-      vector<size_t> VertexHashBS1_temp, VertexHashBS2_temp;
-      for(unsigned int i=0;i<Ntp->NVertexHashBS();i++)
-	{
-	  VertexHashBS1_temp.push_back(Ntp->VertexHashBS1(i));
-	  VertexHashBS2_temp.push_back(Ntp->VertexHashBS2(i));
+    vector<size_t> VertexHashBS1_temp, VertexHashBS2_temp;
+    for(unsigned int i=0;i<Ntp->NVertexHashBS();i++)
+      {
+	VertexHashBS1_temp.push_back(Ntp->VertexHashBS1(i));
+	VertexHashBS2_temp.push_back(Ntp->VertexHashBS2(i));
 
-	}
+      }
 
-      boost::hash_combine(hash, Ntp->LeptonHash(Tauminus));
-      boost::hash_combine(hash, Ntp->LeptonHash(Tauplus));
-      hashes.push_back(hash);
-      hash = 0;
-      boost::hash_combine(hash, Ntp->LeptonHash(Tauplus));
-      boost::hash_combine(hash, Ntp->LeptonHash(Tauminus));
-      hashes.push_back(hash);
+    boost::hash_combine(hash, Ntp->LeptonHash(Tauminus));
+    boost::hash_combine(hash, Ntp->LeptonHash(Tauplus));
+    hashes.push_back(hash);
+    hash = 0;
+    boost::hash_combine(hash, Ntp->LeptonHash(Tauplus));
+    boost::hash_combine(hash, Ntp->LeptonHash(Tauminus));
+    hashes.push_back(hash);
 
-      if(a1a1){
-	//GEF
-	TauminusSecondaryVertex = Ntp->PFTau_secondaryVertex_pos(Tauminus);
-	TauplusSecondaryVertex = Ntp->PFTau_secondaryVertex_pos(Tauplus);
-	a1LVRefit_Tauminus = Ntp->PFTauRefit_PionsP4(Tauminus,0) + Ntp->PFTauRefit_PionsP4(Tauminus,1) + Ntp->PFTauRefit_PionsP4(Tauminus,2);
-	a1LVRefit_Tauplus = Ntp->PFTauRefit_PionsP4(Tauplus,0) + Ntp->PFTauRefit_PionsP4(Tauplus,1) + Ntp->PFTauRefit_PionsP4(Tauplus,2);
-	tauBSPrimaryVertex = GetRefittedPV(hashes, tauPrimaryVertex, PVRefitBS_X_temp ,PVRefitBS_Y_temp,PVRefitBS_Z_temp ,VertexHashBS1_temp, VertexHashBS2_temp,isRefitBS);
-	solutionsBS=tauPairMomentumSolutions(TauminusSecondaryVertex-tauBSPrimaryVertex, a1LVRefit_Tauminus, a1LV_Tauminus, isMinusReal, TauplusSecondaryVertex-tauBSPrimaryVertex, a1LVRefit_Tauplus, a1LVRefit_Tauplus, isPlusReal,isRefitBS);
-	TauminusPairConstraintBS=solutionsBS.at(3);
-	TauplusPairConstraintBS=solutionsBS.at(7);
-	HPairConstraint= TauplusPairConstraint+TauminusPairConstraint;
-	double TGJminus = GetThetaGJ(TauminusSecondaryVertex-tauBSPrimaryVertex, a1LVRefit_Tauminus);
-	double TGJminusmax = GetThetaGJMax(a1LVRefit_Tauminus);
-	double TGJplus = GetThetaGJ(TauplusSecondaryVertex-tauBSPrimaryVertex, a1LVRefit_Tauplus);
-	double TGJplusmax = GetThetaGJMax(a1LVRefit_Tauplus);
+    if(a1a1){
+      //GEF
+      TauminusSecondaryVertex = Ntp->PFTau_secondaryVertex_pos(Tauminus);
+      TauplusSecondaryVertex = Ntp->PFTau_secondaryVertex_pos(Tauplus);
+      a1LVRefit_Tauminus = Ntp->PFTauRefit_PionsP4(Tauminus,0) + Ntp->PFTauRefit_PionsP4(Tauminus,1) + Ntp->PFTauRefit_PionsP4(Tauminus,2);
+      a1LVRefit_Tauplus = Ntp->PFTauRefit_PionsP4(Tauplus,0) + Ntp->PFTauRefit_PionsP4(Tauplus,1) + Ntp->PFTauRefit_PionsP4(Tauplus,2);
+      tauBSPrimaryVertex = GetRefittedPV(hashes, tauPrimaryVertex, PVRefitBS_X_temp ,PVRefitBS_Y_temp,PVRefitBS_Z_temp ,VertexHashBS1_temp, VertexHashBS2_temp,isRefitBS);
+      solutionsBS=tauPairMomentumSolutions(TauminusSecondaryVertex-tauBSPrimaryVertex, a1LVRefit_Tauminus, a1LV_Tauminus, isMinusReal, TauplusSecondaryVertex-tauBSPrimaryVertex, a1LVRefit_Tauplus, a1LVRefit_Tauplus, isPlusReal,isRefitBS);
+      TauminusPairConstraintBS=solutionsBS.at(3);
+      TauplusPairConstraintBS=solutionsBS.at(7);
+      HPairConstraint= TauplusPairConstraint+TauminusPairConstraint;
 
+      //
+      HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,0));
+      HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,1));
+      HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,2));
+      HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 0));
+      HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 1));
+      HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 2));
+
+      HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,0));
+      HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,1));
+      HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,2));
+      HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 0));
+      HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 1));
+      HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 2));
+    }
+    if(rhorho){
+      HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
+      HadRefitPions_minus.push_back(Tauminusvis - Ntp->ChargedDaughters_P4(Tauminus));
+      HadRefitPionsCharge_minus.push_back(0);
+      HadRefitPionsCharge_minus.push_back(-1);
+
+      HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
+      HadRefitPions_plus.push_back(Tauplusvis - Ntp->ChargedDaughters_P4(Tauplus));
+      HadRefitPionsCharge_plus.push_back(0);
+      HadRefitPionsCharge_plus.push_back(1);
+    }
+    if(pionpion){
+      HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
+      HadRefitPionsCharge_minus.push_back(-1);
+      PionMinus_ref = Ntp->Daughters_vertex(Tauminus) - tauBSPrimaryVertex;
+
+      HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
+      HadRefitPionsCharge_plus.push_back(1);
+      PionPlus_ref = Ntp->Daughters_vertex(Tauplus) - tauBSPrimaryVertex;
+    }
+    if(a1a1 || rhorho || pionpion){
+      Tau1MTT = TauMinusMTT; Tau2MTT = TauPlusMTT;
+      Tau1SVFit = TauMinusSVFit; Tau2SVFit = TauPlusSVFit;
+      Tau1Mixed = TauMinusMixed; Tau2Mixed = TauPlusMixed;
+    }
+    if(plusminus){
+      if(a1rho){
+	HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,0));
+	HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,1));
+	HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,2));
+	HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 0));
+	HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 1));
+	HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 2));
+
+	HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
+	HadRefitPions_minus.push_back(Tauminusvis - Ntp->ChargedDaughters_P4(Tauminus));
+	HadRefitPionsCharge_minus.push_back(0);
+	HadRefitPionsCharge_minus.push_back(-1);
+      }
+      if(a1pion){
+        //GEF
+        if(Ntp->PFTau_TrackHasMomentum(Tauminus) == true && Ntp->isPVCovAvailable() == true){
+          TMatrixTSym<double> PV_cov = Ntp->PFTau_TIP_primaryVertex_cov();
+          LorentzVectorParticle A1 = Ntp->PFTau_a1_lvp(Tauplus);
+          TrackParticle PION = Ntp->PFTau_Track(Tauminus);
+          GlobalEventFit GEF(PION,A1,METInput,tauBSPrimaryVertex,PV_cov);
+          GEF.setMassConstraint(125.3);
+          GEF.SetCorrectPt(false);
+          GEFObject FitTaus = GEF.Fit();
+          if(FitTaus.Fitconverged()){
+            TauHGEF = FitTaus.getTauH().LV();
+            TauPiGEF = FitTaus.getTauMu().LV();
+          }
+        }
+   
+        //
+	HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,0));
+	HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,1));
+	HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,2));
+	HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 0));
+	HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 1));
+	HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 2));
+
+	HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
+	HadRefitPionsCharge_minus.push_back(-1);
+        PionMinus_ref = Ntp->Daughters_vertex(Tauminus) - tauBSPrimaryVertex;
+      }
+      if(rhopion){
+	HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
+	HadRefitPions_plus.push_back(Tauplusvis - Ntp->ChargedDaughters_P4(Tauplus));
+	HadRefitPionsCharge_plus.push_back(0);
+	HadRefitPionsCharge_plus.push_back(1);
+
+	HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
+	HadRefitPionsCharge_minus.push_back(-1);
+ 	PionMinus_ref = Ntp->Daughters_vertex(Tauminus) - tauBSPrimaryVertex;
+      }
+      Tau1MTT = TauPlusMTT; Tau2MTT = TauMinusMTT;
+      Tau1SVFit = TauPlusSVFit; Tau2SVFit = TauMinusSVFit;
+      Tau1Mixed = TauPlusMixed; Tau2Mixed = TauMinusMixed;
+    }
+    if(minusplus){
+      if(a1rho){
+	HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,0));
+	HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,1));
+	HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,2));
+	HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 0));
+	HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 1));
+	HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 2));
+
+	HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
+	HadRefitPions_plus.push_back(Tauplusvis - Ntp->ChargedDaughters_P4(Tauplus));
+	HadRefitPionsCharge_plus.push_back(0);
+	HadRefitPionsCharge_plus.push_back(1);
+      }
+      if(a1pion){
+        //GEF
+        if(Ntp->PFTau_TrackHasMomentum(Tauplus) == true && Ntp->isPVCovAvailable() == true){
+          TMatrixTSym<double> PV_cov = Ntp->PFTau_TIP_primaryVertex_cov();
+          LorentzVectorParticle A1 = Ntp->PFTau_a1_lvp(Tauminus);
+          TrackParticle PION = Ntp->PFTau_Track(Tauplus);
+          GlobalEventFit GEF(PION,A1,METInput,tauBSPrimaryVertex,PV_cov);
+          GEF.setMassConstraint(125.3);
+          GEF.SetCorrectPt(false);
+          GEFObject FitTaus = GEF.Fit();
+          if(FitTaus.Fitconverged()){
+            TauHGEF = FitTaus.getTauH().LV();
+            TauPiGEF = FitTaus.getTauMu().LV();
+          }
+        }
+	
 	//
 	HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,0));
 	HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,1));
@@ -1256,247 +1140,190 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 	HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 1));
 	HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 2));
 
-	HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,0));
-	HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,1));
-	HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,2));
-	HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 0));
-	HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 1));
-	HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 2));
+	HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
+	HadRefitPionsCharge_plus.push_back(1);
+ 	PionPlus_ref = Ntp->Daughters_vertex(Tauplus) - tauBSPrimaryVertex;
       }
-      if(rhorho){
+      if(rhopion){
 	HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
 	HadRefitPions_minus.push_back(Tauminusvis - Ntp->ChargedDaughters_P4(Tauminus));
 	HadRefitPionsCharge_minus.push_back(0);
 	HadRefitPionsCharge_minus.push_back(-1);
 
 	HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
-	HadRefitPions_plus.push_back(Tauplusvis - Ntp->ChargedDaughters_P4(Tauplus));
-	HadRefitPionsCharge_plus.push_back(0);
 	HadRefitPionsCharge_plus.push_back(1);
+        PionPlus_ref = Ntp->Daughters_vertex(Tauplus) - tauBSPrimaryVertex;
       }
-      if(pionpion){
-	HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
-	HadRefitPionsCharge_minus.push_back(-1);
-        PionMinus_ref = Ntp->Daughters_vertex(Tauminus) - tauBSPrimaryVertex;
-
-	HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
-	HadRefitPionsCharge_plus.push_back(1);
-	PionPlus_ref = Ntp->Daughters_vertex(Tauplus) - tauBSPrimaryVertex;
-      }
-      if(a1a1 || rhorho || pionpion){
-	Tau1MTT = TauMinusMTT; Tau2MTT = TauPlusMTT;
-	Tau1SVFit = TauMinusSVFit; Tau2SVFit = TauPlusSVFit;
-	Tau1Mixed = TauMinusMixed; Tau2Mixed = TauPlusMixed;
-      }
-      if(plusminus){
-	if(a1rho){
-	  HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,0));
-	  HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,1));
-	  HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,2));
-	  HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 0));
-	  HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 1));
-	  HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 2));
-
-	  HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
-	  HadRefitPions_minus.push_back(Tauminusvis - Ntp->ChargedDaughters_P4(Tauminus));
-	  HadRefitPionsCharge_minus.push_back(0);
-	  HadRefitPionsCharge_minus.push_back(-1);
-	}
-	if(a1pion){
-	  HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,0));
-	  HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,1));
-	  HadRefitPions_plus.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,2));
-	  HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 0));
-	  HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 1));
-	  HadRefitPionsCharge_plus.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 2));
-
-	  HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
-	  HadRefitPionsCharge_minus.push_back(-1);
-	}
-	if(rhopion){
-	  HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
-	  HadRefitPions_plus.push_back(Tauplusvis - Ntp->ChargedDaughters_P4(Tauplus));
-	  HadRefitPionsCharge_plus.push_back(0);
-	  HadRefitPionsCharge_plus.push_back(1);
-
-	  HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
-	  HadRefitPionsCharge_minus.push_back(-1);
-	}
-	Tau1MTT = TauPlusMTT; Tau2MTT = TauMinusMTT;
-	Tau1SVFit = TauPlusSVFit; Tau2SVFit = TauMinusSVFit;
-	Tau1Mixed = TauPlusMixed; Tau2Mixed = TauMinusMixed;
-      }
-      if(minusplus){
-	if(a1rho){
-	  HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,0));
-	  HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,1));
-	  HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,2));
-	  HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 0));
-	  HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 1));
-	  HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 2));
-
-	  HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
-	  HadRefitPions_plus.push_back(Tauplusvis - Ntp->ChargedDaughters_P4(Tauplus));
-	  HadRefitPionsCharge_plus.push_back(0);
-	  HadRefitPionsCharge_plus.push_back(1);
-	}
-	if(a1pion){
-	  HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,0));
-	  HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,1));
-	  HadRefitPions_minus.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,2));
-	  HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 0));
-	  HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 1));
-	  HadRefitPionsCharge_minus.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 2));
-
-	  HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
-	  HadRefitPionsCharge_plus.push_back(1);
-	  PionPlus_ref = Ntp->Daughters_pcaRefitPV(Tauplus);
-	}
-	if(rhopion){
-	  HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
-	  HadRefitPions_minus.push_back(Tauminusvis - Ntp->ChargedDaughters_P4(Tauminus));
-	  HadRefitPionsCharge_minus.push_back(0);
-	  HadRefitPionsCharge_minus.push_back(-1);
-
-	  HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
-	  HadRefitPionsCharge_plus.push_back(1);
-	  PionPlus_ref = Ntp->Daughters_pcaRefitPV(Tauplus);
-	}
-	Tau1MTT = TauMinusMTT; Tau2MTT = TauPlusMTT;
-	Tau1SVFit = TauMinusSVFit; Tau2SVFit = TauPlusSVFit;
-	Tau1Mixed = TauMinusMixed; Tau2Mixed = TauPlusMixed;
-      }
+      Tau1MTT = TauMinusMTT; Tau2MTT = TauPlusMTT;
+      Tau1SVFit = TauMinusSVFit; Tau2SVFit = TauPlusSVFit;
+      Tau1Mixed = TauMinusMixed; Tau2Mixed = TauPlusMixed;
     }
+  }
 
-  double pvx(0);
-  pvx =  Ntp->npv();
-  // if(id == DataMCType::Data) pvx =  Ntp->npv();
-  if(id !=DataMCType::Data && id !=DataMCType::QCD)	  pvx = Ntp->PUNumInteractions();
-
-
-  if (std::isnan(Wspin)!=true)
+  if((HadPionsTruth_minus!=HadPionsTruth_plus) && (HadPionsTruth_minus!=VectZeroLV) && (HadPionsTruth_plus!=VectZeroLV)) genPionsAreOk = true;
+  if((TauMinusTruth != TauPlusTruth) && (TauMinusTruth != zeroLV) && (TauPlusTruth != zeroLV)) genTausAreOk = true;
+   
+  if (std::isnan(Wspin)!=true && GenMatchSelection)
     {
       if(channeltruth)
 	{
 	  //GEN LEVEL PLOTS
-	  if((HadPionsTruth_minus!=HadPionsTruth_plus) && (HadPionsTruth_minus!=VectZeroLV) && (HadPionsTruth_plus!=VectZeroLV))
+	  if(genPionsAreOk)
 	    {
-	      if(TauMinusTruth!=TauPlusTruth && TauMinusTruth!=zeroLV && TauPlusTruth!=zeroLV){
-		if(a1a1truth && ScalcPVTruth.isOk("a1", "a1", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus)==true){
+	      if(a1a1truth){
+		if(genTausAreOk){
 		  Acop_PVTruth = ScalcPVTruth.AcopAngle("a1", "a1", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		  Acop_DPTruth = ScalcDPTruth.AcopAngle_DP("a1", "a1", HadPionsTruth_minus, HadPionsChargeTruth_minus, HadPionsTruth_plus, HadPionsChargeTruth_plus);
 		}
-		if(rhorhotruth && ScalcPVTruth.isOk("rho", "rho", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus)==true){
+		Acop_DPTruth = ScalcDPTruth.AcopAngle_DP("a1", "a1", HadPionsTruth_minus, HadPionsTruth_plus);
+	      }
+	      if(rhorhotruth){
+		if(genTausAreOk){
 		  Acop_PVTruth = ScalcPVTruth.AcopAngle("rho", "rho", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		  Acop_DPTruth = ScalcDPTruth.AcopAngle_DP("rho", "rho", HadPionsTruth_minus, HadPionsChargeTruth_minus, HadPionsTruth_plus, HadPionsChargeTruth_plus);
 		}
-		if(pionpiontruth && ScalcPVTruth.isOk("pion", "pion", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus)==true){
+		Acop_DPTruth = ScalcDPTruth.AcopAngle_DP("rho", "rho", HadPionsTruth_minus, HadPionsTruth_plus);
+	      }
+	      if(pionpiontruth){
+		if(genTausAreOk){
 		  Acop_PVTruth = ScalcPVTruth.AcopAngle("pion", "pion", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		  cout<<"boucle1"<<endl;
-		  Acop_IPTruth = ScalcIPTruth.AcopAngle_IP(HadPionsTruth_minus.at(0), PionMinus_refTruth, HadPionsTruth_plus.at(0), PionPlus_refTruth);
-		  cout<<"boucle2"<<endl;
 		}
-		if(a1rhotruth){
-		  if(plusminustruth && ScalcPVTruth.isOk("rho", "a1", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus)==true){
+		Acop_IPTruth = ScalcIPTruth.AcopAngle_IP(HadPionsTruth_minus.at(0), PionMinus_refTruth, HadPionsTruth_plus.at(0), PionPlus_refTruth);
+	      }
+	      if(a1rhotruth){
+		if(plusminustruth){
+		  if(genTausAreOk){
 		    Acop_PVTruth = ScalcPVTruth.AcopAngle("rho", "a1", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		    Acop_DPTruth = ScalcDPTruth.AcopAngle_DP("rho", "a1", HadPionsTruth_minus, HadPionsChargeTruth_minus, HadPionsTruth_plus, HadPionsChargeTruth_plus);
 		  }
-		  if(minusplustruth && ScalcPVTruth.isOk("a1", "rho", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus)==true){
-		    Acop_PVTruth = ScalcPVTruth.AcopAngle("a1", "rho", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		    Acop_DPTruth = ScalcDPTruth.AcopAngle_DP("a1", "rho", HadPionsTruth_minus, HadPionsChargeTruth_minus, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		  }
+		  Acop_DPTruth = ScalcDPTruth.AcopAngle_DP("rho", "a1", HadPionsTruth_minus, HadPionsTruth_plus);
 		}
-		if(a1piontruth){
-		  if(plusminustruth && ScalcPVTruth.isOk("pion", "a1", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus)==true){
+		if(minusplustruth){
+		  if(genTausAreOk){
+		    Acop_PVTruth = ScalcPVTruth.AcopAngle("a1", "rho", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
+		  }
+		  Acop_DPTruth = ScalcDPTruth.AcopAngle_DP("a1", "rho", HadPionsTruth_minus, HadPionsTruth_plus);
+		}
+	      }
+	      if(a1piontruth){
+		if(plusminustruth){
+		  if(genTausAreOk){
 		    Acop_PVTruth = ScalcPVTruth.AcopAngle("pion", "a1", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		    Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("a1","pion", HadPionsTruth_plus, HadPionsChargeTruth_plus, HadPionsTruth_minus.at(0), PionMinus_refTruth);
 		    Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","pion", TauPlusTruth, 1., HadPionsTruth_plus, HadPionsChargeTruth_plus, TauMinusTruth, HadPionsTruth_minus.at(0), PionMinus_refTruth);
 		  }
-		  if(minusplustruth && ScalcPVTruth.isOk("a1", "pion", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus)==true){
+		  Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("a1","pion", HadPionsTruth_plus, HadPionsTruth_minus.at(0), PionMinus_refTruth);
+		}
+		if(minusplustruth){
+		  if(genTausAreOk){
 		    Acop_PVTruth = ScalcPVTruth.AcopAngle("a1", "pion", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		    Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("a1","pion", HadPionsTruth_minus, HadPionsChargeTruth_minus, HadPionsTruth_plus.at(0), PionPlus_refTruth);
 		    Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","pion", TauMinusTruth, -1., HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus.at(0), PionPlus_refTruth);
 		  }
+		  Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("a1","pion", HadPionsTruth_minus, HadPionsTruth_plus.at(0), PionPlus_refTruth);
 		}
-		if(rhopiontruth){
-		  if(plusminustruth && ScalcPVTruth.isOk("pion", "rho", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus)==true){
+	      }
+	      if(rhopiontruth){
+		if(plusminustruth){
+		  if(genTausAreOk){
 		    Acop_PVTruth = ScalcPVTruth.AcopAngle("pion", "rho", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		    Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("rho","pion", HadPionsTruth_plus, HadPionsChargeTruth_plus, HadPionsTruth_minus.at(0), PionMinus_refTruth);
 		    Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("rho","pion", TauPlusTruth, 1., HadPionsTruth_plus, HadPionsChargeTruth_plus, TauMinusTruth, HadPionsTruth_minus.at(0), PionMinus_refTruth);
 		  }
-		  if(minusplustruth && ScalcPVTruth.isOk("rho", "pion", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus)==true){
+		  Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("rho","pion", HadPionsTruth_plus, HadPionsTruth_minus.at(0), PionMinus_refTruth);
+		}
+		if(minusplustruth){
+		  if(genTausAreOk){
 		    Acop_PVTruth = ScalcPVTruth.AcopAngle("rho", "pion", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		    Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("rho","pion", HadPionsTruth_minus, HadPionsChargeTruth_minus, HadPionsTruth_plus.at(0), PionPlus_refTruth);
 		    Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("rho","pion", TauMinusTruth, -1.,  HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus.at(0), PionPlus_refTruth);
 		  }
+		  Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("rho","pion", HadPionsTruth_minus, HadPionsTruth_plus.at(0), PionPlus_refTruth);
 		}
-		decayplaneAcopAngleTruth.at(t).Fill(Acop_DPTruth,Wspin);
-		polarimetricAcopAngleTruth.at(t).Fill(Acop_PVTruth,Wspin);
-                impactparameterAcopAngleTruth.at(t).Fill(Acop_IPTruth,Wspin);
-		DPIPAcopAngleTruth.at(t).Fill(Acop_DPIPTruth,Wspin);
-		PVIPAcopAngleTruth.at(t).Fill(Acop_PVIPTruth,Wspin);
-	      } //mixed taus
-	    } //pions
-	} //channel
+	      }
+	      decayplaneAcopAngleTruth.at(t).Fill(Acop_DPTruth,Wspin);
+	      polarimetricAcopAngleTruth.at(t).Fill(Acop_PVTruth,Wspin);
+	      impactparameterAcopAngleTruth.at(t).Fill(Acop_IPTruth,Wspin);
+	      DPIPAcopAngleTruth.at(t).Fill(Acop_DPIPTruth,Wspin);
+	      PVIPAcopAngleTruth.at(t).Fill(Acop_PVIPTruth,Wspin);
+	    } //gen pions
+	} //gen channel
+
+  if((HadRefitPions_minus!=HadRefitPions_plus) && (HadRefitPions_minus!=VectZeroLV) && (HadRefitPions_plus!=VectZeroLV)) recoPionsAreOk = true;
+  if((TauPlusMixed!=TauMinusMixed) && (TauPlusMixed!=zeroLV) && (TauMinusMixed!=zeroLV)) mixedTausAreOk = true;
+  if((TauminusPairConstraintBS!=TauplusPairConstraintBS) && (TauminusPairConstraintBS!=zeroLV) && (TauplusPairConstraintBS!=zeroLV)) recoTausAreOk = true;
+  if((TauPiGEF!=TauHGEF) && (TauPiGEF!=zeroLV) && (TauHGEF!=zeroLV)) GEFTausAreOk = true;
 
       //RECO LEVEL PLOTS
       if(channel)
 	{
-	  if((HadRefitPions_minus!=HadRefitPions_plus) && (HadRefitPions_minus!=VectZeroLV) && (HadRefitPions_plus!=VectZeroLV))
+	  if(recoPionsAreOk)
 	    {
-	      if(TauminusPairConstraintBS!=TauplusPairConstraintBS && TauminusPairConstraintBS!=zeroLV && TauplusPairConstraintBS!=zeroLV)
-		{
-		  if(a1a1){
-		    if(ScalcPVRefitWithTracksBS.isOk("a1", "a1", TauminusPairConstraintBS, HadRefitPions_minus, HadRefitPionsCharge_minus, TauplusPairConstraintBS, HadRefitPions_plus, HadRefitPionsCharge_plus)==true){
+	      if(a1a1){
+		    if(recoTausAreOk){
 		      Acop_PVGEF = ScalcPVRefitWithTracksBS.AcopAngle("a1", "a1", TauminusPairConstraintBS, HadRefitPions_minus, HadRefitPionsCharge_minus, TauplusPairConstraintBS, HadRefitPions_plus, HadRefitPionsCharge_plus);
 		    }
-		  }  //is ok
-		} //taus
-	      if(TauMinusMixed!=TauPlusMixed && TauMinusMixed!=zeroLV && TauPlusMixed!=zeroLV){
-		if(a1a1 && ScalcPV.isOk("a1", "a1", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus)==true){
+		if(mixedTausAreOk){
 		  Acop_PV = ScalcPV.AcopAngle("a1", "a1", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-		  Acop_DP = ScalcDP.AcopAngle_DP("a1", "a1", HadRefitPions_minus, HadRefitPionsCharge_minus, HadRefitPions_plus, HadRefitPionsCharge_plus);
 		}
-		if(rhorho && ScalcPV.isOk("rho", "rho", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus)==true){
+		  Acop_DP = ScalcDP.AcopAngle_DP("a1", "a1", HadRefitPions_minus, HadRefitPions_plus);
+	}
+		if(rhorho){
+		  if(mixedTausAreOk){
 		  Acop_PV = ScalcPV.AcopAngle("rho", "rho", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-		  Acop_DP = ScalcDP.AcopAngle_DP("rho", "rho", HadRefitPions_minus, HadRefitPionsCharge_minus, HadRefitPions_plus, HadRefitPionsCharge_plus);
 		}
-		if(pionpion && ScalcPV.isOk("pion", "pion", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus)==true){
+		  Acop_DP = ScalcDP.AcopAngle_DP("rho", "rho", HadRefitPions_minus, HadRefitPions_plus);
+		}
+		if(pionpion){
+		if(mixedTausAreOk){
 		  Acop_PV = ScalcPV.AcopAngle("pion", "pion", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-		  //Acop_IP = ScalcIP.AcopAngle_IP(HadRefitPions_minus.at(0), PionMinus_ref, HadRefitPions_plus.at(0), PionPlus_ref);
+}
+		  Acop_IP = ScalcIP.AcopAngle_IP(HadRefitPions_minus.at(0), PionMinus_ref, HadRefitPions_plus.at(0), PionPlus_ref);
 		}
 		if(a1rho){
-		  if(plusminus && ScalcPV.isOk("rho", "a1", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus)==true){
+		  if(plusminus){
+		if(mixedTausAreOk){
 		    Acop_PV = ScalcPV.AcopAngle("rho", "a1", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-		    Acop_DP = ScalcDP.AcopAngle_DP("rho", "a1", HadRefitPions_minus, HadRefitPionsCharge_minus, HadRefitPions_plus, HadRefitPionsCharge_plus);
+}
+		    Acop_DP = ScalcDP.AcopAngle_DP("rho", "a1", HadRefitPions_minus, HadRefitPions_plus);
 		  }
-		  if(minusplus && ScalcPV.isOk("a1", "rho", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus)==true){
+		  if(minusplus){
+		if(mixedTausAreOk){
 		    Acop_PV = ScalcPV.AcopAngle("a1", "rho", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-		    Acop_DP = ScalcDP.AcopAngle_DP("a1", "rho", HadRefitPions_minus, HadRefitPionsCharge_minus, HadRefitPions_plus, HadRefitPionsCharge_plus);
+}
+		    Acop_DP = ScalcDP.AcopAngle_DP("a1", "rho", HadRefitPions_minus, HadRefitPions_plus);
 		  }
 		}
 		if(a1pion){
-		  if(plusminus && ScalcPV.isOk("pion", "a1", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus)==true){
+		  if(plusminus){
+		if(mixedTausAreOk){
 		    Acop_PV = ScalcPV.AcopAngle("pion", "a1", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-		    Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("a1","pion", HadRefitPions_plus, HadRefitPionsCharge_plus, HadRefitPions_minus.at(0), PionMinus_ref);
-		    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","pion", TauPlusMixed, 1., HadRefitPions_plus, HadRefitPionsCharge_plus, TauMinusMixed, HadRefitPions_minus.at(0), PionMinus_ref);
+                    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","pion", TauPlusMixed, 1., HadRefitPions_plus, HadRefitPionsCharge_plus, TauMinusMixed, HadRefitPions_minus.at(0), PionMinus_ref);
+}
+		if(GEFTausAreOk){
+                    Acop_PVGEF = ScalcPV.AcopAngle("pion", "a1", TauPiGEF, HadRefitPions_minus, HadRefitPionsCharge_minus, TauHGEF, HadRefitPions_plus, HadRefitPionsCharge_plus);
+}
+		    Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("a1","pion", HadRefitPions_plus, HadRefitPions_minus.at(0), PionMinus_ref);
 		  }
-		  if(minusplus && ScalcPV.isOk("a1", "pion", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus)==true){
+		  if(minusplus){
+		if(mixedTausAreOk){
 		    Acop_PV = ScalcPV.AcopAngle("a1", "pion", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-		    Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("a1","pion", HadRefitPions_minus, HadRefitPionsCharge_minus, HadRefitPions_plus.at(0), PionPlus_ref);
-		    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","pion", TauMinusMixed, -1.,  HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus.at(0), PionPlus_ref);
+                    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","pion", TauMinusMixed, -1.,  HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus.at(0), PionPlus_ref);
+}
+		if(GEFTausAreOk){
+                    Acop_PVGEF = ScalcPV.AcopAngle("a1", "pion", TauHGEF, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPiGEF, HadRefitPions_plus, HadRefitPionsCharge_plus);
+}
+		    Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("a1","pion", HadRefitPions_minus, HadRefitPions_plus.at(0), PionPlus_ref);
 		  }
 		}
 		if(rhopion){
-		  if(plusminus && ScalcPV.isOk("pion", "rho", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus)==true){
+		  if(plusminus){
+		if(mixedTausAreOk){
 		    Acop_PV = ScalcPV.AcopAngle("pion", "rho", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-		    Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("rho","pion", HadRefitPions_plus, HadRefitPionsCharge_plus, HadRefitPions_minus.at(0), PionMinus_ref);
-		    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("rho","pion", TauPlusMixed, 1.,  HadRefitPions_plus, HadRefitPionsCharge_plus, TauMinusMixed, HadRefitPions_minus.at(0), PionMinus_ref);
+                    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("rho","pion", TauPlusMixed, 1.,  HadRefitPions_plus, HadRefitPionsCharge_plus, TauMinusMixed, HadRefitPions_minus.at(0), PionMinus_ref);
+}
+		    Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("rho","pion", HadRefitPions_plus, HadRefitPions_minus.at(0), PionMinus_ref);
 		  }
-		  if(minusplus && ScalcPV.isOk("rho", "pion", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus)==true){
+		  if(minusplus){
+		if(mixedTausAreOk){
 		    Acop_PV = ScalcPV.AcopAngle("rho", "pion", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-		    Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("rho","pion", HadRefitPions_minus, HadRefitPionsCharge_minus, HadRefitPions_plus.at(0), PionPlus_ref);
-		    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("rho","pion", TauMinusMixed, -1., HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus.at(0), PionPlus_ref);
+                    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("rho","pion", TauMinusMixed, -1., HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus.at(0), PionPlus_ref);
+
+}
+		    Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("rho","pion", HadRefitPions_minus, HadRefitPions_plus.at(0), PionPlus_ref);
 		  }
 		}
 		decayplaneAcopAngle.at(t).Fill(Acop_DP,Wspin);
@@ -1505,12 +1332,46 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
  		impactparameterAcopAngle.at(t).Fill(Acop_IP,Wspin);
 		DPIPAcopAngle.at(t).Fill(Acop_DPIP,Wspin);
 		PVIPAcopAngle.at(t).Fill(Acop_PVIP,Wspin);
-	      } //mixed taus
 	    } //pions
 	} //channel
 
       //PULLS
       Ref.at(t).Fill(Wspin);
+      if(mixedTausAreOk){
+	SVfitMTTdR1.at(t).Fill(Tau1MTT.DeltaR(Tau1SVFit),w);
+	SVfitMTTdR2.at(t).Fill(Tau2MTT.DeltaR(Tau2SVFit),w);
+
+        double P1svfit = (Tau1SVFit.P()-Tau1Truth.P())/Tau1Truth.P();
+        double P2svfit = (Tau2SVFit.P()-Tau2Truth.P())/Tau2Truth.P();
+        double Eta1MTT = (Tau1MTT.Eta()-Tau1Truth.Eta())/Tau1Truth.Eta();
+        double Phi1MTT = (Tau1MTT.Phi()-Tau1Truth.Phi())/Tau1Truth.Phi();
+        double Eta2MTT = (Tau2MTT.Eta()-Tau2Truth.Eta())/Tau2Truth.Eta();
+        double Phi2MTT = (Tau2MTT.Phi()-Tau2Truth.Phi())/Tau2Truth.Phi();
+        double DAcopPV = (Acop_PV-Acop_PVTruth)/Acop_PVTruth;
+	
+	PcorrEtaSVfitMTT1.at(t).Fill(P1svfit,Eta1MTT,w);
+        PcorrPhiSVfitMTT1.at(t).Fill(P1svfit,Phi1MTT,w);
+
+        PcorrEtaSVfitMTT2.at(t).Fill(P2svfit,Eta2MTT,w);
+        PcorrPhiSVfitMTT2.at(t).Fill(P2svfit,Phi2MTT,w);
+
+	dRandPcorrEta1.at(t).Fill(P1svfit,Eta1MTT,Tau1MTT.DeltaR(Tau1SVFit),w);
+        dRandPcorrPhi1.at(t).Fill(P1svfit,Phi1MTT,Tau1MTT.DeltaR(Tau1SVFit),w);
+
+        dRandPcorrEta2.at(t).Fill(P2svfit,Eta2MTT,Tau2MTT.DeltaR(Tau2SVFit),w);
+        dRandPcorrPhi2.at(t).Fill(P2svfit,Phi2MTT,Tau2MTT.DeltaR(Tau2SVFit),w);
+
+        PullAcopPV.at(t).Fill((Acop_PV-Acop_PVTruth)/Acop_PVTruth,w);
+        dR1vsAcopPV.at(t).Fill(Tau1MTT.DeltaR(Tau1SVFit),DAcopPV,w);
+        dR2vsAcopPV.at(t).Fill(Tau2MTT.DeltaR(Tau2SVFit),DAcopPV,w);
+        P1vsAcopPV.at(t).Fill(P1svfit,DAcopPV,w);
+        P2vsAcopPV.at(t).Fill(P2svfit,DAcopPV,w);
+        Phi1vsAcopPV.at(t).Fill(Phi1MTT,DAcopPV,w);
+        Eta1vsAcopPV.at(t).Fill(Eta1MTT,DAcopPV,w);
+        Phi2vsAcopPV.at(t).Fill(Phi2MTT,DAcopPV,w);
+        Eta2vsAcopPV.at(t).Fill(Eta2MTT,DAcopPV,w);
+
+      }
 
       //FastMTT
       if(Tau1MTT!=zeroLV && Tau2MTT!=zeroLV){
@@ -1588,9 +1449,27 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 	DeltaPtau1GEF.at(t).Fill(DPtau1GEF,w);
 	DeltaEtau1GEF.at(t).Fill(DEtau1GEF,w);
       }
+      if(TauPiGEF !=zeroLV && TauHGEF!=zeroLV){
+        DPhitauPiGEF = (TauPiGEF.Phi()-TauPiTruth.Phi())/TauPiTruth.Phi();
+        DEtatauPiGEF = (TauPiGEF.Eta()-TauPiTruth.Eta())/TauPiTruth.Eta();
+        DPtauPiGEF = (TauPiGEF.P()-TauPiTruth.P())/TauPiTruth.P();
+        DEtauPiGEF = (TauPiGEF.E()-TauPiTruth.E())/TauPiTruth.E();
+        DPhitauHGEF = (TauHGEF.Phi()-TauHTruth.Phi())/TauHTruth.Phi();
+        DEtatauHGEF = (TauHGEF.Eta()-TauHTruth.Eta())/TauHTruth.Eta();
+        DPtauHGEF = (TauHGEF.P()-TauHTruth.P())/TauHTruth.P();
+        DEtauHGEF = (TauHGEF.E()-TauHTruth.E())/TauHTruth.E();
+        DeltaPhitauPiGEF.at(t).Fill(DPhitauPiGEF,w);
+        DeltaEtatauPiGEF.at(t).Fill(DEtatauPiGEF,w);
+        DeltaPtauPiGEF.at(t).Fill(DPtauPiGEF,w);
+        DeltaEtauPiGEF.at(t).Fill(DEtauPiGEF,w);
+        DeltaPhitauHGEF.at(t).Fill(DPhitauHGEF,w);
+        DeltaEtatauHGEF.at(t).Fill(DEtatauHGEF,w);
+        DeltaPtauHGEF.at(t).Fill(DPtauHGEF,w);
+        DeltaEtauHGEF.at(t).Fill(DEtauHGEF,w);
+      }
     } //isnan
 } //do event
-//}
+
 //  This is a function if you want to do something after the event loop
 void HCPTauTau::Finish() {
 

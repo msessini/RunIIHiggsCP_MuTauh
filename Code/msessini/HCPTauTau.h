@@ -39,7 +39,7 @@
 class HCPTauTau : public Selection {
 
  public:
-  HCPTauTau(TString Name_, TString id_);
+  HCPTauTau(TString Name_, TString id_, char* Channel_, char* CPstate_);
   virtual ~HCPTauTau();
 
   virtual void  Configure();
@@ -65,6 +65,8 @@ class HCPTauTau : public Selection {
   virtual void doEvent();
   virtual void Store_ExtraDist();
   ReferenceScaleFactors *RSF;
+  char* Channel;
+  char* CPstate;
   int TriggerOkDummy, selVertexDummy, selMuon_IsoDummy, selMuon_AntiIsoDummy, selTauDummy, ChargeSumDummy;
   double MTDummy, MvisDummy, TauFLSigmaDummy;
 
@@ -484,8 +486,42 @@ class HCPTauTau : public Selection {
   std::vector<TH1D> DeltaPtau2GEF;
   std::vector<TH1D> DeltaEtau2GEF;
   //
+  std::vector<TH1D> DeltaPhitauPiGEF;
+  std::vector<TH1D> DeltaEtatauPiGEF;
+  std::vector<TH1D> DeltaPtauPiGEF;
+  std::vector<TH1D> DeltaEtauPiGEF;
+  std::vector<TH1D> DeltaPhitauHGEF;
+  std::vector<TH1D> DeltaEtatauHGEF;
+  std::vector<TH1D> DeltaPtauHGEF;
+  std::vector<TH1D> DeltaEtauHGEF;
+  //
   std::vector<TH1D> Fraction1;
   std::vector<TH1D> Fraction2;
+  //
+  std::vector<TH1D> SVfitMTTdR1;
+  std::vector<TH1D> SVfitMTTdR2;
+
+  std::vector<TH2D> PcorrEtaSVfitMTT1;
+  std::vector<TH2D> PcorrPhiSVfitMTT1;
+
+  std::vector<TH2D> PcorrEtaSVfitMTT2;
+  std::vector<TH2D> PcorrPhiSVfitMTT2;
+
+  std::vector<TH3D> dRandPcorrEta1;
+  std::vector<TH3D> dRandPcorrPhi1;
+
+  std::vector<TH3D> dRandPcorrEta2;
+  std::vector<TH3D> dRandPcorrPhi2;
+
+  std::vector<TH1D> PullAcopPV;
+  std::vector<TH2D> dR1vsAcopPV;
+  std::vector<TH2D> dR2vsAcopPV;
+  std::vector<TH2D> P1vsAcopPV;
+  std::vector<TH2D> P2vsAcopPV;
+  std::vector<TH2D> Phi1vsAcopPV;
+  std::vector<TH2D> Eta1vsAcopPV;
+  std::vector<TH2D> Phi2vsAcopPV;
+  std::vector<TH2D> Eta2vsAcopPV;
 
 
   /* //--------------------------------------------------------------------- */
