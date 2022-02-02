@@ -506,6 +506,16 @@ if( $ARGV[0] eq "--Local" ){
     system(sprintf("mkdir $OutputDir/workdir$set/EPS "));
     system(sprintf("ln -s $OutputDir/workdir$set/Code/InputData $OutputDir/workdir$set/InputData "));
     
+    # generate first setup script
+    system(sprintf("touch $OutputDir/workdir$set/firstsetup"));
+    system(sprintf("chmod 744 $OutputDir/workdir$set/firstsetup"));
+    system(sprintf("echo \"#! /bin/bash\" >> $OutputDir/workdir$set/firstsetup "));
+    system(sprintf("echo \"sed -i 's\ TauSpiner/ \ \g' $OutputDir/workdir$set/Code/Makefile\" >> $OutputDir/workdir$set/firstsetup "));
+    system(sprintf("echo \"cd $OutputDir/workdir$set/Code/DataFormats\" >> $OutputDir/workdir$set/firstsetup "));
+    system(sprintf("echo \"mv MyDict_rdict.pcm lib/. \" >> $OutputDir/workdir$set/firstsetup "));
+    system(sprintf("echo \"cd $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/firstsetup"));
+    system(sprintf("echo \"rm firstsetup\" >> $OutputDir/workdir$set/firstsetup"));
+
     # generate compile script 
     system(sprintf("touch $OutputDir/workdir$set/compile"));
     system(sprintf("chmod 744 $OutputDir/workdir$set/compile")); 
@@ -514,6 +524,9 @@ if( $ARGV[0] eq "--Local" ){
     system(sprintf("echo \"source config \\\$\@ \"   >> $OutputDir/workdir$set/compile "));
     system(sprintf("echo \"gmake all\" >> $OutputDir/workdir$set/compile "));
     system(sprintf("echo \"cd $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/compile"));
+    system(sprintf("echo \"if test -f 'firstsetup'; then\" >> $OutputDir/workdir$set/compile"));
+    system(sprintf("echo \"  source firstsetup\" >> $OutputDir/workdir$set/compile"));
+    system(sprintf("echo \"fi\" >> $OutputDir/workdir$set/compile"));
 
     # Generate Combine script 
     system(sprintf("echo \"#! /bin/bash\" >> $OutputDir/workdir$set/Combine")) ;
