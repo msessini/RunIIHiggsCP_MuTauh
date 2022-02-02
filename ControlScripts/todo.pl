@@ -753,9 +753,9 @@ if( $ARGV[0] eq "--Local" ){
 			system(sprintf("echo \"RunType: LOCAL\" >> $OutputDir/workdir$set/Set_$B/Input.txt"));
 			
 			# Setup QSUB scripts
-			$s1_char='\${que}';
-			$s2_char='\${output}';
-			$s3_char='\${error}';
+			$s1_char='${que}';
+			$s2_char='${output}';
+			$s3_char='${error}';
 			system(sprintf("echo \" #PBS -u $UserID\"  >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B"));
 			system(sprintf("echo \" #! /bin/bash\"  >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B"));
 			system(sprintf("echo \" export HOME=\\\"$OutputDir/workdir$set/\\\"         \"  >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B")); 
@@ -763,7 +763,7 @@ if( $ARGV[0] eq "--Local" ){
 			system(sprintf("echo \" que=\\\"$QsubQue\\\"\" >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B")); 
 			system(sprintf("echo \" output=\\\"Set_$B.qsub.o  \\\"\" >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B")); 
 			system(sprintf("echo \" error=\\\"Set_$B.qsub.e  \\\"\" >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B")); 
-			system(sprintf("echo \' qsub -q  $s1_char  -o $s2_char -e $s3_char -F \"\$1 \${2}\" Set_$B.sh\' >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B"));		
+			system(sprintf("echo \' qsub -q  $s1_char  -o $s2_char -e $s3_char -F \"\$1 \$2\" Set_$B.sh\' >> $OutputDir/workdir$set/Set_$B/Qsub_Set_$B"));		
 		    }
 		    ($a,$b,$c)=split('/',$file);
 		    $myfile=$file;
