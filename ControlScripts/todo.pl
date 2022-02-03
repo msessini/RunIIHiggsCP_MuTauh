@@ -52,6 +52,7 @@ $InputDir="/home-pbs/$UserID/InputTest";
 $OutputDir="/home-pbs/$UserID/Test";
 #$OutputDir="~/";
 $CodeDir="../Code";
+$PlotDir="../PlotTools";
 $set="ControlSample_";
 $CMSSWRel="8_0_26_patch1";
 $PileupVersion="V08-03-17";
@@ -503,6 +504,8 @@ if( $ARGV[0] eq "--Local" ){
     system(sprintf("mkdir  $OutputDir/workdir$set/Code "));
     system(sprintf("mkdir  $OutputDir/workdir$set/Code/i386_linux "));
     system(sprintf("cp -r $CodeDir/* $OutputDir/workdir$set/Code/ "));
+    system(sprintf("mkdir $OutputDir/workdir$set/PlotTools "));
+    system(sprintf("cp -r $PlotDir/* $OutputDir/workdir$set/PlotTools/ "));
     system(sprintf("mkdir $OutputDir/workdir$set/EPS "));
     system(sprintf("ln -s $OutputDir/workdir$set/Code/InputData $OutputDir/workdir$set/InputData "));
     
@@ -510,7 +513,7 @@ if( $ARGV[0] eq "--Local" ){
     system(sprintf("touch $OutputDir/workdir$set/firstsetup"));
     system(sprintf("chmod 744 $OutputDir/workdir$set/firstsetup"));
     system(sprintf("echo \"#! /bin/bash\" >> $OutputDir/workdir$set/firstsetup "));
-    system(sprintf("echo \"sed -i 's\+= TauSpiner/\+=\g' $OutputDir/workdir$set/Code/Makefile\" >> $OutputDir/workdir$set/firstsetup "));
+    system(sprintf("echo \"sed -i 's;+= TauSpiner/;+=;g' $OutputDir/workdir$set/Code/Makefile\" >> $OutputDir/workdir$set/firstsetup "));
     system(sprintf("echo \"cd $OutputDir/workdir$set/Code/DataFormats\" >> $OutputDir/workdir$set/firstsetup "));
     system(sprintf("echo \"mv MyDict_rdict.pcm lib/. \" >> $OutputDir/workdir$set/firstsetup "));
     system(sprintf("echo \"cd $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/firstsetup"));
