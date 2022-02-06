@@ -264,7 +264,7 @@ int main(int argc, char* argv[]) {
     char* CPstate = argv[2];
     Logger(Logger::Info) << "Reconstructing histograms: Loading files" << endl;
     for (unsigned int j = 0; j < selections.size(); j++) {
-      selections[j]->LoadResults(Files);
+      selections[j]->LoadResults(Files,Channel,CPstate);
     }
     Logger(Logger::Info) << "Loading Files Complete" << std::endl;
     if (runtype == Selection_Base::Local) {
@@ -275,7 +275,7 @@ int main(int argc, char* argv[]) {
 	    TString n = selections.at(j)->Get_Name();
 	    Logger(Logger::Info) << "Adding Systematic Uncertainty " << UncertType.at(i) << endl;
 	    Selection_Base *s = SF.Factory(selections.at(j)->Get_Analysis(), UncertList.at(i), Channel, CPstate, mode, runtype, Lumi);
-	    s->LoadResults(Files);
+	    s->LoadResults(Files,Channel,CPstate);
 	    selections[j]->EvaluateSystematics(s, 1.0);
 	    delete s;
 	  }

@@ -14,7 +14,8 @@ class Example : public Selection {
 
   virtual void  Configure();
   virtual void  Finish();
-
+  char* Channel;
+  char* CPstate;
   enum cuts {TriggerOk=0,PrimeVtx,NCuts};
 
  protected:

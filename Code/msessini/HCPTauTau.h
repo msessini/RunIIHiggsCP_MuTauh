@@ -275,7 +275,6 @@ class HCPTauTau : public Selection {
   std::vector<TH1D> DPIPAcopAngle;
   std::vector<TH1D> PVIPAcopAngle;
  std::vector<TH1D> polarimetricAcopAnglePVRefitWithTracksBSMVADMQCDMC_DP;
- std::vector<TH1D> Ref;
  
  std::vector<TH1D> polarimetricAcopAnglePVRefitWithTracksBSMVADMHiggsUnrolled_DP;
  std::vector<TH1D> polarimetricAcopAnglePVRefitWithTracksBSMVADMJetFakesUnrolled_DP;
@@ -512,6 +511,10 @@ class HCPTauTau : public Selection {
 
   std::vector<TH3D> dRandPcorrEta2;
   std::vector<TH3D> dRandPcorrPhi2;
+
+  std::vector<TH1D> RefX;
+  std::vector<TH1D> RefY;
+  std::vector<TH1D> RefZ;
 
   std::vector<TH1D> PullAcopPV;
   std::vector<TH2D> dR1vsAcopPV;

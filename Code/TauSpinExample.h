@@ -14,6 +14,7 @@ class TauSpinExample : public Selection {
   virtual void  Configure();
   virtual void  Finish();
   char* CPstate;
+  char* Channel;
   enum cuts {isZtautauto3pimu=0,NCuts};
 
  protected:

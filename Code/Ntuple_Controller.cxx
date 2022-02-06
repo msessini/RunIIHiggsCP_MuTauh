@@ -3263,8 +3263,6 @@ std::vector<TLorentzVector> Ntuple_Controller::GetTruthPionsFromRho(unsigned int
   output.push_back(Pi);
   output.push_back(Pi0);
   return output;
-
-
 }
 
 

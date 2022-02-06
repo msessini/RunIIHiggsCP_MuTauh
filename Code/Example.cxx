@@ -9,6 +9,8 @@
 Example::Example(TString Name_, TString id_,char* Channel_, char* CPstate_):
   Selection(Name_,id_)
 {
+Channel = Channel_;
+CPstate = CPstate_;
 }
 
 Example::~Example(){
@@ -116,7 +118,7 @@ void  Example::doEvent(){
 
 
 void  Example::Finish(){
-  Selection::Finish();
+  Selection::Finish(Channel,CPstate);
 }
 
 

@@ -258,7 +258,10 @@ void  HCPTauTau::Configure(){
   DeltaEtauHGEF=HConfig.GetTH1D(Name+"_DeltaEtauHGEF","DeltaEtauHGEF",50,-1,1,"#Delta E","Events");
 
   //REF
-  Ref=HConfig.GetTH1D(Name+"_Ref","Ref",50,0,2,"ref","Events");
+  RefX=HConfig.GetTH1D(Name+"_RefX","RefX",50,-1,1,"ref","Events");
+  RefY=HConfig.GetTH1D(Name+"_RefY","RefY",50,-1,1,"ref","Events");
+  RefZ=HConfig.GetTH1D(Name+"_RefZ","RefZ",50,-1,1,"ref","Events");
+
   SVfitMTTdR1=HConfig.GetTH1D(Name+"_SVfitMTTdR1","SVfitMTTdR1",50,0,0.06,"#Delta (R) #tau 1","a.u");
   SVfitMTTdR2=HConfig.GetTH1D(Name+"_SVfitMTTdR2","SVfitMTTdR2",50,0,0.06,"#Delta (R) #tau 2","a.u");
 
@@ -353,7 +356,10 @@ void  HCPTauTau::Store_ExtraDist(){
   Extradist1d.push_back(&DeltaPtauHGEF);
   Extradist1d.push_back(&DeltaEtauHGEF);
   //ref
-  Extradist1d.push_back(&Ref);
+  Extradist1d.push_back(&RefX);
+  Extradist1d.push_back(&RefY);
+  Extradist1d.push_back(&RefZ);
+
   Extradist1d.push_back(&SVfitMTTdR1);
   Extradist1d.push_back(&SVfitMTTdR2);
 
@@ -770,7 +776,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
         HadPionsTruth_minus.push_back(Ntp->GetTruthTauProductLV(3,211,Tauminustruth));
         HadPionsChargeTruth_minus.push_back(-1);
-        PionPlus_refTruth = Ntp->MCTauandProd_Vertex(Tauminustruth,2) - Ntp->MCTauandProd_Vertex(Tauminustruth,0);
+        PionMinus_refTruth = Ntp->MCTauandProd_Vertex(Tauminustruth,2) - Ntp->MCTauandProd_Vertex(Tauminustruth,0);
       }
       Tau1Truth = TauPlusTruth; Tau2Truth = TauMinusTruth;
       TauHTruth = TauPlusTruth; TauPiTruth = TauMinusTruth;
@@ -1034,11 +1040,11 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
     if(pionpion){
       HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
       HadRefitPionsCharge_minus.push_back(-1);
-      PionMinus_ref = Ntp->Daughters_vertex(Tauminus) - tauBSPrimaryVertex;
+      PionMinus_ref = Ntp->Daughters_pcaRefitPV(Tauminus);
 
       HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
       HadRefitPionsCharge_plus.push_back(1);
-      PionPlus_ref = Ntp->Daughters_vertex(Tauplus) - tauBSPrimaryVertex;
+      PionPlus_ref = Ntp->Daughters_pcaRefitPV(Tauplus);
     }
     if(a1a1 || rhorho || pionpion){
       Tau1MTT = TauMinusMTT; Tau2MTT = TauPlusMTT;
@@ -1085,7 +1091,8 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
 	HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
 	HadRefitPionsCharge_minus.push_back(-1);
-        PionMinus_ref = Ntp->Daughters_vertex(Tauminus) - tauBSPrimaryVertex;
+        PionMinus_ref = Ntp->Daughters_pcaRefitPV(Tauminus);
+        
       }
       if(rhopion){
 	HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
@@ -1095,7 +1102,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
 	HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
 	HadRefitPionsCharge_minus.push_back(-1);
- 	PionMinus_ref = Ntp->Daughters_vertex(Tauminus) - tauBSPrimaryVertex;
+	PionMinus_ref = Ntp->Daughters_pcaRefitPV(Tauminus);
       }
       Tau1MTT = TauPlusMTT; Tau2MTT = TauMinusMTT;
       Tau1SVFit = TauPlusSVFit; Tau2SVFit = TauMinusSVFit;
@@ -1141,7 +1148,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
 	HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
 	HadRefitPionsCharge_plus.push_back(1);
- 	PionPlus_ref = Ntp->Daughters_vertex(Tauplus) - tauBSPrimaryVertex;
+ 	PionPlus_ref = Ntp->Daughters_pcaRefitPV(Tauplus);
       }
       if(rhopion){
 	HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
@@ -1151,7 +1158,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
 	HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
 	HadRefitPionsCharge_plus.push_back(1);
-        PionPlus_ref = Ntp->Daughters_vertex(Tauplus) - tauBSPrimaryVertex;
+	PionPlus_ref = Ntp->Daughters_pcaRefitPV(Tauplus);
       }
       Tau1MTT = TauMinusMTT; Tau2MTT = TauPlusMTT;
       Tau1SVFit = TauMinusSVFit; Tau2SVFit = TauPlusSVFit;
@@ -1335,7 +1342,10 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 	} //channel
 
       //PULLS
-      Ref.at(t).Fill(Wspin);
+      RefX.at(t).Fill((PionMinus_ref.X()-PionMinus_refTruth.X())/PionMinus_refTruth.X());
+      RefY.at(t).Fill((PionMinus_ref.X()-PionMinus_refTruth.Y())/PionMinus_refTruth.Y());
+      RefZ.at(t).Fill((PionMinus_ref.X()-PionMinus_refTruth.Z())/PionMinus_refTruth.Z());
+
       if(mixedTausAreOk){
 	SVfitMTTdR1.at(t).Fill(Tau1MTT.DeltaR(Tau1SVFit),w);
 	SVfitMTTdR2.at(t).Fill(Tau2MTT.DeltaR(Tau2SVFit),w);
@@ -1488,5 +1498,5 @@ void HCPTauTau::Finish() {
       }
     }
   }
-  Selection::Finish();
+  Selection::Finish(Channel,CPstate);
 }

@@ -14,8 +14,8 @@ class Selection : public Selection_Base {
   Selection(TString Name_, TString id_);
   virtual ~Selection();
 
-  virtual void  Finish();
-  virtual void  LoadResults(std::vector<TString> files);
+  virtual void  Finish(char* Channel, char* CPstate);
+  virtual void  LoadResults(std::vector<TString> files, char* Channel, char* CPstate);
 
   virtual bool Passed();
   virtual bool NMinusL(int a, int b=-1, int c=-1, int d=-1, int e=-1);

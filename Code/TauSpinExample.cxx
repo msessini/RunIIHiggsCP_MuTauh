@@ -16,6 +16,7 @@ TauSpinExample::TauSpinExample(TString Name_, TString id_,char* Channel_,char* C
   zsmax(0.5)
 {
   CPstate = CPstate_;
+  Channel = Channel_;
   //  verbose=true;
 }
 
@@ -568,7 +569,7 @@ void  TauSpinExample::Finish(){
     pi_ExoverEtau_hminus.at(tdata).SetBinContent(i,fpi_ExoverEtau_hminus.Integral(min,max));
     pi_ExoverEtau_hminus.at(tdata).SetBinError(i,0.00001);
   }
-  Selection::Finish();
+  Selection::Finish(Channel, CPstate);
 }
 
 

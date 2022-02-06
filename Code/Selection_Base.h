@@ -21,7 +21,7 @@ class Selection_Base {
 
   virtual void  Configure()=0;
   virtual void  Finish()=0;
-  virtual void  LoadResults(std::vector<TString> files)=0;
+  virtual void  LoadResults(std::vector<TString> files, char* Channel, char* CPstate)=0;
   virtual bool Passed()=0;
 
   virtual TString Get_Analysis(){return Analysis;}

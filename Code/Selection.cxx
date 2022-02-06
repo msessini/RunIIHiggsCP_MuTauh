@@ -49,12 +49,13 @@ void Selection::ConfigureHistograms() {
 	}
 }
 
-void Selection::LoadResults(std::vector<TString> files) {
+void Selection::LoadResults(std::vector<TString> files, char* Channel, char* CPstate) {
 	if (!isStored) {
 		ConfigureHistograms();
 	}
 	for (unsigned int f = 0; f < files.size(); f++) {
 		TString file = files.at(f);
+                cout<<file<<endl;
 		if (!file.Contains(".root")) {
 			vector<TString> filelist;
 			string dir = file.Data();
@@ -68,13 +69,14 @@ void Selection::LoadResults(std::vector<TString> files) {
 				}
 				closedir(dp);
 			}
-			TString ID = Get_Name() + ".root";
+			TString ID = Get_Name() + "_" + string(Channel) + "_" + string(CPstate) +".root";
 			for (unsigned int i = 0; i < filelist.size(); i++) {
 				if (filelist.at(i).Contains(ID)) {
 					file += filelist.at(i);
 					break;
 				}
 			}
+		cout<<file<<endl;
 		}
 		if (file.Contains("root")) {
 			TFile *f = TFile::Open(file, "READ");
@@ -193,7 +195,7 @@ bool Selection::AnalysisCuts(int t, double w, double wobjs) {
 	return false;
 }
 
-void Selection::Finish() {
+void Selection::Finish(char* Channel, char* CPstate) {
 	if (Npassed.size() != Npassed_noweight.size()) {
 		Logger(Logger::Error) << "Histograms not Configured. Please fix your code!!!! Running Selection::ConfigureHistograms()" << std::endl;
 		Selection::ConfigureHistograms();
@@ -211,7 +213,9 @@ void Selection::Finish() {
 		fName += "COMBINED_";
 	if (mode == ANALYSIS)
 		fName += "ANALYSIS_";
-	fName += Name;
+	fName += Name+"_";
+        fName += string(Channel)+"_";
+        fName += string(CPstate);
 
 	Save(fName);      // Save file with unweighted events - required for combining code
 

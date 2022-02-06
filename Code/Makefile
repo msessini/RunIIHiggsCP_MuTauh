@@ -67,7 +67,7 @@ CINTTARGETS =
 
 # now include conditional options set by flags in make.inc
 ifdef USE_TauSpinner
-	SUBDIRS += TauSpiner/  CommonUtils/TauPolSoftware/TauDecaysInterface/
+	SUBDIRS +=  CommonUtils/TauPolSoftware/TauDecaysInterface/
 	SHAREDLIBFLAGS +=	-L./TauSpiner/lhapdf/lib -lLHAPDF \
 				-L./TauSpiner/TAUOLA/lib -lTauolaCxxInterface -lTauolaFortran -lTauolaTauSpinner \
 				-L./TauSpiner/hepmc/install/lib -lHepMC
