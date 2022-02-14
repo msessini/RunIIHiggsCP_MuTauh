@@ -1,13 +1,15 @@
 from histograms import hist_dict, create_title
 from legend import config_legend
 from saver import create_dir, save
+from Ymaxfinder import findYmax
 from ROOT import THStack, TCanvas, TLegend
 
-def plot(file,CPstate,channel,process,output,genlevel):
+def plot(file,CPstate,channel,process,year,output,genlevel):
     legend = TLegend(0.2, 0.7, 0.6, 0.9)
-    config_legend(legend,CPstate,genlevel)
+    config_legend(legend,CPstate,genlevel,year)
     canvas = TCanvas()
     canvas.SetGrid()
+    Ymax = findYmax(file,channel,process,genlevel)
     stack = THStack()
     for i, hist in enumerate(hist_dict(file,channel,process,genlevel)):
         print(hist)
@@ -18,7 +20,7 @@ def plot(file,CPstate,channel,process,output,genlevel):
         hist['TH1'].SetMarkerSize(hist['style']['width'])
         if(hist['TH1'].Integral()>0):
           hist['TH1'].Scale(1/hist['TH1'].Integral())
-        hist['TH1'].GetYaxis().SetRangeUser(0,1)
+        hist['TH1'].GetYaxis().SetRangeUser(0,Ymax)
         hist['TF1'].SetLineStyle(hist['fit']['style'])
         hist['TF1'].SetLineColor(hist['fit']['color'])
         hist['TF1'].SetLineWidth(hist['fit']['width'])

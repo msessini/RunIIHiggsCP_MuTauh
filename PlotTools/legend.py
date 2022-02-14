@@ -1,8 +1,8 @@
-def config_legend(legend,CPstate,genlevel):
+def config_legend(legend,CPstate,genlevel,year):
     if(genlevel):
-        legend.SetHeader('CP ' + CPstate + ', gen. level','C')
+        legend.SetHeader('CP ' + CPstate + ', gen. level, ' + year,'C')
     else:
-        legend.SetHeader('CP ' + CPstate + ', reco. level','C')
+        legend.SetHeader('CP ' + CPstate + ', reco. level, '+ year,'C')
     legend.SetBorderSize(1)
     legend.SetLineColor(1)
     legend.SetTextSize(0.03)

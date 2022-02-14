@@ -532,6 +532,8 @@ if( $ARGV[0] eq "--Local" ){
     system(sprintf("echo \"fi\" >> $OutputDir/workdir$set/compile"));
 
     # Generate Combine script 
+    system(sprintf("touch $OutputDir/workdir$set/Combine"));
+    system(sprintf("chmod 744 $OutputDir/workdir$set/Combine"));
     system(sprintf("echo \"#! /bin/bash\" >> $OutputDir/workdir$set/Combine")) ;
     system(sprintf("echo \"export workdir=\\\"$OutputDir/workdir$set/\\\"\" >> $OutputDir/workdir$set/Combine"));
     system(sprintf("echo \"cd $OutputDir/workdir$set/Code/; source config \" >> $OutputDir/workdir$set/Combine"));

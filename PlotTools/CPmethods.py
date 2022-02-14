@@ -27,4 +27,10 @@ def build_methods(channel,genlevel=False):
         methods = all_methods[:3:2]
     if channel == 'pirho':
         methods = all_methods[:1]+all_methods[4:]
+    if channel == 'a1mu':
+        methods = all_methods[4:]
+    if channel == 'rhomu':
+        methods = all_methods[4:]
+    if channel == 'pimu':
+        methods = all_methods[0]
     return methods

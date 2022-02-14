@@ -14,7 +14,10 @@ ch_translator = {
     "pipi": r'\pi + \pi',
     "a1rho": r'a_{1} + \rho',
     "a1pi": r'a_{1} + \pi',
-    "pirho": r'\pi + \rho'
+    "pirho": r'\pi + \rho',
+    "a1mu": r'\a_{1} + \mu',
+    "rhomu": r'\rho + \mu',
+    "pimu": r'\pi + \mu'
 }
 
 def create_names(channel,process,genlevel=False):

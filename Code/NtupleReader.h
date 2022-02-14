@@ -312,7 +312,7 @@ class NtupleReader {
   vector<double>  *Muon_B;
   vector<double>  *Muon_M;
   vector<vector<double> > *Muon_par;
-  //  vector<vector<double> > *Muon_cov;
+  vector<vector<double> > *Muon_cov;
   std::vector<std::vector<double> > *PFTau_Track_par; 
   std::vector<std::vector<double> > *PFTau_Track_cov; 
   std::vector<int>  *PFTau_Track_charge; 
@@ -356,6 +356,11 @@ class NtupleReader {
   vector<int>     *PFTau_a1_pdgid;
   vector<double>  *PFTau_a1_B;
   vector<double>  *PFTau_a1_M;
+  //Muon Ref
+  vector<float> *Ref_x;
+  vector<float> *Ref_y;
+  vector<float> *Ref_z;
+  //
   std::vector<float> *PFTauTrack_deltaR;
   std::vector<std::vector<double > > *PFTauLeadTrackLV;
   //Int_t           JetsNumber;
@@ -677,6 +682,9 @@ class NtupleReader {
 
   std::vector<Int_t> *tau1IndexVect;
   std::vector<Int_t> *tau2IndexVect;
+  //For mutau channel only
+  Int_t MuIndex;
+  Int_t TauIndex;
 
 
   // List of branches
@@ -961,7 +969,7 @@ class NtupleReader {
   TBranch        *b_Muon_B;   //!
   TBranch        *b_Muon_M;   //!
   TBranch        *b_Muon_par;   //!
-  //  TBranch        *b_Muon_cov;   //!
+  TBranch        *b_Muon_cov;   //!
   TBranch        *b_PFTau_Track_par; 
   TBranch        *b_PFTau_Track_cov; 
   TBranch        *b_PFTau_Track_charge;
@@ -1006,6 +1014,11 @@ class NtupleReader {
   TBranch        *b_PFTau_a1_pdgid;   //!
   TBranch        *b_PFTau_a1_B;   //!
   TBranch        *b_PFTau_a1_M;   //!
+  //Muon ref
+  TBranch	 *b_Ref_x;
+  TBranch        *b_Ref_y;
+  TBranch        *b_Ref_z;
+  //
   TBranch        *b_PFTauTrack_deltaR;
   TBranch        *b_PFTauLeadTrackLV;
   //TBranch        *b_JetsNumber;   //!
@@ -1339,6 +1352,8 @@ class NtupleReader {
 
   TBranch   *b_tau1IndexVect;
   TBranch   *b_tau2IndexVect;
+  TBranch   *b_MuIndex;
+  TBranch   *b_TauIndex;
 
   NtupleReader(TTree *tree=0);
   virtual ~NtupleReader();
@@ -1655,7 +1670,7 @@ void NtupleReader::Init(TTree *tree)
   Muon_B = 0;
   Muon_M = 0;
   Muon_par = 0;
-  //  Muon_cov = 0;
+  Muon_cov = 0;
   PFTau_Track_par = 0; 
   PFTau_Track_cov = 0; 
   PFTau_Track_charge = 0; 
@@ -1701,6 +1716,11 @@ void NtupleReader::Init(TTree *tree)
   PFTau_a1_pdgid = 0;
   PFTau_a1_B = 0;
   PFTau_a1_M = 0;
+  //Muon ref
+  Ref_x = 0;
+  Ref_y = 0;
+  Ref_z = 0;
+  //
   PFTauLeadTrackLV = 0;
   PFTauTrack_deltaR = 0;
   //JetsNumber = 0;
@@ -1988,6 +2008,8 @@ void NtupleReader::Init(TTree *tree)
 
   tau1IndexVect=0;
   tau2IndexVect=0;
+  MuIndex=0;
+  TauIndex=0;
    
   // Set branch addresses and branch pointers
   if (!tree) return;
@@ -2275,7 +2297,7 @@ void NtupleReader::Init(TTree *tree)
   fChain->SetBranchAddress("Muon_B", &Muon_B, &b_Muon_B);
   fChain->SetBranchAddress("Muon_M", &Muon_M, &b_Muon_M);
   fChain->SetBranchAddress("Muon_par", &Muon_par, &b_Muon_par);
-  //  fChain->SetBranchAddress("Muon_cov", &Muon_cov, &b_Muon_cov);
+  fChain->SetBranchAddress("Muon_cov", &Muon_cov, &b_Muon_cov);
   fChain->SetBranchAddress("PFTau_Track_par", &PFTau_Track_par, &b_PFTau_Track_par); 
   fChain->SetBranchAddress("PFTau_Track_cov", &PFTau_Track_cov, &b_PFTau_Track_cov); 
   fChain->SetBranchAddress("PFTau_Track_charge", &PFTau_Track_charge, &b_PFTau_Track_charge); 
@@ -2321,6 +2343,11 @@ void NtupleReader::Init(TTree *tree)
   fChain->SetBranchAddress("PFTau_a1_pdgid", &PFTau_a1_pdgid, &b_PFTau_a1_pdgid);
   fChain->SetBranchAddress("PFTau_a1_B", &PFTau_a1_B, &b_PFTau_a1_B);
   fChain->SetBranchAddress("PFTau_a1_M", &PFTau_a1_M, &b_PFTau_a1_M);
+  //Muon ref
+  fChain->SetBranchAddress("Ref_x", &Ref_x, &b_Ref_x);
+  fChain->SetBranchAddress("Ref_y", &Ref_y, &b_Ref_y);
+  fChain->SetBranchAddress("Ref_z", &Ref_z, &b_Ref_z);
+  //
   fChain->SetBranchAddress("PFTauTrack_deltaR", &PFTauTrack_deltaR, &b_PFTauTrack_deltaR);
   fChain->SetBranchAddress("PFTauLeadTrackLV", &PFTauLeadTrackLV, &b_PFTauLeadTrackLV);
   fChain->SetBranchAddress("jets_VBFleadFilterMatch", &jets_VBFleadFilterMatch, &b_jets_VBFleadFilterMatch);
@@ -2693,6 +2720,8 @@ void NtupleReader::Init(TTree *tree)
 
   fChain->SetBranchAddress("tau1IndexVect",&tau1IndexVect,&b_tau1IndexVect);
   fChain->SetBranchAddress("tau2IndexVect",&tau2IndexVect,&b_tau2IndexVect);
+  fChain->SetBranchAddress("TauIndex",&TauIndex,&b_TauIndex);
+  fChain->SetBranchAddress("MuIndex",&MuIndex,&b_MuIndex);
   
   Notify();
 }
