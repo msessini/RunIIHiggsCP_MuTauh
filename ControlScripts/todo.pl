@@ -556,8 +556,8 @@ if( $ARGV[0] eq "--Local" ){
     system(sprintf("cd $OutputDir/workdir$set/; ./subs '{DIR}'  $RemoteScrathDir$UserID/  $OutputDir/workdir$set/set_env; "));
   
     # Generate runAnalysis script
-    system(sprintf("touch $OutputDir/runAnalysis");
-    system(sprintf("chmod 744 $OutputDir/runAnalysis");
+    system(sprintf("touch $OutputDir/runAnalysis"));
+    system(sprintf("chmod 744 $OutputDir/runAnalysis"));
     system(sprintf("echo \"#!/bin/bash\" >> $OutputDir/runAnalysis"));
     system(sprintf("echo \"date\" >> $OutputDir/runAnalysis"));
     system(sprintf("echo \'source Submit \"\${1}\" Even\' >> $OutputDir/runAnalysis"));
