@@ -1,5 +1,5 @@
-#ifndef HCPTauTau_h
-#define HCPTauTau_h
+#ifndef HCPMuTau_h
+#define HCPMuTau_h
 
 #include "Selection.h"
 #include <vector>
@@ -36,11 +36,11 @@
 #include "RooFunctor.h"
 #include <memory>
 
-class HCPTauTau : public Selection {
+class HCPMuTau : public Selection {
 
  public:
-  HCPTauTau(TString Name_, TString id_, char* Channel_, char* CPstate_);
-  virtual ~HCPTauTau();
+  HCPMuTau(TString Name_, TString id_, char* Channel_, char* CPstate_);
+  virtual ~HCPMuTau();
 
   virtual void  Configure();
   virtual void  Finish();

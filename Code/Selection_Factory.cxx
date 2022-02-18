@@ -43,6 +43,7 @@
 #ifdef USE_msessini
 
 #include "msessini/HCPTauTau.h"
+#include "msessini/HCPMuTau.h"
 
 #endif
 
@@ -100,6 +101,8 @@ Selection_Base* Selection_Factory::Factory(TString Analysis, TString UncertType,
 #ifdef USE_msessini
 
   else if(Analysis.Contains("hcptautau"))s=new HCPTauTau(Analysis,UncertType,Channel,CPstate);
+  else if(Analysis.Contains("hcpmutau"))s=new HCPMuTau(Analysis,UncertType,Channel,CPstate);
+
 
 #endif
 

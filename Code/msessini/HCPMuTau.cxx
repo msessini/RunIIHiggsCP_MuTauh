@@ -1,4 +1,4 @@
-#include "HCPTauTau.h"
+#include "HCPMuTau.h"
 #include "TLorentzVector.h"
 #include "Math/Vector4D.h"
 #include "Math/Vector3D.h"
@@ -34,7 +34,7 @@
 #include "TauPolSoftware/TauDecaysInterface/interface/SCalculator.h"
 #include <algorithm>
 
-HCPTauTau::HCPTauTau(TString Name_, TString id_, char* Channel_, char* CPstate_):
+HCPMuTau::HCPTauTau(TString Name_, TString id_, char* Channel_, char* CPstate_):
   Selection(Name_,id_)
   //DataMC_Corr(true,true,false),
   //tauTrgSF("tight")
@@ -56,7 +56,7 @@ HCPTauTau::HCPTauTau(TString Name_, TString id_, char* Channel_, char* CPstate_)
   BDT->PreAnalysis();
 }
 
-HCPTauTau::~HCPTauTau(){
+HCPMuTau::~HCPTauTau(){
   for(unsigned int j=0; j<Npassed.size(); j++){
     Logger(Logger::Info) << "Selection Summary before: "
 			 << Npassed.at(j).GetBinContent(1)     << " +/- " << Npassed.at(j).GetBinError(1)     << " after: "
@@ -68,7 +68,7 @@ HCPTauTau::~HCPTauTau(){
   delete wFF2018;
 }
 
-void  HCPTauTau::Configure(){
+void  HCPMuTau::Configure(){
   // Setup Cut Values
   for(int i=0; i<NCuts;i++){
     cut.push_back(0);
@@ -295,7 +295,7 @@ void  HCPTauTau::Configure(){
 
 }
 
-void  HCPTauTau::Store_ExtraDist(){
+void  HCPMuTau::Store_ExtraDist(){
 
   Extradist1d.push_back(&polarimetricAcopAngle);
   Extradist1d.push_back(&polarimetricGEFAcopAngle);
@@ -389,7 +389,7 @@ void  HCPTauTau::Store_ExtraDist(){
   Extradist1d.push_back(&Fraction2);
 }
 
-void  HCPTauTau::doEvent()  { //  Method called on every event
+void  HCPMuTau::doEvent()  { //  Method called on every event
 
   unsigned int t;                // sample type, you may manage in your further analysis, if needed
   int id(Ntp->GetMCID());  //read event ID of a sample
@@ -405,7 +405,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   int TauMu= -1;
   int TauHad= -1;
   bool GenMatchSelection=false;
-  
   
   TauMu = Ntp->MuIndex();
   TauHad = Ntp->TauIndex();
@@ -431,7 +430,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   double wTrgSF1=1.,wTrgSF2=1.;
 
   if(!Ntp->isData() && id!=DataMCType::QCD && !isEmbed) w*=Ntp->PUReweight();
-
   string TES="Nom";
   if((!Ntp->isData() && id!=DataMCType::QCD) || isEmbed) {
 
@@ -502,7 +500,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   float PUPPImetCorr_py=Ntp->PUPPImet()*sin(Ntp->PUPPImetphi());
 
 
-
   if((!Ntp->isData() && id!=DataMCType::QCD) || isEmbed){
 
     if (isEmbed && Ntp->MC_weight()>10000.)w*=Ntp->MC_weight()*0.000000001; //problem with 2016
@@ -537,7 +534,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
 
   if(!Ntp->isData() && !isEmbed && (Ntp->year()==2016||Ntp->year()==2017))w*=Ntp->prefiringweight();
-
   //std::vector<unsigned int> exclude_cuts;
   //exclude_cuts.push_back(TausIsolation);
   classic_svFit::LorentzVector tau1P4;
@@ -631,11 +627,15 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   TLorentzVector TauMuSVFit, TauHadSVFit;
   TLorentzVector TauMuMTT, TauHadMTT;
   TLorentzVector TauMuMixed, TauHadMixed;
+  TLorentzVector TauPlusMixed, TauMinusMixed;
   TLorentzVector TauHGEF, TauMuGEF;
   TLorentzVector TauMuTruth, TauHadTruth;
+  TLorentzVector TauMinusTruth, TauPlusTruth;
   TLorentzVector MuonP4Truth;
   unsigned int Taumutruth=0;
   unsigned int Tauhadtruth=0;
+  unsigned int Tauminustruth=0;
+  unsigned int Tauplustruth=0;
   string CHANNEL = string(Channel);
   //
   bool a1 = false;
@@ -659,7 +659,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   //
   bool recoPionsAreOk = false, genPionsAreOk = false;
   bool recoTausAreOk = false, GEFTausAreOk = false, mixedTausAreOk = false, genTausAreOk = false;
-
   //GENERATED LEVEL
   if(Ntp->MCTau_JAK(0) == 2){
     TauMuTruth = Ntp->MCTau_p4(0);
@@ -678,9 +677,17 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
   if(Ntp->MCTau_charge(Tauhadtruth)<0){
     minushadtruth = true;
+    Tauminustruth = Tauhadtruth;
+    Tauplustruth = Taumutruth;
+    TauMinusTruth = TauHadTruth;
+    TauPlusTruth = TauMuTruth;
   }
   if(Ntp->MCTau_charge(Tauhadtruth)>0){
     plushadtruth = true;
+    Tauplustruth = Tauhadtruth;
+    Tauminustruth = Taumutruth;
+    TauPlusTruth = TauHadTruth;
+    TauMinusTruth = TauMuTruth;
   }
   //3 prongs decay
   if(Ntp->MCTau_JAK(Tauhadtruth) == 5) a1truth=true;
@@ -692,43 +699,62 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   if(a1truth && mutruth && CHANNEL == "A1MU") a1mutruth=true;
   if(rhotruth && mutruth && CHANNEL == "RHOMU") rhomutruth=true;
   if(piontruth && mutruth && CHANNEL == "PIONMU") pionmutruth=true;
-
   if(a1mutruth || rhomutruth || pionmutruth) channeltruth = true;
      if(channeltruth){
-       Muon_refTruth = Ntp->MCTauandProd_Vertex(Taumutruth,2) - Ntp->MCTauandProd_Vertex(Taumutruth,0);
-       MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Taumutruth);
        if(a1mutruth){
-	 HadPionsTruth = Ntp->GetTruthPionsFromA1(Tauhadtruth);
 	 if(minushadtruth){
+           HadPionsTruth = Ntp->GetTruthPionsFromA1(Tauminustruth);
 	   HadPionsChargeTruth.push_back(1);
 	   HadPionsChargeTruth.push_back(-1);
 	   HadPionsChargeTruth.push_back(-1);
+
+           Muon_refTruth = Ntp->MCTauandProd_Vertex(Tauplustruth,2) - Ntp->MCTauandProd_Vertex(Tauplustruth,0);
+           MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Tauplustruth);
 	 }
 	 if(plushadtruth){
+	   HadPionsTruth = Ntp->GetTruthPionsFromA1(Tauminustruth);
 	   HadPionsChargeTruth.push_back(-1);
 	   HadPionsChargeTruth.push_back(1);
 	   HadPionsChargeTruth.push_back(1);
+
+           Muon_refTruth = Ntp->MCTauandProd_Vertex(Tauminustruth,2) - Ntp->MCTauandProd_Vertex(Tauminustruth,0);
+           MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Tauminustruth);
 	 }
        }
        if(rhomutruth){
-	 HadPionsTruth = Ntp->GetTruthPionsFromRho(Tauhadtruth);
 	 if(minushadtruth){
+	   HadPionsTruth = Ntp->GetTruthPionsFromRho(Tauminustruth);
 	   HadPionsChargeTruth.push_back(-1);
 	   HadPionsChargeTruth.push_back(0);
+
+           Muon_refTruth = Ntp->MCTauandProd_Vertex(Tauplustruth,2) - Ntp->MCTauandProd_Vertex(Tauplustruth,0);
+           MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Tauplustruth);
 	 }
 	 if(plushadtruth){
+	   HadPionsTruth = Ntp->GetTruthPionsFromRho(Tauplustruth);
 	   HadPionsChargeTruth.push_back(1);
 	   HadPionsChargeTruth.push_back(0);
+
+           Muon_refTruth = Ntp->MCTauandProd_Vertex(Tauminustruth,2) - Ntp->MCTauandProd_Vertex(Tauminustruth,0);
+           MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Tauminustruth);
 	 }
        }
        if(pionmutruth){
-	 HadPionsTruth.push_back(Ntp->GetTruthTauProductLV(3,211,Tauhadtruth));
-	 Pion_refTruth = Ntp->MCTauandProd_Vertex(Tauhadtruth,2) - Ntp->MCTauandProd_Vertex(Tauhadtruth,0);
 	 if(minushadtruth){
 	   HadPionsChargeTruth.push_back(-1);
+           HadPionsTruth.push_back(Ntp->GetTruthTauProductLV(3,211,Tauminustruth));
+           Pion_refTruth = Ntp->MCTauandProd_Vertex(Tauminustruth,2) - Ntp->MCTauandProd_Vertex(Tauminustruth,0);
+
+           Muon_refTruth = Ntp->MCTauandProd_Vertex(Tauplustruth,2) - Ntp->MCTauandProd_Vertex(Tauplustruth,0);
+           MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Tauplustruth);
 	 }
 	 if(plushadtruth){
 	   HadPionsChargeTruth.push_back(1);
+           HadPionsTruth.push_back(Ntp->GetTruthTauProductLV(3,211,Tauplustruth));
+           Pion_refTruth = Ntp->MCTauandProd_Vertex(Tauplustruth,2) - Ntp->MCTauandProd_Vertex(Tauplustruth,0);
+
+           Muon_refTruth = Ntp->MCTauandProd_Vertex(Tauminustruth,2) - Ntp->MCTauandProd_Vertex(Tauminustruth,0);
+           MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Tauminustruth);
 	 }
        }
      }
@@ -743,7 +769,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
          plushad = true;
 	 charge = true;
        }
-
      if(Ntp->MVADM2017(TauHad) == 10 && Ntp->PFTau_hassecondaryVertex(TauHad) && Ntp->PFtauHasThreePions(TauHad)) a1=true;
      if(Ntp->MVADM2017(TauHad) == 1) rho=true;
      if(Ntp->MVADM2017(TauHad) == 0) pion=true;
@@ -753,7 +778,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
      if(pion && CHANNEL == "PIONMU") pionmu=true;
 
      if((a1mu || rhomu || pionmu) && charge) channel = true;
-
      if(channel){
 
        TMatrixD metcov(2,2);
@@ -824,7 +848,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 	 }
        }
        }
-    
        float m_sv_;
        float met_;
        float p_tt_;
@@ -886,7 +909,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
        boost::hash_combine(hash, Ntp->LeptonHash(TauHad));
        hashes.push_back(hash);
 
-       Muon_ref = Ntp->MuonTrack_SV(TauMu) - tauBSPrimaryVertex;
+       Muon_ref = Ntp->Daughters_pcaRefitPV(TauMu);
 
        if(a1mu){
 	 //GEF
@@ -935,7 +958,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
        }
      }
 
-if((HadPionsTruth!=VectZeroLV) && (HadPionsTruth!=VectZeroLV)) genPionsAreOk = true;
+if(HadPionsTruth!=VectZeroLV) genPionsAreOk = true;
 if((TauMuTruth != TauHadTruth) && (TauHadTruth != zeroLV) && (TauMuTruth != zeroLV)) genTausAreOk = true;
    
 if (std::isnan(Wspin)!=true && GenMatchSelection)
@@ -946,10 +969,18 @@ if (std::isnan(Wspin)!=true && GenMatchSelection)
 	if(genPionsAreOk)
 	  {
 	    if(a1mutruth){
+	     if(minushadtruth){
 	      if(genTausAreOk){
- 	        Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","muon", TauHadTruth, 1., HadPionsTruth, HadPionsChargeTruth, TauMuTruth, MuonP4Truth, Muon_refTruth);
-	      }
+ 	          Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","muon", TauMinusTruth, -1., HadPionsTruth, HadPionsChargeTruth, TauPlusTruth, MuonP4Truth, Muon_refTruth);
+              }
 	      Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("a1","muon", HadPionsTruth, MuonP4Truth, Muon_refTruth);
+	     }
+             if(plushadtruth){
+              if(genTausAreOk){
+                  //Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","muon", TauPlusTruth, 1., HadPionsTruth, HadPionsChargeTruth, TauMinusTruth, MuonP4Truth, Muon_refTruth);
+              }
+              Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("a1","muon", HadPionsTruth, MuonP4Truth, Muon_refTruth);
+             }
 	    }
 	    if(rhomutruth){
 	      if(genTausAreOk){
@@ -979,12 +1010,52 @@ if (std::isnan(Wspin)!=true && GenMatchSelection)
 	  {
 	    if(a1mu){
 	      if(GEFTausAreOk){
-		if(minushad){
+		/*if(minushad){
                   Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","muon", TauHGEF, -1., HadRefitPions, HadRefitPionsCharge, TauMuGEF, TauMuVis, Muon_ref);
                 }
                 if(plushad){
                   Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","muon", TauHGEF, 1., HadRefitPions, HadRefitPionsCharge, TauMuGEF, TauMuVis, Muon_ref);
+                }*/
+		TLorentzVector ZMF = TauHGEF + TauMuVis;
+                TVector3 boost = -ZMF.BoostVector();
+
+                vector<TLorentzVector> tauandprod;
+		tauandprod.push_back(TauHGEF);
+		for(unsigned int i = 0; i<HadRefitPions.size(); i++){
+		  tauandprod.push_back(HadRefitPions.at(i));
+		}
+
+		SCalculator S1("a1");
+                if(minushad){
+		  S1.Configure(tauandprod,ZMF,-1);
                 }
+                if(plushad){
+		  S1.Configure(tauandprod,ZMF,+1);
+		}
+                //VECTEUR POLA
+                TVector3 h = S1.pv();
+                TauHGEF.Boost(boost);
+                h*=1./h.Mag();
+                TVector3 n = TauHGEF.Vect().Unit();
+                TVector3 k = (h.Cross(n)).Unit();
+                //IMPACT PARAMETER
+                TLorentzVector Muon_tlv = TauMuVis;
+                //TVector3 Muon_ref = Ntp->Muon_TrackRef(MuIndex) - tauBSPrimaryVertex;
+                TVector3 Muon_dir = Muon_tlv.Vect();
+                double proj = Muon_ref*Muon_dir/Muon_dir.Mag2();
+                TVector3 Muon_IP = Muon_ref-Muon_dir*proj;
+                TLorentzVector eta(Muon_IP,0);
+                eta.Boost(boost);
+                TVector3 etaVec = eta.Vect().Unit();
+                Muon_tlv.Boost(boost);
+                TVector3 MuVec = Muon_tlv.Vect().Unit();
+                TVector3 etaVecTrans = (etaVec - MuVec*(MuVec*etaVec)).Unit();
+                Acop_PVIP = TMath::ATan2((k.Cross(etaVecTrans)).Mag(),k*etaVecTrans);
+                double sign_PV = (k.Cross(etaVecTrans))*n;
+                if (sign_PV>0) Acop_PVIP = 2.0*TMath::Pi() - Acop_PVIP;
+                  Acop_PVIP = Acop_PVIP - 0.5*TMath::Pi();
+                if (Acop_PVIP<0) Acop_PVIP = Acop_PVIP + 2*TMath::Pi();
+		
 	      }
 	      /*if(mixedTausAreOk){
                 if(minushad){
@@ -1162,7 +1233,7 @@ if (std::isnan(Wspin)!=true && GenMatchSelection)
 } //do event
 
 //  This is a function if you want to do something after the event loop
-void HCPTauTau::Finish() {
+void HCPMuTau::Finish() {
 
   if(mode == RECONSTRUCT) {
     SkimConfig SC;

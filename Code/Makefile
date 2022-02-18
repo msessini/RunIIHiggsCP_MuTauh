@@ -116,7 +116,7 @@ ifdef USE_cgrimault
 endif
 
 ifdef USE_msessini
-	TARGETS += HCPTauTau
+	TARGETS += HCPTauTau HCPMuTau
 	DEFS += -DUSE_msessini=1
 endif
 
