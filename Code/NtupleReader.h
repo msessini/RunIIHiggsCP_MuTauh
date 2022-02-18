@@ -347,6 +347,10 @@ class NtupleReader {
   vector<float>   *daughters_pcaGenPV_x;
   vector<float>   *daughters_pcaGenPV_y;
   vector<float>   *daughters_pcaGenPV_z;
+  vector<vector<float>> *daughters_pcaRefitPVBS_x;
+  vector<vector<float>> *daughters_pcaRefitPVBS_y;
+  vector<vector<float>> *daughters_pcaRefitPVBS_z;
+  vector<vector<vector<double>>> *RefitPVBS_Cov;
   vector<float>   *daughters_vx;
   vector<float>   *daughters_vy;
   vector<float>   *daughters_vz;
@@ -1001,6 +1005,10 @@ class NtupleReader {
   TBranch        *b_daughters_pcaRefitPV_x;   //!
   TBranch        *b_daughters_pcaRefitPV_y;   //!
   TBranch        *b_daughters_pcaRefitPV_z;   //!
+  TBranch	 *b_daughters_pcaRefitPVBS_x;
+  TBranch        *b_daughters_pcaRefitPVBS_y;
+  TBranch        *b_daughters_pcaRefitPVBS_z;
+  TBranch	 *b_RefitPVBS_Cov;
   TBranch        *b_daughters_pcaGenPV_x;   //!
   TBranch        *b_daughters_pcaGenPV_y;   //!
   TBranch        *b_daughters_pcaGenPV_z;   //!
@@ -1704,6 +1712,10 @@ void NtupleReader::Init(TTree *tree)
   daughters_pcaRefitPV_x = 0;
   daughters_pcaRefitPV_y = 0;
   daughters_pcaRefitPV_z = 0;
+  daughters_pcaRefitPVBS_x = 0;
+  daughters_pcaRefitPVBS_y = 0;
+  daughters_pcaRefitPVBS_z = 0;
+  RefitPVBS_Cov = 0;
   daughters_pcaGenPV_x = 0;
   daughters_pcaGenPV_y = 0;
   daughters_pcaGenPV_z = 0;
@@ -2329,6 +2341,10 @@ void NtupleReader::Init(TTree *tree)
   fChain->SetBranchAddress("daughters_pcaRefitPV_x", &daughters_pcaRefitPV_x, &b_daughters_pcaRefitPV_x);
   fChain->SetBranchAddress("daughters_pcaRefitPV_y", &daughters_pcaRefitPV_y, &b_daughters_pcaRefitPV_y);
   fChain->SetBranchAddress("daughters_pcaRefitPV_z", &daughters_pcaRefitPV_z, &b_daughters_pcaRefitPV_z);
+  fChain->SetBranchAddress("daughters_pcaRefitPVBS_x", &daughters_pcaRefitPVBS_x, &b_daughters_pcaRefitPVBS_x);
+  fChain->SetBranchAddress("daughters_pcaRefitPVBS_y", &daughters_pcaRefitPVBS_y, &b_daughters_pcaRefitPVBS_y);
+  fChain->SetBranchAddress("daughters_pcaRefitPVBS_z", &daughters_pcaRefitPVBS_z, &b_daughters_pcaRefitPVBS_z);
+  fChain->SetBranchAddress("RefitPVBS_Cov", &RefitPVBS_Cov, &b_RefitPVBS_Cov);
   fChain->SetBranchAddress("daughters_pcaGenPV_x", &daughters_pcaGenPV_x, &b_daughters_pcaGenPV_x);
   fChain->SetBranchAddress("daughters_pcaGenPV_y", &daughters_pcaGenPV_y, &b_daughters_pcaGenPV_y);
   fChain->SetBranchAddress("daughters_pcaGenPV_z", &daughters_pcaGenPV_z, &b_daughters_pcaGenPV_z);

@@ -3555,6 +3555,17 @@ bool Ntuple_Controller::isPVCovAvailable(){ // sometimes returns zero size matri
    return true;
 }
 
+TMatrixTSym<double> Ntuple_Controller::PFTau_RefitPVBS_Cov(unsigned int i){
+  TMatrixTSym<double> PVBSCov(3);
+  for(int j=0; j<3; j++){
+    for(int k=j; k<3; k++){
+      PVBSCov(j,k) = Ntp->RefitPVBS_Cov->at(i).at(j).at(k);
+      PVBSCov(k,j) = Ntp->RefitPVBS_Cov->at(i).at(j).at(k);
+    }
+  }
+  return PVBSCov;
+}
+
  TMatrixTSym<float> Ntuple_Controller::PFTau_TIP_primaryVertex_cov(){
    TMatrixTSym<float> V_cov(LorentzVectorParticle::NVertex);
    int l=0;

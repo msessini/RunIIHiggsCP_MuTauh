@@ -526,6 +526,8 @@ class Ntuple_Controller{
   TVector3       PVtx(){return TVector3(Ntp->pv_x,Ntp->pv_y,Ntp->pv_z);}
   double pv_z(){return Ntp->pv_z;}
   TMatrixTSym<float> PFTau_TIP_primaryVertex_cov();
+  TMatrixTSym<double> PFTau_RefitPVBS_Cov(unsigned int i);
+  TVector3 RefitPVBS(unsigned int i){return TVector3(Ntp->RefitPVBS_x->at(i),Ntp->RefitPVBS_y->at(i),Ntp->RefitPVBS_z->at(i));}
   bool isPVCovAvailable();
   /* bool           isPVtxRefit(){return Ntp->isRefitPV;} */
   /* TVector3       PVRefitNoBSOld(){return TVector3(Ntp->pvRefitNoBS_x,Ntp->pvRefitNoBS_y,Ntp->pvRefitNoBS_z);} */
@@ -941,6 +943,7 @@ class Ntuple_Controller{
   TVector3 Daughters_pca(unsigned int i){return TVector3(Ntp->daughters_pca_x->at(i),Ntp->daughters_pca_y->at(i),Ntp->daughters_pca_z->at(i));}
   TVector3 Daughters_pcaRefitPV(unsigned int i){return TVector3(Ntp->daughters_pcaRefitPV_x->at(i),Ntp->daughters_pcaRefitPV_y->at(i),Ntp->daughters_pcaRefitPV_z->at(i));}
   TVector3 Daughters_pcaGenPV(unsigned int i){return TVector3(Ntp->daughters_pcaGenPV_x->at(i),Ntp->daughters_pcaGenPV_y->at(i),Ntp->daughters_pcaGenPV_z->at(i));}
+  TVector3 Daughters_pcaRefitPVBS(unsigned int i, unsigned int j){return TVector3(Ntp->daughters_pcaRefitPVBS_x->at(i).at(j),Ntp->daughters_pcaRefitPVBS_y->at(i).at(j),Ntp->daughters_pcaRefitPVBS_z->at(i).at(j));}
 
   TVector3 Daughters_vertex(unsigned int i){return TVector3(Ntp->daughters_vx->at(i),Ntp->daughters_vy->at(i),Ntp->daughters_vz->at(i));}
 

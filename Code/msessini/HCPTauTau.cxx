@@ -670,6 +670,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
   //
   bool recoPionsAreOk = false, genPionsAreOk = false;
   bool recoTausAreOk = false, GEFTausAreOk = false, mixedTausAreOk = false, genTausAreOk = false;
+  //
 
   //GENERATED LEVEL
   if(Ntp->MCTau_charge(0)<0 && Ntp->MCTau_charge(1)>0){
@@ -736,7 +737,6 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
       HadPionsChargeTruth_plus.push_back(0);
     }
     if(pionpiontruth){
-    cout<<"yes"<<endl;
       HadPionsTruth_minus.push_back(Ntp->GetTruthTauProductLV(3,211,Tauminustruth));
       HadPionsChargeTruth_minus.push_back(-1);
       PionMinus_refTruth = Ntp->MCTauandProd_Vertex(Tauminustruth,2) - Ntp->MCTauandProd_Vertex(Tauminustruth,0);
@@ -998,14 +998,17 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
     boost::hash_combine(hash, Ntp->LeptonHash(Tauplus));
     boost::hash_combine(hash, Ntp->LeptonHash(Tauminus));
     hashes.push_back(hash);
+    //
+    unsigned int PVidx = GetRefittedPVBSIdx(hashes, tauPrimaryVertex, PVRefitBS_X_temp ,PVRefitBS_Y_temp,PVRefitBS_Z_temp ,VertexHashBS1_temp, VertexHashBS2_temp,isRefitBS);
 
-    if(a1a1){
+
+    if(a1a1 && isRefitBS){
       //GEF
       TauminusSecondaryVertex = Ntp->PFTau_secondaryVertex_pos(Tauminus);
       TauplusSecondaryVertex = Ntp->PFTau_secondaryVertex_pos(Tauplus);
       a1LVRefit_Tauminus = Ntp->PFTauRefit_PionsP4(Tauminus,0) + Ntp->PFTauRefit_PionsP4(Tauminus,1) + Ntp->PFTauRefit_PionsP4(Tauminus,2);
       a1LVRefit_Tauplus = Ntp->PFTauRefit_PionsP4(Tauplus,0) + Ntp->PFTauRefit_PionsP4(Tauplus,1) + Ntp->PFTauRefit_PionsP4(Tauplus,2);
-      tauBSPrimaryVertex = GetRefittedPV(hashes, tauPrimaryVertex, PVRefitBS_X_temp ,PVRefitBS_Y_temp,PVRefitBS_Z_temp ,VertexHashBS1_temp, VertexHashBS2_temp,isRefitBS);
+      tauBSPrimaryVertex = Ntp->RefitPVBS(PVidx);
       solutionsBS=tauPairMomentumSolutions(TauminusSecondaryVertex-tauBSPrimaryVertex, a1LVRefit_Tauminus, a1LV_Tauminus, isMinusReal, TauplusSecondaryVertex-tauBSPrimaryVertex, a1LVRefit_Tauplus, a1LVRefit_Tauplus, isPlusReal,isRefitBS);
       TauminusPairConstraintBS=solutionsBS.at(3);
       TauplusPairConstraintBS=solutionsBS.at(7);
@@ -1037,14 +1040,14 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
       HadRefitPionsCharge_plus.push_back(0);
       HadRefitPionsCharge_plus.push_back(1);
     }
-    if(pionpion){
+    if(pionpion && isRefitBS){
       HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
       HadRefitPionsCharge_minus.push_back(-1);
-      PionMinus_ref = Ntp->Daughters_pcaRefitPV(Tauminus);
+      PionMinus_ref = Ntp->Daughters_pcaRefitPVBS(Tauminus,PVidx);
 
       HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
       HadRefitPionsCharge_plus.push_back(1);
-      PionPlus_ref = Ntp->Daughters_pcaRefitPV(Tauplus);
+      PionPlus_ref = Ntp->Daughters_pcaRefitPVBS(Tauplus,PVidx);
     }
     if(a1a1 || rhorho || pionpion){
       Tau1MTT = TauMinusMTT; Tau2MTT = TauPlusMTT;
@@ -1065,10 +1068,11 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 	HadRefitPionsCharge_minus.push_back(0);
 	HadRefitPionsCharge_minus.push_back(-1);
       }
-      if(a1pion){
+      if(a1pion && isRefitBS){
         //GEF
-        if(Ntp->PFTau_TrackHasMomentum(Tauminus) == true && Ntp->isPVCovAvailable() == true){
-          TMatrixTSym<double> PV_cov = Ntp->PFTau_TIP_primaryVertex_cov();
+        if(Ntp->PFTau_TrackHasMomentum(Tauminus) == true){
+          TMatrixTSym<double> PV_cov = Ntp->PFTau_RefitPVBS_Cov(PVidx);
+          TMatrixTSym<double> oldPV_cov = Ntp->PFTau_TIP_primaryVertex_cov();
           LorentzVectorParticle A1 = Ntp->PFTau_a1_lvp(Tauplus);
           TrackParticle PION = Ntp->PFTau_Track(Tauminus);
           GlobalEventFit GEF(PION,A1,METInput,tauBSPrimaryVertex,PV_cov);
@@ -1091,10 +1095,10 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
 	HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
 	HadRefitPionsCharge_minus.push_back(-1);
-        PionMinus_ref = Ntp->Daughters_pcaRefitPV(Tauminus);
+        PionMinus_ref = Ntp->Daughters_pcaRefitPVBS(Tauminus,PVidx);
         
       }
-      if(rhopion){
+      if(rhopion && isRefitBS){
 	HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
 	HadRefitPions_plus.push_back(Tauplusvis - Ntp->ChargedDaughters_P4(Tauplus));
 	HadRefitPionsCharge_plus.push_back(0);
@@ -1102,7 +1106,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
 	HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
 	HadRefitPionsCharge_minus.push_back(-1);
-	PionMinus_ref = Ntp->Daughters_pcaRefitPV(Tauminus);
+	PionMinus_ref = Ntp->Daughters_pcaRefitPVBS(Tauminus,PVidx);
       }
       Tau1MTT = TauPlusMTT; Tau2MTT = TauMinusMTT;
       Tau1SVFit = TauPlusSVFit; Tau2SVFit = TauMinusSVFit;
@@ -1122,10 +1126,10 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 	HadRefitPionsCharge_plus.push_back(0);
 	HadRefitPionsCharge_plus.push_back(1);
       }
-      if(a1pion){
+      if(a1pion && isRefitBS){
         //GEF
-        if(Ntp->PFTau_TrackHasMomentum(Tauplus) == true && Ntp->isPVCovAvailable() == true){
-          TMatrixTSym<double> PV_cov = Ntp->PFTau_TIP_primaryVertex_cov();
+        if(Ntp->PFTau_TrackHasMomentum(Tauplus) == true){
+          TMatrixTSym<double> PV_cov = Ntp->PFTau_RefitPVBS_Cov(PVidx);
           LorentzVectorParticle A1 = Ntp->PFTau_a1_lvp(Tauminus);
           TrackParticle PION = Ntp->PFTau_Track(Tauplus);
           GlobalEventFit GEF(PION,A1,METInput,tauBSPrimaryVertex,PV_cov);
@@ -1148,9 +1152,9 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
 	HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
 	HadRefitPionsCharge_plus.push_back(1);
- 	PionPlus_ref = Ntp->Daughters_pcaRefitPV(Tauplus);
+ 	PionPlus_ref = Ntp->Daughters_pcaRefitPVBS(Tauplus,PVidx);
       }
-      if(rhopion){
+      if(rhopion && isRefitBS){
 	HadRefitPions_minus.push_back(Ntp->ChargedDaughters_P4(Tauminus));
 	HadRefitPions_minus.push_back(Tauminusvis - Ntp->ChargedDaughters_P4(Tauminus));
 	HadRefitPionsCharge_minus.push_back(0);
@@ -1158,7 +1162,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 
 	HadRefitPions_plus.push_back(Ntp->ChargedDaughters_P4(Tauplus));
 	HadRefitPionsCharge_plus.push_back(1);
-	PionPlus_ref = Ntp->Daughters_pcaRefitPV(Tauplus);
+	PionPlus_ref = Ntp->Daughters_pcaRefitPVBS(Tauplus,PVidx);
       }
       Tau1MTT = TauMinusMTT; Tau2MTT = TauPlusMTT;
       Tau1SVFit = TauMinusSVFit; Tau2SVFit = TauPlusSVFit;
@@ -1212,14 +1216,14 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 		if(plusminustruth){
 		  if(genTausAreOk){
 		    Acop_PVTruth = ScalcPVTruth.AcopAngle("pion", "a1", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		    Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","pion", TauPlusTruth, 1., HadPionsTruth_plus, HadPionsChargeTruth_plus, TauMinusTruth, HadPionsTruth_minus.at(0), PionMinus_refTruth);
+		    Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","pion", TauPlusTruth, 1., HadPionsTruth_plus, HadPionsChargeTruth_plus, HadPionsTruth_minus.at(0), PionMinus_refTruth);
 		  }
 		  Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("a1","pion", HadPionsTruth_plus, HadPionsTruth_minus.at(0), PionMinus_refTruth);
 		}
 		if(minusplustruth){
 		  if(genTausAreOk){
 		    Acop_PVTruth = ScalcPVTruth.AcopAngle("a1", "pion", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		    Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","pion", TauMinusTruth, -1., HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus.at(0), PionPlus_refTruth);
+		    Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","pion", TauMinusTruth, -1., HadPionsTruth_minus, HadPionsChargeTruth_minus, HadPionsTruth_plus.at(0), PionPlus_refTruth);
 		  }
 		  Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("a1","pion", HadPionsTruth_minus, HadPionsTruth_plus.at(0), PionPlus_refTruth);
 		}
@@ -1228,14 +1232,14 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 		if(plusminustruth){
 		  if(genTausAreOk){
 		    Acop_PVTruth = ScalcPVTruth.AcopAngle("pion", "rho", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		    Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("rho","pion", TauPlusTruth, 1., HadPionsTruth_plus, HadPionsChargeTruth_plus, TauMinusTruth, HadPionsTruth_minus.at(0), PionMinus_refTruth);
+		    Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("rho","pion", TauPlusTruth, 1., HadPionsTruth_plus, HadPionsChargeTruth_plus, HadPionsTruth_minus.at(0), PionMinus_refTruth);
 		  }
 		  Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("rho","pion", HadPionsTruth_plus, HadPionsTruth_minus.at(0), PionMinus_refTruth);
 		}
 		if(minusplustruth){
 		  if(genTausAreOk){
 		    Acop_PVTruth = ScalcPVTruth.AcopAngle("rho", "pion", TauMinusTruth, HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus, HadPionsChargeTruth_plus);
-		    Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("rho","pion", TauMinusTruth, -1.,  HadPionsTruth_minus, HadPionsChargeTruth_minus, TauPlusTruth, HadPionsTruth_plus.at(0), PionPlus_refTruth);
+		    Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("rho","pion", TauMinusTruth, -1.,  HadPionsTruth_minus, HadPionsChargeTruth_minus, HadPionsTruth_plus.at(0), PionPlus_refTruth);
 		  }
 		  Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("rho","pion", HadPionsTruth_minus, HadPionsTruth_plus.at(0), PionPlus_refTruth);
 		}
@@ -1275,17 +1279,17 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 		}
 		if(pionpion){
 		if(mixedTausAreOk){
-		  Acop_PV = ScalcPV.AcopAngle("pion", "pion", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-}
+		  Acop_PV = ScalcPV.AcopAngle("pion", "pion", TauMinusTruth, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusTruth, HadRefitPions_plus, HadRefitPionsCharge_plus);
+		}		
 		  Acop_IP = ScalcIP.AcopAngle_IP(HadRefitPions_minus.at(0), PionMinus_ref, HadRefitPions_plus.at(0), PionPlus_ref);
 		}
 		if(a1rho){
 		  if(plusminus){
 		if(mixedTausAreOk){
 		    Acop_PV = ScalcPV.AcopAngle("rho", "a1", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-}
+		}
 		    Acop_DP = ScalcDP.AcopAngle_DP("rho", "a1", HadRefitPions_minus, HadRefitPions_plus);
-		  }
+		 }
 		  if(minusplus){
 		if(mixedTausAreOk){
 		    Acop_PV = ScalcPV.AcopAngle("a1", "rho", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
@@ -1297,7 +1301,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 		  if(plusminus){
 		if(mixedTausAreOk){
 		    Acop_PV = ScalcPV.AcopAngle("pion", "a1", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-                    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","pion", TauPlusMixed, 1., HadRefitPions_plus, HadRefitPionsCharge_plus, TauMinusMixed, HadRefitPions_minus.at(0), PionMinus_ref);
+                    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","pion", TauPlusMixed, 1., HadRefitPions_plus, HadRefitPionsCharge_plus, HadRefitPions_minus.at(0), PionMinus_ref);
 }
 		if(GEFTausAreOk){
                     Acop_PVGEF = ScalcPV.AcopAngle("pion", "a1", TauPiGEF, HadRefitPions_minus, HadRefitPionsCharge_minus, TauHGEF, HadRefitPions_plus, HadRefitPionsCharge_plus);
@@ -1307,7 +1311,7 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 		  if(minusplus){
 		if(mixedTausAreOk){
 		    Acop_PV = ScalcPV.AcopAngle("a1", "pion", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-                    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","pion", TauMinusMixed, -1.,  HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus.at(0), PionPlus_ref);
+                    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","pion", TauMinusMixed, -1.,  HadRefitPions_minus, HadRefitPionsCharge_minus, HadRefitPions_plus.at(0), PionPlus_ref);
 }
 		if(GEFTausAreOk){
                     Acop_PVGEF = ScalcPV.AcopAngle("a1", "pion", TauHGEF, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPiGEF, HadRefitPions_plus, HadRefitPionsCharge_plus);
@@ -1319,14 +1323,14 @@ void  HCPTauTau::doEvent()  { //  Method called on every event
 		  if(plusminus){
 		if(mixedTausAreOk){
 		    Acop_PV = ScalcPV.AcopAngle("pion", "rho", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-                    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("rho","pion", TauPlusMixed, 1.,  HadRefitPions_plus, HadRefitPionsCharge_plus, TauMinusMixed, HadRefitPions_minus.at(0), PionMinus_ref);
+                    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("rho","pion", TauPlusMixed, 1.,  HadRefitPions_plus, HadRefitPionsCharge_plus, HadRefitPions_minus.at(0), PionMinus_ref);
 }
 		    Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("rho","pion", HadRefitPions_plus, HadRefitPions_minus.at(0), PionMinus_ref);
 		  }
 		  if(minusplus){
 		if(mixedTausAreOk){
 		    Acop_PV = ScalcPV.AcopAngle("rho", "pion", TauMinusMixed, HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus, HadRefitPionsCharge_plus);
-                    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("rho","pion", TauMinusMixed, -1., HadRefitPions_minus, HadRefitPionsCharge_minus, TauPlusMixed, HadRefitPions_plus.at(0), PionPlus_ref);
+                    Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("rho","pion", TauMinusMixed, -1., HadRefitPions_minus, HadRefitPionsCharge_minus, HadRefitPions_plus.at(0), PionPlus_ref);
 
 }
 		    Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("rho","pion", HadRefitPions_minus, HadRefitPions_plus.at(0), PionPlus_ref);

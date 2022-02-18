@@ -538,7 +538,7 @@ if( $ARGV[0] eq "--Local" ){
     system(sprintf("echo \"export workdir=\\\"$OutputDir/workdir$set/\\\"\" >> $OutputDir/workdir$set/Combine"));
     system(sprintf("echo \"cd $OutputDir/workdir$set/Code/; source config \" >> $OutputDir/workdir$set/Combine"));
     system(sprintf("echo \"cd $OutputDir/workdir$set/ \" >> $OutputDir/workdir$set/Combine")) ; 
-    system(sprintf("echo \"$OutputDir/workdir$set/Code/Analysis.exe \" >> $OutputDir/workdir$set/Combine")) ;
+    system(sprintf("echo \'$OutputDir/workdir$set/Code/Analysis.exe \"\${1}\" \"\${2}\" \' >> $OutputDir/workdir$set/Combine")) ;
 
     # Generate Combine Input
     system(sprintf("cp $InputFile $OutputDir/workdir$set/Input.txt "));
@@ -554,7 +554,27 @@ if( $ARGV[0] eq "--Local" ){
 			
     system(sprintf("cp  set_env  $OutputDir/workdir$set/;"));
     system(sprintf("cd $OutputDir/workdir$set/; ./subs '{DIR}'  $RemoteScrathDir$UserID/  $OutputDir/workdir$set/set_env; "));
-
+  
+    # Generate runAnalysis script
+    system(sprintf("touch $OutputDir/runAnalysis");
+    system(sprintf("chmod 744 $OutputDir/runAnalysis");
+    system(sprintf("echo \"#!/bin/bash\" >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \"date\" >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \'source Submit \"\${1}\" Even\' >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \"sleep 10\" >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \'source Submit \"\${1}\" Odd\' >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \"sleep 10\" >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \"qstat -u $UserID\" >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \'while [ -n \"\$(qstat -u $UserID)\" ]; do\' >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \'  echo \"\$(qstat -u $UserID)\"\' >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \"  date\" >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \"sleep 2m\" >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \"done\" >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \'./Combine \"\${1}\" Even\' >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \'./Combine \"\${2}\" Odd\' >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \'python ./PlotTools/Oscillation/oscillation.py --evenFile LOCAL_COMBINED_hcptautau_default_\"\${1}\"_Even.root --oddFile LOCAL_COMBINED_hcptautau_default_\"\${1}\"_Odd.root --channel \"\${1}\" --year \"\${2}\" --process ggfH\' >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \'python ./PlotTools/Oscillation/oscillation.py --evenFile LOCAL_COMBINED_hcptautau_default_\"\${1}\"_Even.root --oddFile LOCAL_COMBINED_hcptautau_default_\"\${1}\"_Odd.root --channel \"\${1}\" --year \"\${2}\" --process vbfH\' >> $OutputDir/runAnalysis"));
+    system(sprintf("echo \'python ./PlotTools/Oscillation/oscillation.py --evenFile LOCAL_COMBINED_hcptautau_default_\"\${1}\"_Even.root --oddFile LOCAL_COMBINED_hcptautau_default_\"\${1}\"_Odd.root --channel \"\${1}\" --year \"\${2}\" --process all\' >> $OutputDir/runAnalysis"));
 
 
     # Setup Condor Combine scripts
@@ -567,7 +587,7 @@ if( $ARGV[0] eq "--Local" ){
     #system(sprintf("echo \"queue = 1 \" >> $OutputDir/workdir$set/Condor_Combine"));
 
     # Start Submit script
-    system(sprintf("echo \"#! /bin/bash\" >> $OutputDir/workdir$set/Submit")) ; 
+    system(sprintf("echo \"#!/bin/bash\" >> $OutputDir/workdir$set/Submit")) ; 
     system(sprintf("echo \"verbosity=\\\$(grep SetLevel Code/Analysis.cxx | grep -c -e Debug -e Verbose)\" >> $OutputDir/workdir$set/Submit")) ;
     system(sprintf("echo \"  if [[ \\\${verbosity} -ne 0 ]]; then \" >> $OutputDir/workdir$set/Submit")) ;
     system(sprintf("echo \"    echo 'ERROR: Please make sure to set the verbosity level to Info in Analysis.cxx, otherwise your log-files will break QSUB! Abort...' \" >> $OutputDir/workdir$set/Submit"));
