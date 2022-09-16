@@ -1,27 +1,330 @@
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/: Analysis.exe
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/CommonUtils: SimpleFits
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/CommonUtils: TauAnalysis
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/CommonUtils/TauDataFormat/TauNtuple/src: DataMCType.o
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/CommonUtils/TauDataFormat/TauNtuple/src: TauDecay.o
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/CommonUtils: TauPolSoftware
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/CommonUtils: lib
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/DataFormats: MyDict.cxx
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/DataFormats: MyDict.o
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/DataFormats/lib: MyDict_rdict.pcm
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/DataFormats/lib: libDataFormats.so
-Files ./Makefile and /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/Makefile differ
-Files ./NtupleReader.h and /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/NtupleReader.h differ
-Files ./Ntuple_Controller.h and /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/Ntuple_Controller.h differ
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/: Ntuple_Controller.h~
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/TauSpiner: HepMC-2.06.11
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/TauSpiner: LHAPDF-6.2.1
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/TauSpiner: TAUOLA
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/TauSpiner: hepmc
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/TauSpiner: lhapdf
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/TauSpiner: pythia8303
-Only in .: diff.txt
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/: i386_linux
-Only in /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/: make.inc
-Files ./msessini/HCPTauTau.cxx and /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/msessini/HCPTauTau.cxx differ
-Files ./msessini/HCPTauTau.cxx~ and /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/msessini/HCPTauTau.cxx~ differ
-Files ./msessini/HCPTauTau.h and /home-pbs/msessini/Test/workdirMuonTauHFeb_06_2022/Code/msessini/HCPTauTau.h differ
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code: Analysis.exe
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/CommonUtils: SimpleFits
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/CommonUtils: TauAnalysis
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/CommonUtils/TauDataFormat/TauNtuple/src: DataMCType.o
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/CommonUtils/TauDataFormat/TauNtuple/src: TauDecay.o
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/CommonUtils: TauPolSoftware
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/CommonUtils: lib
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/DataFormats: MyDict.cxx
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/DataFormats: MyDict.o
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/DataFormats/lib: MyDict_rdict.pcm
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/DataFormats/lib: libDataFormats.so
+Only in ./InputData: HistoHCPMuTauInclusive_2016.txt
+Only in ./InputData: HistoHCPMuTauInclusive_2017.txt
+Only in ./InputData: HistoHCPMuTauInclusive_2018.txt
+diff -r ./Makefile /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/Makefile
+70c70
+< 	SUBDIRS += TauSpiner/ CommonUtils/TauPolSoftware/TauDecaysInterface/
+---
+> 	SUBDIRS += CommonUtils/TauPolSoftware/TauDecaysInterface/
+119c119
+< 	TARGETS += HCPTauTau HCPMuTau
+---
+> 	TARGETS += HCPTauTau
+diff -r ./Selection_Factory.cxx /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/Selection_Factory.cxx
+46d45
+< #include "msessini/HCPMuTau.h"
+104,105d102
+<   else if(Analysis.Contains("hcpmutau"))s=new HCPMuTau(Analysis,UncertType,Channel,CPstate);
+< 
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/TauSpiner: HepMC-2.06.11
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/TauSpiner: LHAPDF-6.2.1
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/TauSpiner: TAUOLA
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/TauSpiner: hepmc
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/TauSpiner: lhapdf
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/TauSpiner: pythia8303
+diff -r ./diff.txt /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/diff.txt
+1,35c1,58
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code: Analysis.exe
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/CommonUtils: SimpleFits
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/CommonUtils: TauAnalysis
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/CommonUtils/TauDataFormat/TauNtuple/src: DataMCType.o
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/CommonUtils/TauDataFormat/TauNtuple/src: TauDecay.o
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/CommonUtils: TauPolSoftware
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/CommonUtils: lib
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/DataFormats: MyDict.cxx
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/DataFormats: MyDict.o
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/DataFormats/lib: MyDict_rdict.pcm
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/DataFormats/lib: libDataFormats.so
+< Only in ./InputData: HistoHCPMuTauInclusive_2016.txt
+< Only in ./InputData: HistoHCPMuTauInclusive_2017.txt
+< Only in ./InputData: HistoHCPMuTauInclusive_2018.txt
+< diff -r ./Makefile /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/Makefile
+< 70c70
+< < 	SUBDIRS += TauSpiner/ CommonUtils/TauPolSoftware/TauDecaysInterface/
+< ---
+< > 	SUBDIRS += CommonUtils/TauPolSoftware/TauDecaysInterface/
+< 119c119
+< < 	TARGETS += HCPTauTau HCPMuTau
+< ---
+< > 	TARGETS += HCPTauTau
+< diff -r ./Selection_Factory.cxx /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/Selection_Factory.cxx
+< 46d45
+< < #include "msessini/HCPMuTau.h"
+< 104,105d102
+< <   else if(Analysis.Contains("hcpmutau"))s=new HCPMuTau(Analysis,UncertType,Channel,CPstate);
+< < 
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/TauSpiner: HepMC-2.06.11
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/TauSpiner: LHAPDF-6.2.1
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/TauSpiner: TAUOLA
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/TauSpiner: hepmc
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/TauSpiner: lhapdf
+< Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/TauSpiner: pythia8303
+---
+> 739d738
+> <     cout<<"yes"<<endl;
+> 959a959
+> >     cout<<Ntp->NPVRefitBS()<<endl;
+> 1000a1001
+> >     
+> 1008a1010
+> >       tauBSPrimaryVertex.Print();
+> 1043c1045
+> <       PionMinus_ref = Ntp->Daughters_pcaRefitPV(Tauminus);
+> ---
+> >       PionMinus_ref = Ntp->Daughters_pcaGenPV(Tauminus);// - tauBSPrimaryVertex;
+> 1047c1049
+> <       PionPlus_ref = Ntp->Daughters_pcaRefitPV(Tauplus);
+> ---
+> >       PionPlus_ref = Ntp->Daughters_pcaGenPV(Tauplus);// - tauBSPrimaryVertex;
+> 1071a1074
+> > 	  cout<<PV_cov[0][0]<<endl;
+> 1094c1097
+> <         PionMinus_ref = Ntp->Daughters_pcaRefitPV(Tauminus);
+> ---
+> >         PionMinus_ref = Ntp->Daughters_pcaGenPV(Tauminus);// + tauBSPrimaryVertex;
+> 1105c1108
+> < 	PionMinus_ref = Ntp->Daughters_pcaRefitPV(Tauminus);
+> ---
+> > 	PionMinus_ref = Ntp->Daughters_pcaGenPV(Tauminus);// + tauBSPrimaryVertex;
+> 1127c1130
+> <         if(Ntp->PFTau_TrackHasMomentum(Tauplus) == true && Ntp->isPVCovAvailable() == true){
+> ---
+> >         /*if(Ntp->PFTau_TrackHasMomentum(Tauplus) == true && Ntp->isPVCovAvailable() == true){
+> 1139c1142
+> <         }
+> ---
+> >         }*/
+> 1151c1154
+> <  	PionPlus_ref = Ntp->Daughters_pcaRefitPV(Tauplus);
+> ---
+> >  	PionPlus_ref = Ntp->Daughters_pcaGenPV(Tauplus);// + tauBSPrimaryVertex;
+> 1161c1164
+> < 	PionPlus_ref = Ntp->Daughters_pcaRefitPV(Tauplus);
+> ---
+> > 	PionPlus_ref = Ntp->Daughters_pcaGenPV(Tauplus);// + tauBSPrimaryVertex;
+> 1302c1305
+> < 		if(GEFTausAreOk){
+> ---
+> > 		/*if(GEFTausAreOk){
+> 1304c1307
+> < }
+> ---
+> > }*/
+> 1312c1315
+> < 		if(GEFTausAreOk){
+> ---
+> > 		/*if(GEFTausAreOk){
+> 1314c1317
+> < }
+> ---
+> > }*/
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code: i386_linux
+Only in /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code: make.inc
+diff -r ./msessini/HCPMuTau.cxx /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/msessini/HCPMuTau.cxx
+1c1
+< #include "HCPMuTau.h"
+---
+> #include "HCPTauTau.h"
+37c37
+< HCPMuTau::HCPTauTau(TString Name_, TString id_, char* Channel_, char* CPstate_):
+---
+> HCPTauTau::HCPTauTau(TString Name_, TString id_, char* Channel_, char* CPstate_):
+59c59
+< HCPMuTau::~HCPTauTau(){
+---
+> HCPTauTau::~HCPTauTau(){
+71c71
+< void  HCPMuTau::Configure(){
+---
+> void  HCPTauTau::Configure(){
+298c298
+< void  HCPMuTau::Store_ExtraDist(){
+---
+> void  HCPTauTau::Store_ExtraDist(){
+392c392
+< void  HCPMuTau::doEvent()  { //  Method called on every event
+---
+> void  HCPTauTau::doEvent()  { //  Method called on every event
+408a409
+>   
+432a434
+> 
+502a505
+> 
+536a540
+> 
+630d633
+<   TLorentzVector TauPlusMixed, TauMinusMixed;
+633d635
+<   TLorentzVector TauMinusTruth, TauPlusTruth;
+637,638d638
+<   unsigned int Tauminustruth=0;
+<   unsigned int Tauplustruth=0;
+661a662
+> 
+680,683d680
+<     Tauminustruth = Tauhadtruth;
+<     Tauplustruth = Taumutruth;
+<     TauMinusTruth = TauHadTruth;
+<     TauPlusTruth = TauMuTruth;
+687,690d683
+<     Tauplustruth = Tauhadtruth;
+<     Tauminustruth = Taumutruth;
+<     TauPlusTruth = TauHadTruth;
+<     TauMinusTruth = TauMuTruth;
+701a695
+> 
+703a698,699
+>        Muon_refTruth = Ntp->MCTauandProd_Vertex(Taumutruth,2) - Ntp->MCTauandProd_Vertex(Taumutruth,0);
+>        MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Taumutruth);
+704a701
+> 	 HadPionsTruth = Ntp->GetTruthPionsFromA1(Tauhadtruth);
+706d702
+<            HadPionsTruth = Ntp->GetTruthPionsFromA1(Tauminustruth);
+710,712d705
+< 
+<            Muon_refTruth = Ntp->MCTauandProd_Vertex(Tauplustruth,2) - Ntp->MCTauandProd_Vertex(Tauplustruth,0);
+<            MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Tauplustruth);
+715d707
+< 	   HadPionsTruth = Ntp->GetTruthPionsFromA1(Tauminustruth);
+719,721d710
+< 
+<            Muon_refTruth = Ntp->MCTauandProd_Vertex(Tauminustruth,2) - Ntp->MCTauandProd_Vertex(Tauminustruth,0);
+<            MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Tauminustruth);
+724a714
+> 	 HadPionsTruth = Ntp->GetTruthPionsFromRho(Tauhadtruth);
+726d715
+< 	   HadPionsTruth = Ntp->GetTruthPionsFromRho(Tauminustruth);
+729,731d717
+< 
+<            Muon_refTruth = Ntp->MCTauandProd_Vertex(Tauplustruth,2) - Ntp->MCTauandProd_Vertex(Tauplustruth,0);
+<            MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Tauplustruth);
+734d719
+< 	   HadPionsTruth = Ntp->GetTruthPionsFromRho(Tauplustruth);
+737,739d721
+< 
+<            Muon_refTruth = Ntp->MCTauandProd_Vertex(Tauminustruth,2) - Ntp->MCTauandProd_Vertex(Tauminustruth,0);
+<            MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Tauminustruth);
+742a725,726
+> 	 HadPionsTruth.push_back(Ntp->GetTruthTauProductLV(3,211,Tauhadtruth));
+> 	 Pion_refTruth = Ntp->MCTauandProd_Vertex(Tauhadtruth,2) - Ntp->MCTauandProd_Vertex(Tauhadtruth,0);
+745,749d728
+<            HadPionsTruth.push_back(Ntp->GetTruthTauProductLV(3,211,Tauminustruth));
+<            Pion_refTruth = Ntp->MCTauandProd_Vertex(Tauminustruth,2) - Ntp->MCTauandProd_Vertex(Tauminustruth,0);
+< 
+<            Muon_refTruth = Ntp->MCTauandProd_Vertex(Tauplustruth,2) - Ntp->MCTauandProd_Vertex(Tauplustruth,0);
+<            MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Tauplustruth);
+753,757d731
+<            HadPionsTruth.push_back(Ntp->GetTruthTauProductLV(3,211,Tauplustruth));
+<            Pion_refTruth = Ntp->MCTauandProd_Vertex(Tauplustruth,2) - Ntp->MCTauandProd_Vertex(Tauplustruth,0);
+< 
+<            Muon_refTruth = Ntp->MCTauandProd_Vertex(Tauminustruth,2) - Ntp->MCTauandProd_Vertex(Tauminustruth,0);
+<            MuonP4Truth = Ntp->GetTruthTauProductLV(2,13,Tauminustruth);
+771a746
+> 
+780a756
+> 
+850a827
+>     
+912c889
+<        Muon_ref = Ntp->Daughters_pcaRefitPV(TauMu);
+---
+>        Muon_ref = Ntp->MuonTrack_SV(TauMu) - tauBSPrimaryVertex;
+961c938
+< if(HadPionsTruth!=VectZeroLV) genPionsAreOk = true;
+---
+> if((HadPionsTruth!=VectZeroLV) && (HadPionsTruth!=VectZeroLV)) genPionsAreOk = true;
+972d948
+< 	     if(minushadtruth){
+974,975c950,951
+<  	          Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","muon", TauMinusTruth, -1., HadPionsTruth, HadPionsChargeTruth, TauPlusTruth, MuonP4Truth, Muon_refTruth);
+<               }
+---
+>  	        Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","muon", TauHadTruth, 1., HadPionsTruth, HadPionsChargeTruth, TauMuTruth, MuonP4Truth, Muon_refTruth);
+> 	      }
+977,983d952
+< 	     }
+<              if(plushadtruth){
+<               if(genTausAreOk){
+<                   //Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","muon", TauPlusTruth, 1., HadPionsTruth, HadPionsChargeTruth, TauMinusTruth, MuonP4Truth, Muon_refTruth);
+<               }
+<               Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("a1","muon", HadPionsTruth, MuonP4Truth, Muon_refTruth);
+<              }
+1013c982
+< 		/*if(minushad){
+---
+> 		if(minushad){
+1018,1030d986
+<                 }*/
+< 		TLorentzVector ZMF = TauHGEF + TauMuVis;
+<                 TVector3 boost = -ZMF.BoostVector();
+< 
+<                 vector<TLorentzVector> tauandprod;
+< 		tauandprod.push_back(TauHGEF);
+< 		for(unsigned int i = 0; i<HadRefitPions.size(); i++){
+< 		  tauandprod.push_back(HadRefitPions.at(i));
+< 		}
+< 
+< 		SCalculator S1("a1");
+<                 if(minushad){
+< 		  S1.Configure(tauandprod,ZMF,-1);
+1032,1058d987
+<                 if(plushad){
+< 		  S1.Configure(tauandprod,ZMF,+1);
+< 		}
+<                 //VECTEUR POLA
+<                 TVector3 h = S1.pv();
+<                 TauHGEF.Boost(boost);
+<                 h*=1./h.Mag();
+<                 TVector3 n = TauHGEF.Vect().Unit();
+<                 TVector3 k = (h.Cross(n)).Unit();
+<                 //IMPACT PARAMETER
+<                 TLorentzVector Muon_tlv = TauMuVis;
+<                 //TVector3 Muon_ref = Ntp->Muon_TrackRef(MuIndex) - tauBSPrimaryVertex;
+<                 TVector3 Muon_dir = Muon_tlv.Vect();
+<                 double proj = Muon_ref*Muon_dir/Muon_dir.Mag2();
+<                 TVector3 Muon_IP = Muon_ref-Muon_dir*proj;
+<                 TLorentzVector eta(Muon_IP,0);
+<                 eta.Boost(boost);
+<                 TVector3 etaVec = eta.Vect().Unit();
+<                 Muon_tlv.Boost(boost);
+<                 TVector3 MuVec = Muon_tlv.Vect().Unit();
+<                 TVector3 etaVecTrans = (etaVec - MuVec*(MuVec*etaVec)).Unit();
+<                 Acop_PVIP = TMath::ATan2((k.Cross(etaVecTrans)).Mag(),k*etaVecTrans);
+<                 double sign_PV = (k.Cross(etaVecTrans))*n;
+<                 if (sign_PV>0) Acop_PVIP = 2.0*TMath::Pi() - Acop_PVIP;
+<                   Acop_PVIP = Acop_PVIP - 0.5*TMath::Pi();
+<                 if (Acop_PVIP<0) Acop_PVIP = Acop_PVIP + 2*TMath::Pi();
+< 		
+1236c1165
+< void HCPMuTau::Finish() {
+---
+> void HCPTauTau::Finish() {
+diff -r ./msessini/HCPMuTau.h /home-pbs/msessini/Test/workdirHadHad2018_Feb_16_2022/Code/msessini/HCPMuTau.h
+1,2c1,2
+< #ifndef HCPMuTau_h
+< #define HCPMuTau_h
+---
+> #ifndef HCPTauTau_h
+> #define HCPTauTau_h
+39c39
+< class HCPMuTau : public Selection {
+---
+> class HCPTauTau : public Selection {
+42,43c42,43
+<   HCPMuTau(TString Name_, TString id_, char* Channel_, char* CPstate_);
+<   virtual ~HCPMuTau();
+---
+>   HCPTauTau(TString Name_, TString id_, char* Channel_, char* CPstate_);
+>   virtual ~HCPTauTau();

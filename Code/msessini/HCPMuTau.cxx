@@ -34,7 +34,7 @@
 #include "TauPolSoftware/TauDecaysInterface/interface/SCalculator.h"
 #include <algorithm>
 
-HCPMuTau::HCPTauTau(TString Name_, TString id_, char* Channel_, char* CPstate_):
+HCPMuTau::HCPMuTau(TString Name_, TString id_, char* Channel_, char* CPstate_):
   Selection(Name_,id_)
   //DataMC_Corr(true,true,false),
   //tauTrgSF("tight")
@@ -56,7 +56,7 @@ HCPMuTau::HCPTauTau(TString Name_, TString id_, char* Channel_, char* CPstate_):
   BDT->PreAnalysis();
 }
 
-HCPMuTau::~HCPTauTau(){
+HCPMuTau::~HCPMuTau(){
   for(unsigned int j=0; j<Npassed.size(); j++){
     Logger(Logger::Info) << "Selection Summary before: "
 			 << Npassed.at(j).GetBinContent(1)     << " +/- " << Npassed.at(j).GetBinError(1)     << " after: "
@@ -406,8 +406,8 @@ void  HCPMuTau::doEvent()  { //  Method called on every event
   int TauHad= -1;
   bool GenMatchSelection=false;
   
-  TauMu = Ntp->MuIndex();
-  TauHad = Ntp->TauIndex();
+  TauMu = Ntp->tau1IndexVect(0);
+  TauHad = Ntp->tau2IndexVect(0);
   int j=0;
   int GenMatch1=6, GenMatch2=6;
   
@@ -615,8 +615,8 @@ void  HCPMuTau::doEvent()  { //  Method called on every event
   SCalculator ScalcIP;
   SCalculator ScalcDPIP;
   SCalculator ScalcPVIP;
-  double Acop_PVIPGEF = -99, Acop_PVIP = -99, Acop_DPIP = -99;
-  double Acop_PVIPTruth = -99, Acop_DPIPTruth = -99;
+  double Acop_PVIP = -99, Acop_DPIP = -99, Acop_IP = -99;;
+  double Acop_PVIPTruth = -99, Acop_DPIPTruth = -99, Acop_IPTruth = -99;
 
   TLorentzVector zeroLV(0,0,0,0);
   std::vector<TLorentzVector> VectZeroLV;
@@ -629,6 +629,7 @@ void  HCPMuTau::doEvent()  { //  Method called on every event
   TLorentzVector TauMuMixed, TauHadMixed;
   TLorentzVector TauPlusMixed, TauMinusMixed;
   TLorentzVector TauHGEF, TauMuGEF;
+  TLorentzVector TauPlusGEF, TauMinusGEF;
   TLorentzVector TauMuTruth, TauHadTruth;
   TLorentzVector TauMinusTruth, TauPlusTruth;
   TLorentzVector MuonP4Truth;
@@ -636,6 +637,8 @@ void  HCPMuTau::doEvent()  { //  Method called on every event
   unsigned int Tauhadtruth=0;
   unsigned int Tauminustruth=0;
   unsigned int Tauplustruth=0;
+  unsigned int Tauplus=0;
+  unsigned int Tauminus=0;
   string CHANNEL = string(Channel);
   //
   bool a1 = false;
@@ -762,11 +765,15 @@ void  HCPMuTau::doEvent()  { //  Method called on every event
      if(Ntp->Daughters_charge(TauMu)>0 && Ntp->Daughters_charge(TauHad)<0 && TauMuVis.Pt() > 20 && TauHadVis.Pt() > 20)
        {
 	 minushad = true;
+         Tauminus=TauHad;
+	 Tauplus=TauMu;
 	 charge = true;
        }
      else if(Ntp->Daughters_charge(TauHad)>0 && Ntp->Daughters_charge(TauMu)<0 && TauMuVis.Pt() > 20 && TauHadVis.Pt() > 20)
        {
          plushad = true;
+         Tauminus=TauMu;
+         Tauplus=TauMu;
 	 charge = true;
        }
      if(Ntp->MVADM2017(TauHad) == 10 && Ntp->PFTau_hassecondaryVertex(TauHad) && Ntp->PFtauHasThreePions(TauHad)) a1=true;
@@ -840,11 +847,14 @@ void  HCPMuTau::doEvent()  { //  Method called on every event
 	   TauMuMixed.SetE(TauMuSVFit.E());
 	   TauHadMixed.SetVect(TauHadSVFit.P()*TauHadMTT.Vect().Unit());
 	   TauHadMixed.SetE(TauHadSVFit.E());
-	   //}	
-	   /*else{
-	     TauPlusMixed = TauPlusMTT;
-	     TauMinusMixed = TauMinusMTT;
-	     }*/
+	   if(minushad){
+	     TauMinusMixed = TauHadMixed;
+	     TauPlusMixed = TauMuMixed;
+	   }
+           if(plushad){
+             TauMinusMixed = TauMuMixed;
+             TauPlusMixed = TauHadMixed;
+           }	
 	 }
        }
        }
@@ -901,22 +911,24 @@ void  HCPMuTau::doEvent()  { //  Method called on every event
 
 	 }
 
-       boost::hash_combine(hash, Ntp->LeptonHash(TauHad));
-       boost::hash_combine(hash, Ntp->LeptonHash(TauMu));
+       boost::hash_combine(hash, Ntp->LeptonHash(Tauminus));
+       boost::hash_combine(hash, Ntp->LeptonHash(Tauplus));
        hashes.push_back(hash);
        hash = 0;
-       boost::hash_combine(hash, Ntp->LeptonHash(TauMu));
-       boost::hash_combine(hash, Ntp->LeptonHash(TauHad));
+       boost::hash_combine(hash, Ntp->LeptonHash(Tauplus));
+       boost::hash_combine(hash, Ntp->LeptonHash(Tauminus));
        hashes.push_back(hash);
 
-       Muon_ref = Ntp->Daughters_pcaRefitPV(TauMu);
-
-       if(a1mu){
+       unsigned int PVidx = GetRefittedPVBSIdx(hashes, tauPrimaryVertex, PVRefitBS_X_temp ,PVRefitBS_Y_temp,PVRefitBS_Z_temp ,VertexHashBS1_temp, VertexHashBS2_temp,isRefitBS);
+       
+       if(a1mu && isRefitBS){
+         if(minushad){
 	 //GEF
-	 if(Ntp->Muon_TrackParticleHasMomentum(TauMu) == true && Ntp->isPVCovAvailable() == true){
-	   TMatrixTSym<double> PV_cov = Ntp->PFTau_TIP_primaryVertex_cov();
-	   LorentzVectorParticle A1 = Ntp->PFTau_a1_lvp(TauHad);
-	   TrackParticle MUON = Ntp->Muon_TrackParticle(TauMu);
+	 tauBSPrimaryVertex = Ntp->RefitPVBS(PVidx);
+	 if(Ntp->Muon_TrackParticleHasMomentum(Tauplus) == true){
+           TMatrixTSym<double> PV_cov = Ntp->PFTau_RefitPVBS_Cov(PVidx);
+	   LorentzVectorParticle A1 = Ntp->PFTau_a1_lvp(Tauminus);
+	   TrackParticle MUON = Ntp->Muon_TrackParticle(Tauplus);
 	   GlobalEventFit GEF(MUON,A1,METInput,tauBSPrimaryVertex,PV_cov);
 	   GEF.setMassConstraint(125.3);
 	   GEF.SetCorrectPt(false);
@@ -926,34 +938,80 @@ void  HCPMuTau::doEvent()  { //  Method called on every event
 	     TauMuGEF = FitTaus.getTauMu().LV();
 	   }
 	 }
+  	 TauMinusGEF = TauHGEF;
+	 TauPlusGEF = TauMuGEF;
 	 //
-	 HadRefitPions.push_back(Ntp->PFTauRefit_PionsP4(TauHad,0));
-	 HadRefitPions.push_back(Ntp->PFTauRefit_PionsP4(TauHad,1));
-	 HadRefitPions.push_back(Ntp->PFTauRefit_PionsP4(TauHad,2));
-	 HadRefitPionsCharge.push_back(Ntp->PFTauRefit_PionsCharge(TauHad, 0));
-	 HadRefitPionsCharge.push_back(Ntp->PFTauRefit_PionsCharge(TauHad, 1));
-	 HadRefitPionsCharge.push_back(Ntp->PFTauRefit_PionsCharge(TauHad, 2));
+	 HadRefitPions.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,0));
+	 HadRefitPions.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,1));
+	 HadRefitPions.push_back(Ntp->PFTauRefit_PionsP4(Tauminus,2));
+	 HadRefitPionsCharge.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 0));
+	 HadRefitPionsCharge.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 1));
+	 HadRefitPionsCharge.push_back(Ntp->PFTauRefit_PionsCharge(Tauminus, 2));
+	 //
+         Muon_ref = Ntp->Daughters_pcaRefitPVBS(Tauplus,PVidx);
+
        }
-       if(rhomu){
-	 HadRefitPions.push_back(Ntp->ChargedDaughters_P4(TauHad));
-	 HadRefitPions.push_back(TauHadVis - Ntp->ChargedDaughters_P4(TauHad));
+         if(plushad){
+         //GEF
+         tauBSPrimaryVertex = Ntp->RefitPVBS(PVidx);
+         if(Ntp->Muon_TrackParticleHasMomentum(Tauminus) == true){
+           TMatrixTSym<double> PV_cov = Ntp->PFTau_RefitPVBS_Cov(PVidx);
+           LorentzVectorParticle A1 = Ntp->PFTau_a1_lvp(Tauplus);
+           TrackParticle MUON = Ntp->Muon_TrackParticle(Tauminus);
+           GlobalEventFit GEF(MUON,A1,METInput,tauBSPrimaryVertex,PV_cov);
+           GEF.setMassConstraint(125.3);
+           GEF.SetCorrectPt(false);
+           GEFObject FitTaus = GEF.Fit();
+           if(FitTaus.Fitconverged()){
+             TauHGEF = FitTaus.getTauH().LV();
+             TauMuGEF = FitTaus.getTauMu().LV();
+           }
+         }
+         TauMinusGEF = TauMuGEF;
+         TauPlusGEF = TauHGEF;
+         //
+         HadRefitPions.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,0));
+         HadRefitPions.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,1));
+         HadRefitPions.push_back(Ntp->PFTauRefit_PionsP4(Tauplus,2));
+         HadRefitPionsCharge.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 0));
+         HadRefitPionsCharge.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 1));
+         HadRefitPionsCharge.push_back(Ntp->PFTauRefit_PionsCharge(Tauplus, 2));
+	 //
+	 Muon_ref = Ntp->Daughters_pcaRefitPVBS(Tauminus,PVidx);
+       }
+       }
+       if(rhomu && isRefitBS){
          if(minushad){
 	   HadRefitPionsCharge.push_back(-1);
 	   HadRefitPionsCharge.push_back(0);
+           HadRefitPions.push_back(Ntp->ChargedDaughters_P4(Tauminus));
+           HadRefitPions.push_back(TauHadVis - Ntp->ChargedDaughters_P4(Tauminus));
+	   //
+	   Muon_ref = Ntp->Daughters_pcaRefitPVBS(Tauplus,PVidx);
          }
          if(plushad){
            HadRefitPionsCharge.push_back(1);
            HadRefitPionsCharge.push_back(0);
+           HadRefitPions.push_back(Ntp->ChargedDaughters_P4(Tauplus));
+           HadRefitPions.push_back(TauHadVis - Ntp->ChargedDaughters_P4(Tauplus));
+           //
+           Muon_ref = Ntp->Daughters_pcaRefitPVBS(Tauminus,PVidx);
          }
        }
-       if(pionmu){
-	 HadRefitPions.push_back(Ntp->ChargedDaughters_P4(TauHad));
-	 Pion_ref = Ntp->Daughters_pcaRefitPV(TauHad);
+       if(pionmu && isRefitBS){
          if(minushad){
            HadRefitPionsCharge.push_back(-1);
+           HadRefitPions.push_back(Ntp->ChargedDaughters_P4(Tauminus));
+           Pion_ref = Ntp->Daughters_pcaRefitPVBS(Tauminus,PVidx);
+           //
+           Muon_ref = Ntp->Daughters_pcaRefitPVBS(Tauplus,PVidx);
          }
          if(minushad){
            HadRefitPionsCharge.push_back(1);
+           HadRefitPions.push_back(Ntp->ChargedDaughters_P4(Tauplus));
+           Pion_ref = Ntp->Daughters_pcaRefitPVBS(Tauplus,PVidx);
+	   //
+           Muon_ref = Ntp->Daughters_pcaRefitPVBS(Tauminus,PVidx);
          }
        }
      }
@@ -971,31 +1029,48 @@ if (std::isnan(Wspin)!=true && GenMatchSelection)
 	    if(a1mutruth){
 	     if(minushadtruth){
 	      if(genTausAreOk){
- 	          Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","muon", TauMinusTruth, -1., HadPionsTruth, HadPionsChargeTruth, TauPlusTruth, MuonP4Truth, Muon_refTruth);
+ 	          Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","muon", TauMinusTruth, -1., HadPionsTruth, HadPionsChargeTruth, MuonP4Truth, Muon_refTruth);
               }
 	      Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("a1","muon", HadPionsTruth, MuonP4Truth, Muon_refTruth);
 	     }
              if(plushadtruth){
               if(genTausAreOk){
-                  //Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","muon", TauPlusTruth, 1., HadPionsTruth, HadPionsChargeTruth, TauMinusTruth, MuonP4Truth, Muon_refTruth);
+                  Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("a1","muon", TauPlusTruth, 1., HadPionsTruth, HadPionsChargeTruth, MuonP4Truth, Muon_refTruth);
               }
               Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("a1","muon", HadPionsTruth, MuonP4Truth, Muon_refTruth);
              }
 	    }
 	    if(rhomutruth){
-	      if(genTausAreOk){
-                Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("rho","muon", TauHadTruth, 1., HadPionsTruth, HadPionsChargeTruth, TauMuTruth, MuonP4Truth, Muon_refTruth);
-	      }
+	     if(minushadtruth){
+              if(genTausAreOk){
+                  Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("rho","muon", TauMinusTruth, -1., HadPionsTruth, HadPionsChargeTruth, MuonP4Truth, Muon_refTruth);
+              }
+              Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("rho","muon", HadPionsTruth, MuonP4Truth, Muon_refTruth);
+             }
+             if(plushadtruth){
+              if(genTausAreOk){
+                  Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("rho","muon", TauPlusTruth, 1., HadPionsTruth, HadPionsChargeTruth, MuonP4Truth, Muon_refTruth);
+              }
               Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("rho","muon", HadPionsTruth, MuonP4Truth, Muon_refTruth);
 	    }
+	    }
 	    if(pionmutruth){
+	     if(minushadtruth){
 	      if(genTausAreOk){
-                Acop_DPIPTruth = ScalcDPIPTruth.AcopAngle_DPIP("pion","muon", HadPionsTruth, MuonP4Truth, Muon_refTruth);
+                Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("pion","muon", TauMinusTruth, -1., HadPionsTruth, HadPionsChargeTruth, MuonP4Truth, Muon_refTruth);
 	      }
-              //Acop_IPTruth = ScalcIPTruth.AcopAngle_IP("pion","muon", HadPionsTruth, MuonP4Truth, Muon_refTruth);
+              Acop_IPTruth = ScalcIPTruth.AcopAngle_IP(HadPionsTruth.at(0), Pion_refTruth, MuonP4Truth, Muon_refTruth);
+	    }
+             if(plushadtruth){
+              if(genTausAreOk){
+                Acop_PVIPTruth = ScalcPVIPTruth.AcopAngle_PVIP("pion","muon", TauPlusTruth, 1., HadPionsTruth, HadPionsChargeTruth, MuonP4Truth, Muon_refTruth);
+              }
+              Acop_IPTruth = ScalcIPTruth.AcopAngle_IP(HadPionsTruth.at(0), Pion_refTruth, MuonP4Truth, Muon_refTruth);
+            }
 	    }
 	    DPIPAcopAngleTruth.at(t).Fill(Acop_DPIPTruth,Wspin);
 	    PVIPAcopAngleTruth.at(t).Fill(Acop_PVIPTruth,Wspin);
+ 	    impactparameterAcopAngleTruth.at(t).Fill(Acop_IPTruth,Wspin);
 	  } //gen pions
       } //gen channel
 
@@ -1004,93 +1079,53 @@ if (std::isnan(Wspin)!=true && GenMatchSelection)
     if((TauHGEF!=TauMuGEF) && (TauHGEF!=zeroLV) && (TauMuGEF!=zeroLV)) GEFTausAreOk = true;
 
     //RECO LEVEL PLOTS
-    if(channel)
+    if(channel && isRefitBS)
       {
 	if(recoPionsAreOk)
 	  {
 	    if(a1mu){
-	      if(GEFTausAreOk){
-		/*if(minushad){
-                  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","muon", TauHGEF, -1., HadRefitPions, HadRefitPionsCharge, TauMuGEF, TauMuVis, Muon_ref);
-                }
-                if(plushad){
-                  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","muon", TauHGEF, 1., HadRefitPions, HadRefitPionsCharge, TauMuGEF, TauMuVis, Muon_ref);
-                }*/
-		TLorentzVector ZMF = TauHGEF + TauMuVis;
-                TVector3 boost = -ZMF.BoostVector();
-
-                vector<TLorentzVector> tauandprod;
-		tauandprod.push_back(TauHGEF);
-		for(unsigned int i = 0; i<HadRefitPions.size(); i++){
-		  tauandprod.push_back(HadRefitPions.at(i));
-		}
-
-		SCalculator S1("a1");
-                if(minushad){
-		  S1.Configure(tauandprod,ZMF,-1);
-                }
-                if(plushad){
-		  S1.Configure(tauandprod,ZMF,+1);
-		}
-                //VECTEUR POLA
-                TVector3 h = S1.pv();
-                TauHGEF.Boost(boost);
-                h*=1./h.Mag();
-                TVector3 n = TauHGEF.Vect().Unit();
-                TVector3 k = (h.Cross(n)).Unit();
-                //IMPACT PARAMETER
-                TLorentzVector Muon_tlv = TauMuVis;
-                //TVector3 Muon_ref = Ntp->Muon_TrackRef(MuIndex) - tauBSPrimaryVertex;
-                TVector3 Muon_dir = Muon_tlv.Vect();
-                double proj = Muon_ref*Muon_dir/Muon_dir.Mag2();
-                TVector3 Muon_IP = Muon_ref-Muon_dir*proj;
-                TLorentzVector eta(Muon_IP,0);
-                eta.Boost(boost);
-                TVector3 etaVec = eta.Vect().Unit();
-                Muon_tlv.Boost(boost);
-                TVector3 MuVec = Muon_tlv.Vect().Unit();
-                TVector3 etaVecTrans = (etaVec - MuVec*(MuVec*etaVec)).Unit();
-                Acop_PVIP = TMath::ATan2((k.Cross(etaVecTrans)).Mag(),k*etaVecTrans);
-                double sign_PV = (k.Cross(etaVecTrans))*n;
-                if (sign_PV>0) Acop_PVIP = 2.0*TMath::Pi() - Acop_PVIP;
-                  Acop_PVIP = Acop_PVIP - 0.5*TMath::Pi();
-                if (Acop_PVIP<0) Acop_PVIP = Acop_PVIP + 2*TMath::Pi();
-		
+	      if(minushad){
+	        if(GEFTausAreOk){
+		  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","muon", TauMinusGEF, -1., HadRefitPions, HadRefitPionsCharge, TauMuVis, Muon_ref);
+	        }
+	       Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("a1","muon", HadRefitPions, TauMuVis, Muon_ref);
 	      }
-	      /*if(mixedTausAreOk){
-                if(minushad){
-                  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","muon", TauHadMixed, -1., HadRefitPions, HadRefitPionsCharge, TauMuMixed, TauMuVis, Muon_ref);
+              if(plushad){
+                if(GEFTausAreOk){
+                  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","muon", TauPlusGEF, 1., HadRefitPions, HadRefitPionsCharge, TauMuVis, Muon_ref);
                 }
-                if(plushad){
-                  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("a1","muon", TauHadMixed, 1., HadRefitPions, HadRefitPionsCharge, TauMuMixed, TauMuVis, Muon_ref);
-                }
-	      }*/
-	      Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("a1","muon", HadRefitPions, TauMuVis, Muon_ref);
+               Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("a1","muon", HadRefitPions, TauMuVis, Muon_ref);
+              }
 	    }
 	    if(rhomu){
-	      if(mixedTausAreOk){
-                if(minushad){
-                  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("rho","muon", TauHadMixed, -1., HadRefitPions, HadRefitPionsCharge, TauMuMixed, TauMuVis, Muon_ref);
+              if(minushad){
+                if(mixedTausAreOk){
+                  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("rho","muon", TauMinusMixed, -1., HadRefitPions, HadRefitPionsCharge, TauMuVis, Muon_ref);
                 }
-                if(plushad){
-                  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("rho","muon", TauHadMixed, 1., HadRefitPions, HadRefitPionsCharge, TauMuMixed, TauMuVis, Muon_ref);
+               Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("rho","muon", HadRefitPions, TauMuVis, Muon_ref);
+              }
+              if(plushad){
+                if(mixedTausAreOk){
+                  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("rho","muon", TauPlusMixed, 1., HadRefitPions, HadRefitPionsCharge, TauMuVis, Muon_ref);
                 }
-	      }
-              Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("rho","muon", HadRefitPions, TauMuVis, Muon_ref);
+               Acop_DPIP = ScalcDPIP.AcopAngle_DPIP("rho","muon", HadRefitPions, TauMuVis, Muon_ref);
+              }
 	    }
 	    if(pionmu){
 	      if(mixedTausAreOk){
                 if(minushad){
-                  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("pion","muon", TauHadMixed, -1., HadRefitPions, HadRefitPionsCharge, TauMuMixed, TauMuVis, Muon_ref);
+                  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("pion","muon", TauMinusMixed, -1., HadRefitPions, HadRefitPionsCharge, TauMuVis, Muon_ref);
                 }
+		Acop_IP = ScalcIP.AcopAngle_IP(HadRefitPions.at(0), Pion_ref, TauMuVis, Muon_ref);
                 if(plushad){
-                  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("pion","muon", TauHadMixed, 1., HadRefitPions, HadRefitPionsCharge, TauMuMixed, TauMuVis, Muon_ref);
+                  Acop_PVIP = ScalcPVIP.AcopAngle_PVIP("pion","muon", TauPlusMixed, 1., HadRefitPions, HadRefitPionsCharge, TauMuVis, Muon_ref);
                 }
+		Acop_IP = ScalcIP.AcopAngle_IP(HadRefitPions.at(0), Pion_ref, TauMuVis, Muon_ref);
 	      }
 	    }
-	    //polarimetricGEFAcopAngle.at(t).Fill(Acop_PVIPGEF,Wspin);
 	    DPIPAcopAngle.at(t).Fill(Acop_DPIP,Wspin);
 	    PVIPAcopAngle.at(t).Fill(Acop_PVIP,Wspin);
+	    impactparameterAcopAngle.at(t).Fill(Acop_IP,Wspin);
 	  } //pions
       } //channel
 

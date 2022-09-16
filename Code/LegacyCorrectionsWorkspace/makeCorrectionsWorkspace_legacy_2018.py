@@ -69,7 +69,7 @@ for task in histsToWrap:
         name=task[1])
 
     w.factory('expr::m_sel_trg_data("0.9946*(@0*@3+@1*@2-@1*@3)", m_sel_trg8_1_data, m_sel_trg17_1_data, m_sel_trg8_2_data, m_sel_trg17_2_data)')
-    w.factory('expr::m_sel_trg_ratio("min(1./@0,2)", m_sel_trg_data)')
+    w.factory('expr::m_sel_trg_ratio("min(1./@0,2.)", m_sel_trg_data)')
 
 histsToWrap = [
     (loc_kit + '/muonEmbID.root:ID_pt_eta_bins', 'm_sel_idEmb_data')
@@ -78,7 +78,7 @@ wsptools.SafeWrapHist(w, ['gt_pt', 'expr::gt_abs_eta("TMath::Abs(@0)",gt_eta[0])
                           GetFromTFile(histsToWrap[0][0]),
                           name=histsToWrap[0][1])
 
-w.factory('expr::m_sel_idEmb_ratio("min(1./@0,20)", m_sel_idEmb_data)')
+w.factory('expr::m_sel_idEmb_ratio("min(1./@0,20.)", m_sel_idEmb_data)')
 
 ### DESY electron & muon tag and probe results
 loc = 'inputs/2018/LeptonEfficiencies'
@@ -827,12 +827,12 @@ for task in histsToWrap:
                           GetFromTFile(task[0]), name=task[1])
 
 w.factory('expr::m_sel_trg_ic_data("0.9989*(@0*@3+@1*@2-@1*@3)", m_sel_trg_8_ic_1_data, m_sel_trg_17_ic_1_data, m_sel_trg_8_ic_2_data, m_sel_trg_17_ic_2_data)')
-w.factory('expr::m_sel_trg_ic_ratio("min(1./@0,20)", m_sel_trg_ic_data)')
+w.factory('expr::m_sel_trg_ic_ratio("min(1./@0,20.)", m_sel_trg_ic_data)')
 
 wsptools.SafeWrapHist(w, ['gt_pt', 'expr::gt_abs_eta("TMath::Abs(@0)",gt_eta[0])'],
                           GetFromTFile(loc+'MM_LO/muon_SFs.root:data_id_eff'), 'm_sel_id_ic_data')
 
-w.factory('expr::m_sel_id_ic_ratio("min(1./@0,20)", m_sel_id_ic_data)')
+w.factory('expr::m_sel_id_ic_ratio("min(1./@0,20.)", m_sel_id_ic_data)')
 ############### WORK IN PROGRESS
 
 # emu and e+tau trigger electron scale factors from IC
@@ -974,7 +974,7 @@ TauTriggerFile.Close()
 
 loc = 'inputs/2018/TauPOGTriggerSFs/'
 tau_trg_file = ROOT.TFile(loc+'tauTriggerEfficiencies2018.root')
-w.factory('expr::t_pt_trig("min(max(@0,20),450)" ,t_pt[0])')
+w.factory('expr::t_pt_trig("min(max(@0,20.),450.)" ,t_pt[0])')
 tau_id_wps=['vloose','loose','medium','tight','vtight']
 
 for wp in tau_id_wps:
@@ -1008,8 +1008,8 @@ for wp in tau_id_wps:
   
         w.factory('expr::t_trg_pt_%s_%s_%s("(@0==0)*@1 + (@0==1)*@2 + (@0>=3)*@3", t_dm[0], t_trg_pt_%s_%s_dm0_%s, t_trg_pt_%s_%s_dm1_%s, t_trg_pt_%s_%s_dm10_%s)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x)) 
 
-        w.factory('expr::t_trg_%s_%s_data("min(@0*@1/@2,1)", t_trg_pt_%s_%s_data, t_trg_phieta_%s_%s_data, t_trg_ave_phieta_%s_%s_data)' % (wp, y, wp, y, wp, y, wp, y))  
-        w.factory('expr::t_trg_%s_%s_mc("min(@0*@1/@2,1)", t_trg_pt_%s_%s_mc, t_trg_phieta_%s_%s_mc, t_trg_ave_phieta_%s_%s_mc)' % (wp, y, wp, y, wp, y, wp, y))
+        w.factory('expr::t_trg_%s_%s_data("min(@0*@1/@2,1.)", t_trg_pt_%s_%s_data, t_trg_phieta_%s_%s_data, t_trg_ave_phieta_%s_%s_data)' % (wp, y, wp, y, wp, y, wp, y))  
+        w.factory('expr::t_trg_%s_%s_mc("min(@0*@1/@2,1.)", t_trg_pt_%s_%s_mc, t_trg_phieta_%s_%s_mc, t_trg_ave_phieta_%s_%s_mc)' % (wp, y, wp, y, wp, y, wp, y))
 
         w.factory('expr::t_trg_%s_%s_ratio("@0/@1", t_trg_%s_%s_data, t_trg_%s_%s_mc)' % (wp, y, wp, y, wp, y))
 
@@ -1037,8 +1037,8 @@ for wp in tau_id_wps:
       w.factory('expr::t_trg_pt_uncert_%s_%s_%s_up("(@0==0)*@1 + (@0==1)*@2 + (@0>=3)*@3", t_dm[0], t_trg_uncert_%s_%s_dm0_%s_up, t_trg_uncert_%s_%s_dm1_%s_up, t_trg_uncert_%s_%s_dm10_%s_up)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
       w.factory('expr::t_trg_pt_uncert_%s_%s_%s_down("(@0==0)*@1 + (@0==1)*@2 + (@0>=3)*@3", t_dm[0], t_trg_uncert_%s_%s_dm0_%s_down, t_trg_uncert_%s_%s_dm1_%s_down, t_trg_uncert_%s_%s_dm10_%s_down)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
 
-      w.factory('expr::t_trg_%s_%s_%s_up("(@0>0)*min((@0+@1)*@2/@0,1)", t_trg_pt_%s_%s_%s, t_trg_pt_uncert_%s_%s_%s_up, t_trg_%s_%s_%s)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
-      w.factory('expr::t_trg_%s_%s_%s_down("(@0>0)*max((@0-@1)*@2/@0,0)", t_trg_pt_%s_%s_%s, t_trg_pt_uncert_%s_%s_%s_down, t_trg_%s_%s_%s)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
+      w.factory('expr::t_trg_%s_%s_%s_up("(@0>0)*min((@0+@1)*@2/@0,1.)", t_trg_pt_%s_%s_%s, t_trg_pt_uncert_%s_%s_%s_up, t_trg_%s_%s_%s)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
+      w.factory('expr::t_trg_%s_%s_%s_down("(@0>0)*max((@0-@1)*@2/@0,0.)", t_trg_pt_%s_%s_%s, t_trg_pt_uncert_%s_%s_%s_down, t_trg_%s_%s_%s)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
 
     w.factory('expr::t_trg_%s_%s_ratio_up("(@1>0)*(@3>0)*(sqrt(pow((@0-@1)/@1,2) + pow((@2-@3)/@3,2))+1.)*@4",t_trg_%s_%s_data_up, t_trg_%s_%s_data, t_trg_%s_%s_mc_up, t_trg_%s_%s_mc, t_trg_%s_%s_ratio)' % (wp, y, wp, y, wp, y, wp, y, wp, y, wp, y))
 
@@ -1161,7 +1161,7 @@ for wp in tau_id_wps:
 
 loc = 'inputs/2018/KIT/TauTrigger/'
 tau_trg_file = ROOT.TFile(loc+'tau_trigger_fits.root')
-w.factory('expr::t_pt_trig("min(max(@0,20),450)" ,t_pt[0])')
+w.factory('expr::t_pt_trig("min(max(@0,20.),450.)" ,t_pt[0])')
 tau_id_wps=['vloose','loose','medium','tight','vtight']
 
 for wp in tau_id_wps:
@@ -1197,8 +1197,8 @@ for wp in tau_id_wps:
 
         w.factory('expr::t_trg_pt_%s_%s_%s("(@0==0)*@1 + (@0==1)*@2 + (@0>=3)*@3", t_dm[0], t_trg_pt_%s_%s_dm0_%s, t_trg_pt_%s_%s_dm1_%s, t_trg_pt_%s_%s_dm10_%s)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
 
-        w.factory('expr::t_trg_%s_%s_embed_data("min(@0*@1/@2,1)", t_trg_pt_%s_%s_embed_data, t_trg_phieta_%s_%s_embed_data, t_trg_ave_phieta_%s_%s_embed_data)' % (wp, y, wp, y, wp, y, wp, y))
-        w.factory('expr::t_trg_%s_%s_embed("min(@0*@1/@2,1)", t_trg_pt_%s_%s_embed, t_trg_phieta_%s_%s_embed, t_trg_ave_phieta_%s_%s_embed)' % (wp, y, wp, y, wp, y, wp, y))
+        w.factory('expr::t_trg_%s_%s_embed_data("min(@0*@1/@2,1.)", t_trg_pt_%s_%s_embed_data, t_trg_phieta_%s_%s_embed_data, t_trg_ave_phieta_%s_%s_embed_data)' % (wp, y, wp, y, wp, y, wp, y))
+        w.factory('expr::t_trg_%s_%s_embed("min(@0*@1/@2,1.)", t_trg_pt_%s_%s_embed, t_trg_phieta_%s_%s_embed, t_trg_ave_phieta_%s_%s_embed)' % (wp, y, wp, y, wp, y, wp, y))
 
         w.factory('expr::t_trg_%s_%s_embed_ratio("@0/@1", t_trg_%s_%s_embed_data, t_trg_%s_%s_embed)' % (wp, y, wp, y, wp, y))
 
@@ -1206,7 +1206,7 @@ for wp in tau_id_wps:
 
 loc = 'inputs/2018/KIT/tau_trigger/'
 tau_trg_file = ROOT.TFile(loc+'tauTriggerEfficiencies2018KIT_deeptau.root')
-w.factory('expr::t_pt_trig("min(max(@0,20),450)" ,t_pt[0])')
+w.factory('expr::t_pt_trig("min(max(@0,20.),450.)" ,t_pt[0])')
 tau_id_wps=['vlooseDeepTau','looseDeepTau','mediumDeepTau','tightDeepTau','vtightDeepTau','vvtightDeepTau']
 
 for wp in tau_id_wps:
@@ -1247,7 +1247,7 @@ for wp in tau_id_wps:
 
         w.factory('expr::t_trg_pt_%s_%s_%s("(@0==0)*@1 + (@0==1)*@2 + (@0>=3)*@3", t_dm[0], t_trg_pt_%s_%s_dm0_%s, t_trg_pt_%s_%s_dm1_%s, t_trg_pt_%s_%s_dm10_%s)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
 
-        w.factory('expr::t_trg_%s_%s_%s("min(@0*@1/@2,1)", t_trg_pt_%s_%s_%s, t_trg_phieta_%s_%s_%s, t_trg_ave_phieta_%s_%s_%s)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
+        w.factory('expr::t_trg_%s_%s_%s("min(@0*@1/@2,1.)", t_trg_pt_%s_%s_%s, t_trg_phieta_%s_%s_%s, t_trg_ave_phieta_%s_%s_%s)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
 
       w.factory('expr::t_trg_%s_%s_ratio("@0/@1", t_trg_%s_%s_data, t_trg_%s_%s_mc)' % (wp, y, wp, y, wp, y))
       w.factory('expr::t_trg_%s_%s_embed_ratio("@0/@1", t_trg_%s_%s_data, t_trg_%s_%s_embed)' % (wp, y, wp, y, wp, y))
@@ -1278,8 +1278,8 @@ for wp in tau_id_wps:
       w.factory('expr::t_trg_pt_uncert_%s_%s_%s_up("(@0==0)*@1 + (@0==1)*@2 + (@0>=3&&@0<11)*@3 + (@0==11)*@4", t_dm[0], t_trg_uncert_%s_%s_dm0_%s_up, t_trg_uncert_%s_%s_dm1_%s_up, t_trg_uncert_%s_%s_dm10_%s_up, t_trg_uncert_%s_%s_dm11_%s_up)'    % (wp, y, x, wp, y, x, wp, y, x, wp, y, x, wp, y, x))
       w.factory('expr::t_trg_pt_uncert_%s_%s_%s_down("(@0==0)*@1 + (@0==1)*@2 + (@0>=3&&@0<11)*@3 + (@0==11)*@4", t_dm[0], t_trg_uncert_%s_%s_dm0_%s_down, t_trg_uncert_%s_%s_dm1_%s_down, t_trg_uncert_%s_%s_dm10_%s_down, t_trg_uncert_%s_%s_dm11_%s_down)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x, wp, y, x))
 
-      w.factory('expr::t_trg_%s_%s_%s_up("(@0>0)*min((@0+@1)*@2/@0,1)", t_trg_pt_%s_%s_%s, t_trg_pt_uncert_%s_%s_%s_up, t_trg_%s_%s_%s)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
-      w.factory('expr::t_trg_%s_%s_%s_down("(@0>0)*max((@0-@1)*@2/@0,0)", t_trg_pt_%s_%s_%s, t_trg_pt_uncert_%s_%s_%s_down, t_trg_%s_%s_%s)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
+      w.factory('expr::t_trg_%s_%s_%s_up("(@0>0)*min((@0+@1)*@2/@0,1.)", t_trg_pt_%s_%s_%s, t_trg_pt_uncert_%s_%s_%s_up, t_trg_%s_%s_%s)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
+      w.factory('expr::t_trg_%s_%s_%s_down("(@0>0)*max((@0-@1)*@2/@0,0.)", t_trg_pt_%s_%s_%s, t_trg_pt_uncert_%s_%s_%s_down, t_trg_%s_%s_%s)' % (wp, y, x, wp, y, x, wp, y, x, wp, y, x))
 
     w.factory('expr::t_trg_%s_%s_ratio_up("(@1>0)*(@3>0)*(sqrt(pow((@0-@1)/@1,2) + pow((@2-@3)/@3,2))+1.)*@4",t_trg_%s_%s_data_up, t_trg_%s_%s_data, t_trg_%s_%s_mc_up, t_trg_%s_%s_mc, t_trg_%s_%s_ratio)' % (wp, y, wp, y, wp, y, wp, y, wp, y, wp, y))
 
